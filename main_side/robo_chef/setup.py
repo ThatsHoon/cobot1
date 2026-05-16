@@ -24,11 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'executer = nodes.executer:main',
-            'firbase_bridge = nodes.firebase_bridge:main',
-            'recipe_parser = nodes.recipe_parser:main',
-            'recipe_tester = nodes.recipe_tester:main',
-            'state_manager = nodes.state_manager:main',
+            'firebase_bridge = nodes.firebase_bridge:main',
+            'sequence_runner = nodes.sequence_runner:main',
         ],
     },
 )
