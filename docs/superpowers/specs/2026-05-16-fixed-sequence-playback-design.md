@@ -116,7 +116,7 @@ DSR 소유 ROS2 노드. 기존 `executer.py`의 DSR 초기화 패턴 계승.
 - 그리퍼: `onrobot.RG` 1회 생성(env `GRIPPER_IP`/`GRIPPER_PORT`/`GRIPPER_TYPE`). play_segment에 주입.
 - sub `/recipe`(std_msgs/String): `{order_id, jobs:[{recipe_id, qty, segments[]}...]}` 파싱.
   - jobs 비었거나 segments 누락 → `state=ERROR`, error_msg.
-- 상태 가드: `state != IDLE` 이면 새 `/recipe` 무시.
+- 상태 가드: `state != IDLE` 이면 새 `/recipe` 무시. **IDLE→EXECUTING 전이는 `threading.Lock` 으로 원자화**(단일 물리로봇 안전, 콜백그룹 무관), `cc.run_jobs` 는 락 밖 실행. **`cc.run_jobs` 예기치 못한 예외 시 ERROR `/cooking_status` 발행 + state=ERROR**(unlock_system 으로 복구 — EXECUTING 고착 dead-end 제거).
 - 3중 루프(item→qty→segment) §2대로. 세그먼트마다 `/cooking_status` 발행 후 `play_segment` 호출.
   - `smooth_path = <RECORDS_DIR>/<seg>/smooth.json` (RECORDS_DIR=상수, 경로 정합 §1.3 보류; 코어는 절대경로 인자).
   - 파일 없음 → `state=ERROR`, error_msg="missing segment file: <seg>".
