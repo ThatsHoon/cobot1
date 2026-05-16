@@ -3,10 +3,8 @@ ROBO CHEF — Flask Backend Server
 포트 5000에서 실행. Firebase + ROS2 브릿지 역할.
 """
 import threading
-import time
 import os
 import sys
-import json
 import subprocess
 
 from flask import Flask, jsonify, request, abort
