@@ -446,10 +446,12 @@ git add ros2_move_recoder/player.py
 git commit -m "refactor(player): delegate to playback core, add --yes non-interactive flag"
 ```
 
-### Task 4: gui.py 재생/그리퍼 경로를 playback 로 일원화
+### Task 4: gui.py 재생/그리퍼 경로를 playback 로 일원화 — **DESCOPED**
+
+> **설계 정정(실행 중 발견):** gui.py는 모션(`DsrWorker` 스레드)과 그리퍼 타임라인(`MainWindow` 시그널 구동, ops-ratio·measured-vel 학습)이 분리·결합된 구조라, `play_segment` 단일 호출로의 body-swap은 동작하는 티칭 GUI를 회귀시킨다. → **전체 dedup descope.** 본 Task는 안전·무회귀 부분집합만 적용: ① `from ros2_move_recoder.playback import play_segment` import ② `DsrWorker.__init__`에 `self._play_abort = threading.Event()` 추가, `_play_impl` 진입 시 `clear()` + check_motion 루프에 `and not self._play_abort.is_set()` 보강, `DsrInterruptWorker.abort()`에서 `_play_abort.set()`(기존 MoveStop SSTOP 호출은 유지). 녹화·스무딩·DualSense·bringup·모드전환·그리퍼타임라인 코드 불변. 완전 일원화는 별도 작업으로 분리. (스펙 §3.1 정정 참조)
 
 **Files:**
-- Modify: `common/ros2_move_recoder/ros2_move_recoder/gui.py` (`_play_impl` ~505-577, `_do_play_no_confirm` ~2448, `_start_gripper_play_timeline`/`_ensure_gripper_final_state` ~2721-2930 호출부)
+- Modify: `common/ros2_move_recoder/ros2_move_recoder/gui.py` (import 1줄, `DsrWorker.__init__`/`_play_impl`/`DsrInterruptWorker.abort()` 만)
 
 - [ ] **Step 1: 재생 경로 치환**
 

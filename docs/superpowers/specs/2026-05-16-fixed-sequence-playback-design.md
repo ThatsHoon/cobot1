@@ -105,7 +105,9 @@ def play_segment(
 ```
 **내부(기존 코드 이식, 신규 모션 로직 없음)**: smooth.json 로드 → (require_autonomous면) `get_robot_mode()==ROBOT_MODE_AUTONOMOUS` 확인, 아니면 `ok=False` → `amovesj([posj(*w)..], vel, acc)` async + `check_motion` 폴링(player.py) → 그리퍼 이벤트 타임라인 스레드(gui.py `_start_gripper_play_timeline`/`_ensure_gripper_final_state`의 소요시간 추정 우선순위·`GRIP_MIN_GAP_S`·최종상태 강제 그대로 이식) → `abort_event` set 또는 오류 시 `DR_SSTOP`+스레드 정리 → `PlayResult`.
 
-**리팩터(영향도 점검 대상)**: `player.py`를 play_segment 호출 얇은 CLI로 축소(+`--yes` 비대화, `ros2 run ... player <name> [--yes]` 인터페이스 유지). `gui.py` 재생/그리퍼 경로를 play_segment 호출로 치환 — **녹화·스무딩·DualSense·bringup·모드전환 경로 불변**, §6 회귀 필수. `smoother.py`/`recorder.py`/`dualsense_worker.py`/`gripper_worker.py`/`onrobot.py` 무변경.
+**리팩터(영향도 점검 대상)**: `player.py`를 play_segment 호출 얇은 CLI로 축소(+`--yes` 비대화, `ros2 run ... player <name> [--yes]` 인터페이스 유지).
+
+> **설계 정정(Task 4 실행 중 발견):** gui.py는 모션(`DsrWorker` 워커 스레드)과 그리퍼 타임라인(`MainWindow` GUI 스레드, 시그널 구동, ops-slider 비율·`measured_at_play_vel` 학습 보유)이 **의도적으로 분리·결합된 구조**다. 단일 블로킹 호출인 `play_segment`(+단순화된 `_GripperTimeline`)로 강제 치환하면 그리퍼 타이밍 정확도·서비스 기반 abort/pause/resume·6개 시그널 UI 핸들러·measured-duration 학습 루프를 회귀시킨다. → **gui.py 전체 dedup은 descope.** gui.py는 기존 검증된 재생/그리퍼 경로를 유지하고, 안전·무회귀 부분집합만 반영: ① `playback.play_segment` import ② `DsrWorker._play_abort`(threading.Event) 추가로 MoveStop 서비스가 느릴 때의 보조 abort 보강. 신규 조리 경로(`player.py`·`sequence_runner`)가 공유 코어를 사용하므로 "단일 진실 소스" 핵심 목표는 충족(사용자 요구사항 불변). gui↔playback 완전 일원화는 `_GripperTimeline`을 ops-ratio/measured-vel 인지로 확장 + Qt 진행 시그널 연동이 필요한 별도 작업으로 분리(YAGNI — 현 pivot 범위 밖). `smoother.py`/`recorder.py`/`dualsense_worker.py`/`gripper_worker.py`/`onrobot.py` 무변경.
 
 ### 3.2 (신규) `robo_chef/nodes/sequence_runner.py`
 DSR 소유 ROS2 노드. 기존 `executer.py`의 DSR 초기화 패턴 계승.
