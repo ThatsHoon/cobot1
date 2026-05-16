@@ -38,7 +38,7 @@ def startup():
     })
     rb.start_state_monitor()
     coord_client.start()   # 영속 ROS2 서비스 클라이언트 시작
-    # 주문 처리/ROS2 발행은 ros2_order_publisher.py 가 Firebase 감시 후 전담
+    # 주문 처리는 메인노드 firebase_bridge 가 RTDB /orders(pending) 감시 후 전담
 
 
 # ─────────────────────────────────────────────
@@ -96,7 +96,7 @@ def create_order():
         abort(400, "recipe_id required")
     order_id = fb.create_order(recipe_id, items, total)
     fb.push_log("INFO", f"새 주문 접수: {order_id}", source="kiosk")
-    # ROS2 발행은 ros2_order_publisher.py 가 Firebase 감시 후 1회 전담
+    # 조리 트리거는 메인노드 firebase_bridge 가 RTDB /orders 감시로 전담(웹 발행 없음)
 
     return jsonify({"ok": True, "order_id": order_id}), 201
 
