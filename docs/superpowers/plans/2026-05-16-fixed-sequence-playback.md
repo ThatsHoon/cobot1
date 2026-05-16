@@ -277,7 +277,9 @@ Expected: FAIL — `NotImplementedError` (`_GripperTimeline.start`)
 - `kind`→그리퍼 호출 매핑(gui 동일): `open`→`gripper.open()`, `close`→`gripper.close()`, `move`→`gripper.move(width_mm)`.
 - `start()`: 타임라인 스레드 기동. `stop()`: abort 시 스레드 즉시 종료(이벤트 set). `finish()`: 정상 종료 — `_ensure_gripper_final_state` 로직(마지막 이벤트 상태 강제) + `measured_duration` 계산해 `self.measured_duration` 에 저장.
 
-구현(이식 결과):
+**설계 정정(중요):** 초안은 정상 종료 경로에서 타임라인 스레드가 마지막 이벤트를 방출한 뒤 `finish()` 가 같은 이벤트를 한 번 더 강제 적용해 **중복**되고, 모션이 녹화보다 빨리 끝나도 스레드가 원 스케줄까지 sleep 해 `finish()` join 이 **지연**되는 결함이 있었다. 정정안: abort용 `_stop` 과 정상종료용 `_flush` 를 **분리**한다. 정상 종료 시 `_flush` 를 set → 스레드가 남은 이벤트를 **즉시 순서대로 1회씩** 방출하고 종료(중복·지연 없음). abort 시 `_stop` → 잔여 이벤트 폐기(로봇 정지했으므로). gui 원본의 `_ensure_gripper_final_state` 강제-적용은 "미방출 이벤트 fallback" 의도였으므로, 모든 이벤트가 정확히 1회 방출되면 마지막 이벤트가 곧 최종상태가 되어 별도 강제-적용이 불필요하다.
+
+구현(이식 결과, 정정 반영):
 ```python
 class _GripperTimeline:
     GRIP_MIN_GAP_S = 2.0
@@ -289,7 +291,8 @@ class _GripperTimeline:
         self.logger = logger
         self.measured_duration = None
         self._events = list(sm.get("gripper_events") or [])
-        self._stop = threading.Event()
+        self._stop = threading.Event()    # abort: 잔여 이벤트 폐기
+        self._flush = threading.Event()   # 정상 종료: 잔여 이벤트 즉시 방출
         self._thr = None
         self._t0 = None
 
@@ -325,7 +328,8 @@ class _GripperTimeline:
                 return
             target_t = float(ev.get("t_norm", 0.0)) * dur
             target_t = max(target_t, last_emit_t + self.GRIP_MIN_GAP_S)
-            while not self._stop.is_set():
+            # 스케줄 시각까지 대기. abort(_stop) 또는 정상종료(_flush) 시 즉시 방출.
+            while not self._stop.is_set() and not self._flush.is_set():
                 now = time.monotonic() - self._t0
                 if now >= target_t:
                     break
@@ -340,16 +344,16 @@ class _GripperTimeline:
         self._thr.start()
 
     def stop(self):
+        """abort: 잔여 이벤트 폐기, 최종상태 강제 안 함."""
         self._stop.set()
         if self._thr:
             self._thr.join(timeout=1.0)
 
     def finish(self):
+        """정상 종료: 남은 이벤트를 즉시 순서대로 방출(중복 없음)."""
+        self._flush.set()
         if self._thr:
             self._thr.join(timeout=5.0)
-        if self._events:
-            last = self._events[-1]
-            self._apply(last.get("kind"), last.get("width_mm"))
         if self._t0 is not None:
             self.measured_duration = round(time.monotonic() - self._t0, 3)
 ```
