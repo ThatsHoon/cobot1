@@ -32,6 +32,7 @@ class SequenceRunner(Node):
         super().__init__("sequence_runner")
         self.state = "IDLE"
         self._abort = threading.Event()
+        self._lock = threading.Lock()
         self._gripper = self._init_gripper()
         self.init_dsr()
         self.status_pub = self.create_publisher(String, "/cooking_status", 10)
@@ -73,21 +74,36 @@ class SequenceRunner(Node):
         return res.ok
 
     def _on_recipe(self, msg: String):
-        if self.state != "IDLE":
-            self.get_logger().warn("state!=IDLE — /recipe 무시")
-            return
+        # NOTE: /recipe subscription MUST remain in a MutuallyExclusiveCallbackGroup
+        # (rclpy default). _lock makes the IDLE→EXECUTING transition atomic so
+        # correctness does not depend on that scheduling property.
+        with self._lock:
+            if self.state != "IDLE":
+                self.get_logger().warn("state!=IDLE — /recipe 무시")
+                return
+            try:
+                job = json.loads(msg.data)
+                order_id = job["order_id"]
+                jobs = job["jobs"]
+            except Exception as e:  # noqa: BLE001
+                self.get_logger().error(f"잘못된 /recipe: {e}")
+                return
+            self.state = "EXECUTING"
+            self._abort.clear()
         try:
-            job = json.loads(msg.data)
-            order_id = job["order_id"]
-            jobs = job["jobs"]
+            final = cc.run_jobs(order_id, jobs, play_fn=self._play,
+                                emit_fn=self._emit, seg_path=self._seg_path)
+            new_state = "ERROR" if final["state"] == "ERROR" else "IDLE"
         except Exception as e:  # noqa: BLE001
-            self.get_logger().error(f"잘못된 /recipe: {e}")
-            return
-        self.state = "EXECUTING"
-        self._abort.clear()
-        final = cc.run_jobs(order_id, jobs, play_fn=self._play,
-                            emit_fn=self._emit, seg_path=self._seg_path)
-        self.state = "ERROR" if final["state"] == "ERROR" else "IDLE"
+            self.get_logger().error(f"run_jobs 예외 → ERROR: {e}")
+            self._emit({"state": "ERROR", "order_id": order_id,
+                        "recipe_id": "", "item_index": 0, "item_total": 0,
+                        "qty_index": 0, "qty_total": 0, "segment_name": "",
+                        "segment_index": 0, "segment_total": 0,
+                        "error_msg": f"run_jobs exception: {e}"})
+            new_state = "ERROR"
+        with self._lock:
+            self.state = new_state
 
     def _on_unlock(self, request, response):
         if self.state == "ERROR":
