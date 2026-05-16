@@ -1980,11 +1980,11 @@ function updateProgress() {
 //     5 = 준비 완료 (phase=finished 유지)
 //
 //  상태 파생 규칙:
-//   A. /robot_status (current_step / total_steps / state) — 조리 진행 단계 산출
-//        state == 'EXECUTING' 일 때만 step 기반 파생:
-//          1 ≤ current_step ≤ total_steps - 2  → 'cooking_phase'
-//          current_step == total_steps - 1     → 'serving_phase'
-//          current_step == total_steps         → 'finished'
+//   A. /robot_status (신 스키마, sequence_runner) — segment 단위 진행
+//        state == 'IDLE'      → _onPhase('ready')
+//        state == 'EXECUTING' → _renderProgress (segment_index/total)
+//        state == 'DONE'      → _renderDone (done 오버레이)
+//        state == 'ERROR*'    → _onPhase('error')
 //   B. /phase — 'ready' / 'error' 제어 신호 (취소·긴급 복구 등)
 //        'ready' → 즉시 WAITING(-1)
 //        'error' → 에러 오버레이 후 3s 뒤 키오스크 복귀
@@ -2221,6 +2221,96 @@ function _setOrderNum(val) {
 }
 
 // ════════════════════════════════════════════════════════════
+//  /robot_status 신 스키마 렌더 (segment 단위)
+//  · 고정 6-step(STEPS) 가정을 버리고 publish 된 segment_total 로
+//    동적으로 step 행을 그린다. 기존 step-panel DOM/CSS 그대로 재사용.
+//  · innerHTML 사용 패턴은 기존 renderSteps() 와 동일(동일 신뢰 경계:
+//    Firebase RTDB). 새 디자인 시스템 도입 없이 최소 diff 유지.
+// ════════════════════════════════════════════════════════════
+function _renderProgress(p) {
+  _clearAllTimers();
+
+  const segTot = Math.max(0, p.segTot|0);
+  const segIdx = Math.max(0, p.segIdx|0);
+
+  // 헤더 뱃지 — 하드코딩 "06 STEPS" → 동적 segTot
+  const badge = document.querySelector('.step-hdr-badge');
+  if (badge) badge.innerHTML =
+    String(segTot).padStart(2,'0') + '&nbsp;STEPS';
+
+  // step 행 — segment_total 만큼 동적 생성
+  const el = document.getElementById('stepsBody');
+  if (el) {
+    let rows = '';
+    for (let i = 0; i < segTot; i++) {
+      const isDone   = i < segIdx;
+      const isActive = i === segIdx;
+      const cls = isDone ? 'done' : isActive ? 'active' : 'pending';
+      const showConn = i < segTot - 1;
+      let badgeHtml = '';
+      if (isDone)
+        badgeHtml = `<span class="step-badge badge-done">✓ DONE · 완료</span>`;
+      else if (isActive)
+        badgeHtml = `<span class="step-badge badge-active">IN PROGRESS · 진행 중</span>`;
+      const label  = isActive && p.segName ? p.segName
+                   : `STEP ${i+1}`;
+      const detail = isActive
+        ? (p.segName ? p.segName + ' 수행 중' : '조리 수행 중')
+        : (isDone ? '완료' : '대기 중');
+      const num = String(i+1).padStart(2,'0');
+      rows += `<div class="step-item ${cls}" id="step${i}">
+        <div class="step-icon-wrap">
+          <div class="step-ico"><span class="step-ico-num">${num}</span></div>
+          ${showConn ? `<div class="step-conn"></div>` : ''}
+        </div>
+        <div class="step-text">
+          <div class="step-label">${label}</div>
+          <div class="step-detail">${detail}</div>
+          ${badgeHtml}
+        </div>
+      </div>`;
+    }
+    el.innerHTML = rows;
+    const activeEl = document.getElementById('step'+segIdx);
+    if (activeEl) activeEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  // 상단 액션 라벨 — 현재 메뉴 + item/qty 진행
+  const al = document.getElementById('actionLabel');
+  if (al) {
+    let txt = p.menu || '조리 진행 중';
+    if (p.itemTot > 1) txt += ` · ${p.itemIdx+1}/${p.itemTot} 메뉴`;
+    if (p.qtyTot  > 1) txt += ` · ${p.qtyIdx+1}/${p.qtyTot} 개`;
+    al.textContent = txt;
+  }
+
+  // 하단 전체 진행률 — segment 기반
+  const pct = segTot > 0 ? Math.round(segIdx / segTot * 100) : 0;
+  const pf = document.getElementById('progFill');
+  const pp = document.getElementById('progPct');
+  const ev = document.getElementById('etaVal');
+  if (pf) pf.style.width    = pct + '%';
+  if (pp) pp.textContent    = pct + '%';
+  if (ev) ev.textContent    = segTot > 0 ? `${segIdx}/${segTot}` : '--:--';
+
+  // 진행 중이므로 취소 버튼 노출
+  const cbtn = document.getElementById('cancelBtn');
+  if (cbtn) cbtn.classList.add('show');
+}
+
+function _renderDone(rs) {
+  // 완료 — 기존 finished 경로(done 오버레이) 재사용
+  _clearAllTimers();
+  const pf = document.getElementById('progFill');
+  const pp = document.getElementById('progPct');
+  if (pf) pf.style.width = '100%';
+  if (pp) pp.textContent = '100%';
+  const al = document.getElementById('actionLabel');
+  if (al) al.textContent = '요리가 완료되었습니다';
+  _handleDonePhase();
+}
+
+// ════════════════════════════════════════════════════════════
 //  FIREBASE
 // ════════════════════════════════════════════════════════════
 let firebaseDB = null;      // 전역 — confirmCancel 등에서 사용
@@ -2244,47 +2334,32 @@ function _initFirebase() {
       if (val === 'ready' || val === 'error') _onPhase(val);
     });
 
-    // /robot_status — 조리 단계 드라이버 (current_step / total_steps 로 파생)
+    // /robot_status — sequence_runner 신 스키마 드라이버
+    //   { state, order_id, recipe_id, item_index/total,
+    //     qty_index/total, segment_name, segment_index/total, error_msg }
     //   state 분기:
-    //     'RECOVERING_RESET' / 'RECOVERING_FAIL' → 장비결함 안내 팝업 + 3s 후 키오스크
-    //     'RECOVERING_RETRY' → 현재 step 유지, 타이머 정지 후 대기 (복귀 없음)
-    //     'ERROR*'           → 에러 시퀀스 (키오스크 복귀)
-    //     'EXECUTE' / 'EXECUTING' → current_step/total_steps 기반 정상 파생
+    //     'ERROR*'    → 에러 시퀀스 (_onPhase('error'), 키오스크 복귀)
+    //     'IDLE'      → 주문 접수 대기 (_onPhase('ready'))
+    //     'DONE'      → 완료 (_renderDone → done 오버레이)
+    //     'EXECUTING' → segment 단위 진행 렌더 (_renderProgress)
     db.ref('/robot_status').on('value', snap => {
-      const rs = snap.val();
-      if (!rs || typeof rs !== 'object') return;
+      const rs = snap.val(); if (!rs || typeof rs.state !== 'string') return;
       const state = rs.state;
-      if (typeof state !== 'string') return;
-
-      // RECOVERING_RESET / RECOVERING_FAIL — 장비결함 안내 + 키오스크
-      if (state === 'RECOVERING_RESET' || state === 'RECOVERING_FAIL') {
-        _handleFaultPhase();
-        return;
-      }
-
-      // RECOVERING_RETRY — 현재 단계에서 대기 (진행 타이머만 정지, 복귀 없음)
-      if (state === 'RECOVERING_RETRY') { _clearAllTimers(); return; }
-
-      // ERROR 계열 — /phase='error' 와 동일 경로로 처리
       if (state.startsWith('ERROR')) { _onPhase('error'); return; }
-
-      // step 파생 — current_step/total_steps 기반
-      const cur = Number(rs.current_step);
-      const tot = Number(rs.total_steps);
-      const stepsValid = Number.isFinite(cur) && Number.isFinite(tot) && tot > 0;
-
-      // 완료는 state 무관하게 파생 (마지막 step에서 EXECUTING → STANDBY 등으로 전이 가능)
-      if (stepsValid && cur >= tot) { _onPhase('finished'); return; }
-
-      // 중간 단계는 EXECUTE / EXECUTING 에서만 파생
-      if (state !== 'EXECUTING' && state !== 'EXECUTE') return;
-      if (!stepsValid) return;
-
-      let derived = null;
-      if (cur === tot - 1)                 derived = 'serving_phase';
-      else if (cur >= 1 && cur <= tot - 2) derived = 'cooking_phase';
-
-      if (derived) _onPhase(derived);
+      if (state === 'IDLE')  { _onPhase('ready'); return; }
+      if (state === 'DONE')  { _renderDone(rs); return; }
+      if (state === 'EXECUTING') {
+        _renderProgress({
+          menu:    rs.recipe_id || '',
+          itemIdx: Number(rs.item_index) || 0,
+          itemTot: Number(rs.item_total) || 0,
+          qtyIdx:  Number(rs.qty_index) || 0,
+          qtyTot:  Number(rs.qty_total) || 0,
+          segName: rs.segment_name || '',
+          segIdx:  Number(rs.segment_index) || 0,
+          segTot:  Number(rs.segment_total) || 0,
+        });
+      }
     });
 
     console.log('[CustomerStatus] Firebase 실시간 연결 완료 — /phase + /robot_status 구독');
