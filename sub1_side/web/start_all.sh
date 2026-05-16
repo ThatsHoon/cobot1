@@ -11,7 +11,6 @@ kill -9 $(lsof -t -i:3003) 2>/dev/null
 kill -9 $(lsof -t -i:5000) 2>/dev/null
 pkill -9 -f "cloudflared" 2>/dev/null
 pkill -9 -f "app.py" 2>/dev/null
-pkill -9 -f "ros2_order_publisher" 2>/dev/null
 pkill -9 -f "fk_worker.py" 2>/dev/null
 sleep 2
 
@@ -39,12 +38,6 @@ if [ -f "$BASE/backend/serviceAccountKey.json" ] && [ -f "$BASE/backend/fk_worke
     tmux kill-session -t fk 2>/dev/null
     tmux new-session -d -s fk -c "$BASE/backend" "python3 -u fk_worker.py 2>&1 | tee /tmp/rc_fk.log; echo '--- fk_worker 종료 ---'; read"
     echo "  FK Worker 시작 → /robot_state.tcp_position @ 2Hz"
-fi
-
-# ROS2 Order Publisher (서브노드 → 메인노드 토픽 발행)
-if [ -f "$BASE/backend/serviceAccountKey.json" ]; then
-    nohup bash "$BASE/backend/run_ros2_publisher.sh" > /tmp/rc_ros2_pub.log 2>&1 &
-    echo "  ROS2 Publisher 시작 → /robo_chef/order_request (domain=$ROS_DOMAIN_ID)"
 fi
 
 # Named Tunnel (고정 도메인)

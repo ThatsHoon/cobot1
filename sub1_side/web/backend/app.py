@@ -18,72 +18,6 @@ import config
 import ros2_coord_client as coord_client
 
 
-# ── ROS2 토픽 발행 헬퍼 (subprocess 방식) ────────────────────────
-
-def _ros2_publish_order(order_id: str, order: dict, recipe: dict) -> bool:
-    """
-    std_msgs/String 토픽으로 레시피를 발행한다.
-    ros2_order_publisher.py 가 실행 중이면 Firebase 큐를 통해 처리되지만,
-    이 함수는 Flask에서 직접 subprocess로 one-shot 발행하는 fallback이다.
-    """
-    if config.ORDER_MSG_FORMAT == "simple":
-        msg_data = (
-            f"{recipe.get('recipe_name', recipe_id)}"
-            f"|{recipe.get('recipe_id', '?')}"
-        )
-    else:
-        payload = {
-            "order_id":    order_id,
-            "recipe_id":   recipe.get("recipe_id", ""),
-            "recipe_name": recipe.get("recipe_name", ""),
-            "total_steps": recipe.get("total_steps", 0),
-            "locations":   recipe.get("locations", {}),
-            "sequence":    recipe.get("sequence", []),
-        }
-        msg_data = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-
-    # YAML-safe 이스케이프 (작은따옴표 안에 감쌈)
-    yaml_str = f"data: '{msg_data.replace(chr(39), chr(39)+chr(39))}'"
-
-    env = os.environ.copy()
-    env["ROS_DOMAIN_ID"] = str(config.ROS2_DOMAIN_ID)
-
-    # ros2_pub_once.py: 구독자 유무와 관계없이 즉시 발행 후 종료
-    pub_script = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                              "ros2_pub_once.py")
-    cmd = ["python3", pub_script, config.ROS2_ORDER_TOPIC, msg_data]
-
-    try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=5, env=env)
-        success = r.returncode == 0
-        if success:
-            print(f"[ROS2] 발행 완료: {config.ROS2_ORDER_TOPIC}")
-        else:
-            print(f"[ROS2] 발행 실패 (rc={r.returncode}): {r.stderr[:120]}")
-    except subprocess.TimeoutExpired:
-        print("[ROS2] 발행 timeout")
-        success = False
-    except Exception as e:
-        print(f"[ROS2] 발행 예외: {e}")
-        success = False
-
-    # Firebase 로그 & 상태 업데이트
-    level = "INFO" if success else "WARN"
-    fb.push_log(level,
-        f"ROS2 발행 {'성공' if success else '실패'}: "
-        f"{recipe.get('recipe_name')} → {config.ROS2_ORDER_TOPIC}",
-        source="flask_ros2")
-
-    if success:
-        fb.update_order_status(order_id, "published")
-        fb.update_robot_state({
-            "robot_status":   "COOKING",
-            "current_recipe": recipe.get("recipe_id", ""),
-            "current_step":   0,
-        })
-
-    return success
-
 app = Flask(__name__)
 CORS(app)
 
@@ -106,84 +40,7 @@ def startup():
     })
     rb.start_state_monitor()
     coord_client.start()   # 영속 ROS2 서비스 클라이언트 시작
-    # _start_order_watcher() — ros2_order_publisher.py 가 전담, 중복 발행 방지
-
-
-# ── 주문 감시 스레드 ───────────────────────────────────────────────────────────
-
-_processing_orders: set = set()
-
-
-def _start_order_watcher():
-    """Firebase /orders 를 1초마다 폴링해 pending 주문 처리"""
-    def _watcher():
-        while True:
-            try:
-                orders = fb.get_orders(limit=20) or {}
-                for order_id, order in orders.items():
-                    if (order.get("status") == "pending"
-                            and order_id not in _processing_orders):
-                        _processing_orders.add(order_id)
-                        t = threading.Thread(
-                            target=_process_order,
-                            args=(order_id, order),
-                            daemon=True,
-                        )
-                        t.start()
-            except Exception as e:
-                fb.push_log("WARN", f"Order watcher error: {e}", source="system")
-            time.sleep(1)
-
-    threading.Thread(target=_watcher, daemon=True).start()
-
-
-def _process_order(order_id: str, order: dict):
-    """주문 → 레시피 실행 → 상태 업데이트"""
-    recipe_id = order.get("recipe_id")
-    fb.push_log("INFO", f"주문 수락: {order_id} / 레시피: {recipe_id}", source="system")
-    fb.update_order_status(order_id, "accepted")
-
-    recipe = fb.get_recipe(recipe_id)
-    if not recipe:
-        fb.push_log("WARN", f"레시피를 찾을 수 없음: {recipe_id}", source="system")
-        fb.update_order_status(order_id, "failed")
-        _processing_orders.discard(order_id)
-        return
-
-    fb.update_order_status(order_id, "processing", started_at=fb.now_iso())
-    fb.update_robot_state({
-        "robot_status":   "COOKING",
-        "current_recipe": recipe_id,
-        "current_step":   0,
-    })
-    fb.push_log("COOK", f"레시피 실행 시작: {recipe.get('recipe_name')}", source="robot")
-
-    sequence  = recipe.get("sequence", [])
-    locations = recipe.get("locations", {})
-    failed    = False
-
-    for step in sequence:
-        step_num = step.get("step", 0)
-        fb.update_robot_state({"current_step": step_num})
-        ok = rb.execute_recipe_step(step, locations)
-        if not ok:
-            fb.push_log("ERROR", f"Step {step_num} 실패", source="robot")
-            failed = True
-            break
-
-    final_status = "completed" if not failed else "failed"
-    fb.update_order_status(order_id, final_status, completed_at=fb.now_iso())
-    fb.update_robot_state({
-        "robot_status":   "IDLE" if not failed else "ERROR",
-        "current_recipe": None,
-        "current_step":   0,
-    })
-    fb.push_log(
-        "OK" if not failed else "ERROR",
-        f"주문 {order_id} {'완료' if not failed else '실패'}",
-        source="system",
-    )
-    _processing_orders.discard(order_id)
+    # 주문 처리/ROS2 발행은 ros2_order_publisher.py 가 Firebase 감시 후 전담
 
 
 # ─────────────────────────────────────────────
@@ -329,31 +186,7 @@ def health():
     return jsonify({"status": "ok", "service": "robo-chef-backend"})
 
 
-# ── ROS2 토픽 발행 (수동 트리거 / 테스트용) ──
-
-@app.route("/api/ros2/publish_order", methods=["POST"])
-def ros2_publish_order():
-    """
-    주문 ID를 받아 해당 레시피를 ROS2 토픽으로 즉시 발행.
-    Body: { "order_id": "ORD_XXXXX" }
-    """
-    data     = request.get_json(force=True)
-    order_id = data.get("order_id")
-    if not order_id:
-        abort(400, "order_id required")
-
-    order = fb.get_order(order_id)
-    if not order:
-        abort(404, "Order not found")
-
-    recipe_id = order.get("recipe_id")
-    recipe    = fb.get_recipe(recipe_id) if recipe_id else None
-    if not recipe:
-        abort(404, "Recipe not found")
-
-    ok = _ros2_publish_order(order_id, order, recipe)
-    return jsonify({"ok": ok, "topic": config.ROS2_ORDER_TOPIC})
-
+# ── ROS2 상태 조회 ──
 
 @app.route("/api/ros2/status", methods=["GET"])
 def ros2_status():

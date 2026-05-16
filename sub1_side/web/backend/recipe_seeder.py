@@ -42,6 +42,8 @@ RECIPES = [
             {"step": 11, "action": "WAIT",    "target": None,     "params": {"duration": 5.0},             "description": "조리 대기 (5초)"},
             {"step": 12, "action": "HOME",    "target": None,     "description": "완료 후 홈 포지션"},
         ],
+        # TODO(운영): GUI 녹화 후 실제 세그먼트명으로 교체할 것. (코드 동작과 무관한 시드 값)
+        "segments": [],
     },
     {
         "recipe_id":    "RAMEN_001",
@@ -74,6 +76,8 @@ RECIPES = [
             {"step": 7, "action": "PLACE",   "target": "POT",         "params": {"release_delay": 1.2},        "description": "스프 투입"},
             {"step": 8, "action": "HOME",    "target": None,           "description": "완료 후 홈"},
         ],
+        # TODO(운영): GUI 녹화 후 실제 세그먼트명으로 교체할 것. (코드 동작과 무관한 시드 값)
+        "segments": [],
     },
 ]
 
