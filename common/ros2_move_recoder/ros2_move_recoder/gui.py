@@ -44,6 +44,9 @@ from ros2_move_recoder.dualsense_worker import DualSenseWorker
 from ros2_move_recoder.gripper_worker import GripperWorker
 # 평활화 — single source of truth (CLI smoother 와 GUI 가 동일 함수 사용)
 from ros2_move_recoder.smoother import smooth_and_save
+# 재생 코어 — player.py / sequence_runner 와 공유 (gui 는 신호 기반 경로 유지,
+# play_segment 는 헤드리스 경로에서만 사용. import 는 향후 일원화 대비 + 일관성).
+from ros2_move_recoder.playback import play_segment  # noqa: F401
 
 ROBOT_ID    = "dsr01"
 ROBOT_MODEL = "m0609"
@@ -361,6 +364,11 @@ class DsrWorker(QtCore.QObject):
         self._service_clients = {}
         # * play 중단/일시정지 상태 — InterruptWorker 가 set, _play_impl 이 read
         self._abort_requested = False
+        # * 보조 abort 이벤트 — 서비스 기반 MoveStop 이 느리거나 불가할 때도
+        #   check_motion 폴링 루프가 즉시 빠져나오도록. 기존 서비스 abort 를
+        #   대체하지 않고 OR 조건으로 추가 (근본: 폴링이 외부 정지에만 의존하면
+        #   서비스 지연 시 사용자 abort 가 늦게 반영됨).
+        self._play_abort = threading.Event()
         # * jog 전용 dispatcher — DSR import 와 무관하게 미리 생성 (lazy bind).
         #   외부 thread (DualSense) 에서 직접 set 호출 가능 → 메인 thread 시그널
         #   경유 latency 우회.
@@ -503,6 +511,8 @@ class DsrWorker(QtCore.QObject):
             self._busy = False
 
     def _play_impl(self, smooth_path: str, vel: float, acc: float):
+        # 새 재생 시작 — 이전 abort 이벤트 초기화 (서비스 abort 플래그와 별개)
+        self._play_abort.clear()
         try:
             self._ensure_dsr()
             # 서비스 ready 확인 (controller 죽어있으면 block 안 함)
@@ -554,7 +564,10 @@ class DsrWorker(QtCore.QObject):
             self.log.emit(f"[play] amovesj 시작 rc={rc} — check_motion 폴링")
             if rc == 0:
                 check_motion = self._fns["check_motion"]
-                while check_motion():
+                # 종료 조건: 로봇 모션 완료(check_motion()==0) 또는
+                # 보조 abort 이벤트. 서비스 기반 MoveStop 은 check_motion 을
+                # 0 으로 만들어 이 루프를 빠져나오게 하므로 기존 abort 도 유효.
+                while check_motion() and not self._play_abort.is_set():
                     time.sleep(0.05)
             dt = time.monotonic() - t0
             self.log.emit(f"[play] 모션 종료 (소요 {dt:.2f}s)")
@@ -801,6 +814,9 @@ class DsrInterruptWorker(QtCore.QObject):
         req.stop_mode = self.STOP_MODE_SOFT
         # * play_finished 메시지가 "중단됨"으로 나오도록 플래그 먼저 세팅
         self._dsr._abort_requested = True
+        # * 보조 abort 이벤트도 set — MoveStop 서비스가 느리거나 실패해도
+        #   check_motion 폴링 루프가 즉시 빠져나옴 (기존 서비스 abort 유지).
+        self._dsr._play_abort.set()
         ok, err = self._call_srv(MoveStop, self.STOP_SRV_PATH, request=req)
         if ok:
             self._paused = False
@@ -808,8 +824,9 @@ class DsrInterruptWorker(QtCore.QObject):
             self.aborted.emit()
             self.paused_changed.emit(False)
         else:
-            # 실패 시 abort 플래그 롤백
+            # 실패 시 abort 플래그 롤백 (보조 이벤트도 함께 — 일관성)
             self._dsr._abort_requested = False
+            self._dsr._play_abort.clear()
             self.log.emit(f"[ctrl] abort 실패: {err}")
 
     def is_paused(self) -> bool:
