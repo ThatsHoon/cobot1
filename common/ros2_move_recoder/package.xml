@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd"
+            schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ros2_move_recoder</name>
+  <version>0.1.0</version>
+  <description>Doosan m0609 — 매크로 기록/평활화/재생 패키지 (PyQt5 GUI 포함)</description>
+
+  <maintainer email="gagea45@gmail.com">hoon</maintainer>
+  <license>Proprietary</license>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>dsr_msgs2</depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-scipy</exec_depend>
+  <exec_depend>python3-pyqt5</exec_depend>
+  <exec_depend>python3-pygame</exec_depend>
+  <exec_depend>python3-pymodbus</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

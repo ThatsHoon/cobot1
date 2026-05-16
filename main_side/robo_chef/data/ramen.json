@@ -1,0 +1,110 @@
+{
+  "RAMEN": {
+    "locations": {
+      "INDUCTION": [421, -64, 222, 134, 180, 133],
+      "POWDER": [600, 274, 300, 90, 90, 90],
+      "NOODLE": [457, 215.5, 271, 75, 180, 75],
+      "POT_ON_INDUCTION": [408.5, -193, 126.5, 157, 180, 157],
+      "LAST_PLATING": [625, -164, 96.4, 150, 180, -120]
+    },
+    "order_count": 0,
+    "sequence": [
+      {
+        "action": "reset",
+        "params": {},
+        "desc": "원점 회귀"
+      },
+      {
+        "action": "pick",
+        "params": {
+          "pos": "NOODLE",
+          "height": 90.0
+        },
+        "desc": "면 잡기"
+      },
+      {
+        "action": "place",
+        "params": {
+          "pos": "INDUCTION",
+          "height": 100.0
+        },
+        "desc": "면 놓기"
+      },
+      {
+        "action": "reset",
+        "params": {},
+        "desc": "원점 회귀"
+      },
+      {
+        "action": "movej",
+        "params": {"joint": [0, 0, 0, 90, 0, 0]},
+        "desc": "관절 이동"
+      },
+      {
+        "action": "pick",
+        "params": {
+          "pos": "POWDER",
+          "height": 140.0
+        },
+        "desc": "스프 잡기"
+      },
+      {
+        "action": "movel",
+        "params": {
+          "pos": [-200, -320, 0, 0, 0, 0],
+          "mode": "rel"
+        },
+        "desc": "그릇으로"
+      },
+      {
+        "action": "shake",
+        "params": {
+          "amp": [0, 0, 20, 0, 0, 0],
+          "period": [0, 0, 0.5, 0, 0, 0],
+          "repeat": 5
+        },
+        "desc": "스프 흔들기"
+      },
+      {
+          "action": "place",
+          "params": {
+            "pos": "POWDER",
+            "height": 140
+          },
+          "desc": "스프 놓기"
+      },
+      {
+          "action": "reset",
+          "params": {},
+          "desc": "원점 회귀"
+      },
+      {
+          "action": "pick",
+          "params": {
+            "pos": "POT_ON_INDUCTION",
+            "height": 100
+          },
+          "desc": "냄비 잡기"
+      },
+      {
+          "action": "movej",
+          "params": {"joint": [0, 0, 0, 0, 0, 90]},
+          "desc": "관절 이동"
+      },
+      {
+          "action": "place",
+          "params": {
+            "pos": "LAST_PLATING",
+            "height": 30
+          },
+          "desc": "플레이팅"
+      },
+      {
+          "action": "reset",
+          "params": {},
+          "desc": "원점 회귀"
+      }
+    ]
+  }
+
+}

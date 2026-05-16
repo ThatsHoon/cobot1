@@ -1,0 +1,23 @@
+# --- 비밀키 / 자격증명 (절대 커밋 금지) ---
+serviceAccountKey.json
+**/serviceAccountKey.json
+*serviceAccount*.json
+*.pem
+*.key
+
+# --- ROS 2 / colcon 빌드 산출물 ---
+build/
+install/
+log/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# --- 에디터/OS ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
