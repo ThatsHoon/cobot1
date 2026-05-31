@@ -16,6 +16,11 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>std_srvs</exec_depend>
   <exec_depend>ros2_move_recoder</exec_depend>
+  <exec_depend>dsr_common2</exec_depend>
+  <exec_depend>dsr_msgs2</exec_depend>
+  <!-- firebase-admin 은 rosdep 키가 없어 pip 로 처리: pip3 install firebase-admin -->
+  <!-- setup.py install_requires 에도 명시되어 colcon 빌드 시 함께 설치됨. -->
+
 
   <export>
     <build_type>ament_python</build_type>

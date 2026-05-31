@@ -1535,7 +1535,10 @@ try {
   console.log('[Kiosk] Firebase 연결 완료');
   loadRecipesFromFirebase();
 
-  // 로봇 상태 구독 — ERROR* 진입 시 주문 차단, RECOVERY 가 관측되면 해제
+  // 로봇 상태 구독 — ERROR* 진입 시 주문 차단, IDLE/DONE/RECOVERY 관측 시 해제.
+  //   sequence_runner 는 ERROR → unlock_system(Trigger) → IDLE 로 바로 전이하며
+  //   RECOVERY 상태를 별도 emit 하지 않는다. RECOVERY/RECOVER* 만 해제 조건으로
+  //   두면 ERROR 후 영구 잠금 상태가 되므로 IDLE/DONE 도 해제 조건에 포함.
   firebaseDB.ref('/robot_status').on('value', snap => {
     const rs = snap.val();
     const state = (rs && typeof rs === 'object') ? rs.state : null;
@@ -1544,7 +1547,8 @@ try {
     const wasBusy = _robotBusy;
     if (state.startsWith('ERROR')) {
       _robotBusy = true;
-    } else if (state === 'RECOVERY' || state.startsWith('RECOVER')) {
+    } else if (state === 'IDLE' || state === 'DONE' ||
+               state === 'RECOVERY' || state.startsWith('RECOVER')) {
       _robotBusy = false;
     }
     if (_robotBusy !== wasBusy) {
@@ -1625,82 +1629,35 @@ async function openPay() {
     const tax   = Math.floor(sub * 0.1);
     const total = sub + tax;
 
-    const uniqueRecipeIds = [...new Set(items.map(m => m.fb_id).filter(Boolean))];
-    const primaryRecipeId = uniqueRecipeIds[0] || 'UNKNOWN';
-
-    const menu_counts = items.reduce((acc, m) => {
-      acc[m.name] = (acc[m.name] || 0) + cart[m.id];
-      return acc;
-    }, {});
-
-    const recipe_data = {};
-    if (firebaseDB && uniqueRecipeIds.length > 0) {
-      const results = await Promise.allSettled(
-        uniqueRecipeIds.map(rid =>
-          firebaseDB.ref(`/recipes/${rid}`).once('value').then(snap => ({ rid, data: snap.val() }))
-        )
-      );
-      results.forEach(r => {
-        if (r.status === 'fulfilled' && r.value.data) recipe_data[r.value.rid] = r.value.data;
-      });
+    // 매칭 실패한 메뉴는 backend 가 거부하므로 사전 경고만.
+    const missing = items.filter(m => !m.fb_id).map(m => m.name);
+    if (missing.length) {
+      console.warn('[Kiosk] fb_id 없는 메뉴 — backend 에서 거부됨:', missing,
+                   '— /recipes 에 해당 레시피가 등록되어 있는지 확인');
     }
 
+    // 주문 페이로드는 backend 가 /recipes lookup + recipe_data 채움 + ID 발급 + prune
+    // 모두 책임진다. kiosk 는 RTDB write 안 함 (단일 출처: backend).
     const orderPayload = {
-      recipe_id:   primaryRecipeId,
-      recipe_ids:  uniqueRecipeIds,
-      menu_counts,
       items: items.map(m => ({
         name: m.name, qty: cart[m.id], recipe_id: m.fb_id,
         price: m.price, subtotal: m.price * cart[m.id],
       })),
-      recipe_data,
-      total, status: 'pending',
-      order_time: new Date().toISOString(),
+      total,
     };
 
-    let orderId = 'LOCAL_' + Date.now();
-
-    if (firebaseDB) {
-      const newRef = firebaseDB.ref('/orders').push();
-      await newRef.set({...orderPayload, order_id: newRef.key});
-      orderId = newRef.key;
-
-      // recipe_id 별 주문 수량 집계 후 order_count 증가 — transaction 으로 atomic
-      const qtyByRid = items.reduce((acc, m) => {
-        if (!m.fb_id) return acc;
-        acc[m.fb_id] = (acc[m.fb_id] || 0) + cart[m.id];
-        return acc;
-      }, {});
-      for (const [rid, qty] of Object.entries(qtyByRid)) {
-        try {
-          const r = await firebaseDB.ref(`/recipes/${rid}/order_count`)
-            .transaction(cur => (typeof cur === 'number' ? cur : 0) + qty);
-          console.log(`[Kiosk] order_count 증가: ${rid} +${qty} (committed=${r.committed})`);
-        } catch (err) {
-          console.warn(`[Kiosk] order_count 실패 (${rid}):`, err.message);
-        }
-      }
-      // 매칭 실패한 메뉴 경고 — 장바구니에 fb_id 없는 항목이 있으면 로그
-      const missing = items.filter(m => !m.fb_id).map(m => m.name);
-      if (missing.length) {
-        console.warn('[Kiosk] fb_id 없는 메뉴 — order_count 증가 불가:', missing,
-                     '— /recipes 에 해당 레시피가 등록되어 있는지 확인');
-      }
-      const allSnap = await firebaseDB.ref('/orders').orderByKey().once('value');
-      const allKeys = Object.keys(allSnap.val() || {}).sort();
-      if (allKeys.length > 10) {
-        await Promise.all(allKeys.slice(0, allKeys.length - 10).map(k =>
-          firebaseDB.ref(`/orders/${k}`).remove()
-        ));
-      }
-    } else {
-      const res = await fetch(`${BACKEND_URL}/api/orders`, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(orderPayload),
-      });
-      if (res.ok) orderId = (await res.json()).order_id;
+    let orderId;
+    const res = await fetch(`${BACKEND_URL}/api/orders`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(orderPayload),
+    });
+    if (!res.ok) {
+      let detail = '';
+      try { detail = (await res.json()).description || ''; } catch (_) {}
+      throw new Error(`주문 거부 (HTTP ${res.status}) ${detail}`);
     }
+    orderId = (await res.json()).order_id;
 
     const ico = document.getElementById('mIco');
     ico.textContent = '✓';

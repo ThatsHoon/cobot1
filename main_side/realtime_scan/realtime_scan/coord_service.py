@@ -58,16 +58,27 @@ DISPLAY_HZ       = 10     # 터미널 디스플레이
 FIREBASE_PUSH_HZ = 5      # Firebase set 주기
 STALE_SEC        = 2.0
 
-FIREBASE_DB_URL       = "https://robochef-5d9b6-default-rtdb.asia-southeast1.firebasedatabase.app"
+FIREBASE_DB_URL_DEFAULT = "https://robochef-5d9b6-default-rtdb.asia-southeast1.firebasedatabase.app"
+FIREBASE_DB_URL       = os.environ.get("FIREBASE_DB_URL", FIREBASE_DB_URL_DEFAULT)
 FIREBASE_TELEMETRY    = "telemetry/robot_status"
 FIREBASE_ROBOT_STATE  = "robot_state"          # canonical 상태 노드 (Rokey_1 backend 공유)
 ROBOT_STATE_PUSH_HZ   = 2                      # /robot_state merge-update 주기
+# FIREBASE_CRED_PATH 환경변수 우선. 없으면 후보 경로 중 첫 번째 존재 파일 사용.
 FIREBASE_CRED_CANDIDATES = [
+    os.path.expanduser("~/.config/cobot1/firebase-key.json"),
+    os.path.expanduser("~/cobot_ws/src/cobot1/main_side/robo_chef/config/serviceAccountKey.json"),
     os.path.expanduser("~/cobot_ws/src/robo_chef/config/serviceAccountKey.json"),
     os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                   "..", "..", "robo_chef", "config",
                                   "serviceAccountKey.json")),
 ]
+
+
+def _resolve_firebase_cred() -> str | None:
+    env = os.environ.get("FIREBASE_CRED_PATH")
+    if env and os.path.isfile(env):
+        return env
+    return next((p for p in FIREBASE_CRED_CANDIDATES if os.path.isfile(p)), None)
 
 # ── SafetyBridge 설정 ────────────────────────────────────────────
 ROBOT_ID           = "dsr01"
@@ -217,9 +228,11 @@ class _FirebasePublisher:
             _log("warn", "[firebase] firebase_admin 미설치 — pip install firebase-admin")
             return
 
-        cred_path = next((p for p in FIREBASE_CRED_CANDIDATES if os.path.isfile(p)), None)
+        cred_path = _resolve_firebase_cred()
         if cred_path is None:
-            _log("warn", f"[firebase] credential 파일 없음 — 시도 경로: {FIREBASE_CRED_CANDIDATES}")
+            _log("warn",
+                 "[firebase] credential 파일 없음 — FIREBASE_CRED_PATH 환경변수 또는 "
+                 f"후보: {FIREBASE_CRED_CANDIDATES}")
             return
 
         try:
@@ -272,7 +285,13 @@ class _FirebasePublisher:
 
     def _robot_state_loop(self):
         """/robot_state 에 joint_positions 와 last_updated 만 merge-update.
-        .set() 금지 — 다른 writer 필드(robot_status, mode, gripper_status 등) 보존."""
+        .set() 금지 — 다른 writer 필드(robot_status, mode, gripper_status 등) 보존.
+
+        Ownership matrix (architecture.md §6 참고):
+          - joint_positions ← coord_service (이 함수, 2 Hz)
+          - mode            ← SafetyBridge   (이 파일 line 517, 명령 ack 시점)
+          - tcp_position    ← fk_worker      (sub1_side/web/backend, 2 Hz)
+        last_updated 는 마지막 writer 의 시각."""
         interval = 1.0 / ROBOT_STATE_PUSH_HZ
         err_count = 0
         while self._alive:
@@ -493,7 +512,8 @@ class SafetyBridge:
                         "name":       name,
                         "updated_at": now_iso,
                     }
-                    # /robot_state.mode 는 name 문자열(STANDBY/MOVING/...)로 merge
+                    # /robot_state.mode 는 name 문자열(STANDBY/MOVING/...)로 merge.
+                    # Ownership: SafetyBridge 가 mode 필드 단독 소유 (architecture.md §6).
                     robot_state_patch = {
                         "mode":         name,
                         "last_updated": now_iso,

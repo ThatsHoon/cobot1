@@ -4,6 +4,10 @@
 BASE="$(cd "$(dirname "$0")" && pwd)"
 LOCAL_IP=$(ip route get 1.1.1.1 2>/dev/null | awk '{print $7; exit}')
 
+# ROS_DOMAIN_ID — main_side(realtime_scan) 와 일치해야 cross-PC 통신 가능.
+# 호스트 ~/.bashrc 의 기본값(예: cobot3 의 130)을 덮어쓴다.
+export ROS_DOMAIN_ID=24
+
 # 기존 프로세스 정리
 kill -9 $(lsof -t -i:3001) 2>/dev/null
 kill -9 $(lsof -t -i:3002) 2>/dev/null

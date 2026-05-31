@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RoboChef — Doosan m0609 자동 조리 시스템</title>
+<link rel="stylesheet" href="assets_v2/fonts.css">
+<link rel="stylesheet" href="assets_v2/base.css">
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<div class="deck">
+
+<!-- ══════════════════════════════════════════════════════════
+     01  COVER
+══════════════════════════════════════════════════════════ -->
+<section class="slide is-active" data-name="cover">
+  <div style="display:grid;grid-template-columns:5fr 7fr;gap:48px;height:100%;align-items:center;">
+    <!-- Left: text -->
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:28px;">
+      <div>
+        <div class="h-eyebrow" style="font-size:18px;margin-bottom:20px;">ROBO CHEF &nbsp;·&nbsp; 2026</div>
+        <h1 style="font-family:var(--font-serif);font-size:100px;font-weight:700;line-height:.9;
+                   letter-spacing:-.04em;margin:0;
+                   background:linear-gradient(135deg,#E8EEF9,#7AB4FF 55%,#FF6B5C);
+                   -webkit-background-clip:text;background-clip:text;color:transparent;
+                   filter:drop-shadow(0 0 40px rgba(122,180,255,.30));">
+          RoboChef
+        </h1>
+        <p style="font-family:var(--font-serif);font-size:28px;color:var(--text-2);
+                  margin:20px 0 0;line-height:1.4;font-weight:400;">
+          Doosan m0609 협동로봇 기반<br>
+          <span style="color:var(--accent);">라면 / 스테이크</span> 자동 조리 시스템
+        </p>
+      </div>
+      <div style="height:1px;background:linear-gradient(90deg,var(--border),transparent);"></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <span class="cat-chip" style="font-size:18px;padding:8px 16px;">ROS 2 Humble</span>
+        <span class="cat-chip" style="font-size:18px;padding:8px 16px;">Firebase RTDB</span>
+        <span class="cat-chip warm" style="font-size:18px;padding:8px 16px;">Doosan m0609</span>
+        <span class="cat-chip gray" style="font-size:18px;padding:8px 16px;">Flask</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;margin-top:8px;">
+        <i data-lucide="graduation-cap" style="width:24px;height:24px;color:var(--text-3);stroke-width:1.5;"></i>
+        <span style="font-size:20px;color:var(--text-3);font-family:var(--font-mono);">김재훈 &nbsp;|&nbsp; 로봇 자동화 프로젝트</span>
+      </div>
+    </div>
+    <!-- Right: robot image -->
+    <div class="media contain fill" style="background:rgba(0,0,0,.30);border-color:var(--border);">
+      <img src="assets_v2/media/image55.png" alt="Doosan m0609"
+           style="object-fit:contain;width:100%;height:100%;padding:24px;">
+    </div>
+  </div>
+  <!-- footer -->
+  <div class="s-foot" style="margin-top:24px;">
+    <span class="robochef-mark">RoboChef</span>
+    <span>01 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     02  DEMO VIDEOS  (두괄식 — 결론 먼저)
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="demo-video">
+  <div class="s-head">
+    <div class="s-title">시연 영상</div>
+    <div class="s-meta">ROBO CHEF / DEMO</div>
+  </div>
+  <div class="g2">
+    <!-- 라면 조리 -->
+    <div class="card" style="display:flex;flex-direction:column;gap:16px;">
+      <div style="flex:1;min-height:0;background:#000;border-radius:12px;overflow:hidden;border:1px solid var(--border);">
+        <iframe
+          src="https://www.youtube.com/embed/BVdpttErnng"
+          title="라면 조리 시연"
+          allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+          allowfullscreen
+          style="width:100%;height:100%;border:0;display:block;min-height:360px;">
+        </iframe>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-warm);box-shadow:0 0 12px var(--accent-warm);"></div>
+        <span style="font-size:26px;font-weight:700;color:var(--text-1);font-family:var(--font-serif);">라면 조리</span>
+        <span class="cat-chip warm" style="font-size:18px;">RAMEN</span>
+      </div>
+    </div>
+    <!-- 스테이크 조리 -->
+    <div class="card" style="display:flex;flex-direction:column;gap:16px;">
+      <div style="flex:1;min-height:0;background:#000;border-radius:12px;overflow:hidden;border:1px solid var(--border);">
+        <iframe
+          src="https://www.youtube.com/embed/zAhikqhdXzU"
+          title="스테이크 조리 시연"
+          allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+          allowfullscreen
+          style="width:100%;height:100%;border:0;display:block;min-height:360px;">
+        </iframe>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 12px var(--good);"></div>
+        <span style="font-size:26px;font-weight:700;color:var(--text-1);font-family:var(--font-serif);">스테이크 조리</span>
+        <span class="cat-chip good" style="font-size:18px;">STEAK</span>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>02 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     03  PROJECT OVERVIEW
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="project-overview">
+  <div class="s-head">
+    <div class="s-title">프로젝트 한눈에 보기</div>
+    <div class="s-meta">ROBO CHEF / OVERVIEW</div>
+  </div>
+  <!-- Top: stat row -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px;">
+    <div class="card accent" style="text-align:center;padding:24px 16px;">
+      <div class="stat-big" style="font-size:72px;">2</div>
+      <div class="stat-label">조리 메뉴</div>
+      <div class="stat-cap">RAMEN · STEAK</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 16px;">
+      <div class="stat-big" style="font-size:72px;">2</div>
+      <div class="stat-label">ROS 2 노드</div>
+      <div class="stat-cap">firebase_bridge · sequence_runner</div>
+    </div>
+    <div class="card warm" style="text-align:center;padding:24px 16px;">
+      <div class="stat-big" style="font-size:72px;color:#FFB098;">3</div>
+      <div class="stat-label" style="color:#fff;">웹 패널</div>
+      <div class="stat-cap" style="color:rgba(255,255,255,.6);">Kiosk · Customer · Admin</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 16px;">
+      <div class="stat-big" style="font-size:72px;color:var(--good);">5</div>
+      <div class="stat-label">단계 파이프라인</div>
+      <div class="stat-cap">녹화→주문→조리→상태→시각화</div>
+    </div>
+  </div>
+  <!-- Bottom: two-col description + flow chips -->
+  <div class="g2" style="flex:1;min-height:0;">
+    <div class="card" style="display:flex;flex-direction:column;gap:18px;">
+      <div class="card-head">
+        <i data-lucide="cpu" style="width:24px;height:24px;color:var(--accent);stroke-width:1.5;"></i>
+        시스템 구성
+      </div>
+      <p class="lead" style="font-size:20px;">
+        고객이 <strong style="color:var(--accent);">키오스크</strong>에서 메뉴를 선택하면,
+        <strong style="color:var(--accent);">Firebase RTDB</strong>를 경유해
+        <strong style="color:var(--accent-warm);">Doosan m0609</strong> 협동로봇이
+        사전 녹화된 동작 시퀀스로 실제 조리를 수행한다.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <i data-lucide="check-circle-2" style="width:20px;height:20px;color:var(--good);stroke-width:2;flex-shrink:0;"></i>
+          <span style="font-size:20px;color:var(--text-2);">실시간 주문 FIFO 처리 — 다중 주문 큐잉</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <i data-lucide="check-circle-2" style="width:20px;height:20px;color:var(--good);stroke-width:2;flex-shrink:0;"></i>
+          <span style="font-size:20px;color:var(--text-2);">세그먼트 기반 재생 — pre-flight 안전 검사</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <i data-lucide="check-circle-2" style="width:20px;height:20px;color:var(--good);stroke-width:2;flex-shrink:0;"></i>
+          <span style="font-size:20px;color:var(--text-2);">조리 현황 실시간 반영 — 고객/관리자 대시보드</span>
+        </div>
+      </div>
+    </div>
+    <!-- Workflow vertical flow -->
+    <div class="card" style="display:flex;flex-direction:column;gap:0;">
+      <div class="card-head">
+        <i data-lucide="workflow" style="width:24px;height:24px;color:var(--accent);stroke-width:1.5;"></i>
+        워크플로우 요약
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0;flex:1;justify-content:center;">
+        <!-- step row -->
+        <div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--border);">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7AB4FF,#4D8FFF);
+                      color:#0A0F1C;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+          <span style="font-size:20px;color:var(--text-1);font-weight:600;">동작 녹화 — ros2_move_recoder</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--border);">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7AB4FF,#4D8FFF);
+                      color:#0A0F1C;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+          <span style="font-size:20px;color:var(--text-1);font-weight:600;">웹 주문 → POST /api/orders</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--border);">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7AB4FF,#4D8FFF);
+                      color:#0A0F1C;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+          <span style="font-size:20px;color:var(--text-1);font-weight:600;">Firebase → firebase_bridge → 조리 시작</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--border);">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#FF6B5C,#FFB098);
+                      color:#0A0F1C;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+          <span style="font-size:20px;color:var(--text-1);font-weight:600;">sequence_runner → m0609 동작 재생</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:12px 0;">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#5EE2A6,#34D399);
+                      color:#0A0F1C;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">5</div>
+          <span style="font-size:20px;color:var(--text-1);font-weight:600;">조리 상태 → Firebase → 화면 시각화</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>03 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     04  TECH STACK
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="tech-stack">
+  <div class="s-head">
+    <div class="s-title">기술 스택</div>
+    <div class="s-meta">ROBO CHEF / TECH</div>
+  </div>
+  <div class="g4" style="flex:1;min-height:0;">
+    <!-- Hardware -->
+    <div class="card" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card-head">
+        <i data-lucide="cpu" style="width:22px;height:22px;color:var(--accent-warm);stroke-width:1.5;"></i>
+        <span style="color:var(--accent-warm);">Hardware</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;">
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/doosan/FF6B5C" alt="Doosan" style="width:36px;height:36px;object-fit:contain;">
+          <div class="b-name">Doosan m0609</div>
+          <div style="font-size:16px;color:var(--text-3);text-align:center;">6-DOF 협동로봇</div>
+        </div>
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <i data-lucide="grip" style="width:34px;height:34px;color:#7AB4FF;stroke-width:1.2;"></i>
+          <div class="b-name">OnRobot RG2</div>
+          <div style="font-size:16px;color:var(--text-3);">전동 그리퍼</div>
+        </div>
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/playstation/003087" alt="DualSense" style="width:34px;height:34px;object-fit:contain;filter:brightness(2);">
+          <div class="b-name">DualSense</div>
+          <div style="font-size:16px;color:var(--text-3);">PS5 컨트롤러</div>
+        </div>
+      </div>
+    </div>
+    <!-- ROS 2 / Python -->
+    <div class="card" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card-head">
+        <i data-lucide="layers" style="width:22px;height:22px;color:var(--accent);stroke-width:1.5;"></i>
+        <span style="color:var(--accent);">Robot / ROS 2</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;">
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/ros/22314E" alt="ROS" style="width:34px;height:34px;object-fit:contain;filter:brightness(3) saturate(0.8);">
+          <div class="b-name">ROS 2 Humble</div>
+          <div style="font-size:16px;color:var(--text-3);">로봇 미들웨어</div>
+        </div>
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/python/3776AB" alt="Python" style="width:34px;height:34px;object-fit:contain;">
+          <div class="b-name">Python 3.10</div>
+          <div style="font-size:16px;color:var(--text-3);">ament_python 패키지</div>
+        </div>
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/scipy/8CAAE6" alt="SciPy" style="width:34px;height:34px;object-fit:contain;">
+          <div class="b-name">NumPy / SciPy</div>
+          <div style="font-size:16px;color:var(--text-3);">궤적 스무딩</div>
+        </div>
+      </div>
+    </div>
+    <!-- Firebase / Flask -->
+    <div class="card" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card-head">
+        <i data-lucide="cloud" style="width:22px;height:22px;color:#FFA500;stroke-width:1.5;"></i>
+        <span style="color:#FFA500;">Cloud / Backend</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;">
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/firebase/FFCA28" alt="Firebase" style="width:34px;height:34px;object-fit:contain;">
+          <div class="b-name">Firebase RTDB</div>
+          <div style="font-size:16px;color:var(--text-3);">실시간 데이터베이스</div>
+        </div>
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/flask/E8EEF9" alt="Flask" style="width:34px;height:34px;object-fit:contain;">
+          <div class="b-name">Flask</div>
+          <div style="font-size:16px;color:var(--text-3);">REST API 백엔드</div>
+        </div>
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/cloudflare/F48120" alt="Cloudflare" style="width:34px;height:34px;object-fit:contain;">
+          <div class="b-name">Cloudflare Tunnel</div>
+          <div style="font-size:16px;color:var(--text-3);">원격 접속</div>
+        </div>
+      </div>
+    </div>
+    <!-- Dev Tools -->
+    <div class="card" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card-head">
+        <i data-lucide="wrench" style="width:22px;height:22px;color:var(--good);stroke-width:1.5;"></i>
+        <span style="color:var(--good);">Dev Tools</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;">
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/ubuntu/E95420" alt="Ubuntu" style="width:34px;height:34px;object-fit:contain;">
+          <div class="b-name">Ubuntu 22.04</div>
+          <div style="font-size:16px;color:var(--text-3);">메인 / 서브 PC</div>
+        </div>
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/git/F05032" alt="Git" style="width:34px;height:34px;object-fit:contain;">
+          <div class="b-name">Git / GitHub</div>
+          <div style="font-size:16px;color:var(--text-3);">형상 관리</div>
+        </div>
+        <div class="brand-cell" style="flex:1;min-height:0;">
+          <img src="https://cdn.simpleicons.org/pyqt/41CD52" alt="PyQt5" style="width:34px;height:34px;object-fit:contain;filter:brightness(1.2);">
+          <div class="b-name">PyQt5</div>
+          <div style="font-size:16px;color:var(--text-3);">녹화 GUI</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>04 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     05  SYSTEM ARCHITECTURE
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="arch">
+  <div class="s-head">
+    <div class="s-title">시스템 아키텍처</div>
+    <div class="s-meta">ROBO CHEF / ARCH</div>
+  </div>
+  <div class="g-7-5" style="flex:1;min-height:0;">
+    <!-- Left: SVG architecture diagram -->
+    <div class="card" style="display:flex;align-items:center;justify-content:center;padding:12px;">
+      <svg viewBox="0 0 760 580" style="width:100%;height:100%;font-family:'JetBrains Mono','IBM Plex Mono',monospace;">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#5C6B85"/>
+          </marker>
+          <marker id="arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#7AB4FF"/>
+          </marker>
+        </defs>
+        <!-- Layer 0: Web Panels -->
+        <rect x="10" y="10" width="740" height="90" rx="10" fill="rgba(8,51,68,0.45)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="30" y="35" fill="#22d3ee" font-size="11" font-weight="700" letter-spacing="2">WEB PANELS  ·  sub1_side/web/panel</text>
+        <rect x="20" y="44" width="200" height="44" rx="6" fill="rgba(8,51,68,0.6)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="120" y="66" fill="white" font-size="11" font-weight="600" text-anchor="middle">Kiosk</text>
+        <text x="120" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">주문 UI · Firebase JS SDK</text>
+        <rect x="235" y="44" width="200" height="44" rx="6" fill="rgba(8,51,68,0.6)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="335" y="66" fill="white" font-size="11" font-weight="600" text-anchor="middle">Customer Status</text>
+        <text x="335" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">조리 현황 실시간 표시</text>
+        <rect x="450" y="44" width="200" height="44" rx="6" fill="rgba(8,51,68,0.6)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="550" y="66" fill="white" font-size="11" font-weight="600" text-anchor="middle">Admin Monitor</text>
+        <text x="550" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">관리자 · 로봇 텔레메트리</text>
+
+        <!-- Layer 1: Flask Backend -->
+        <rect x="10" y="124" width="360" height="80" rx="10" fill="rgba(6,78,59,0.45)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="30" y="148" fill="#34d399" font-size="11" font-weight="700" letter-spacing="2">FLASK BACKEND  ·  sub1_side/web/backend</text>
+        <rect x="20" y="157" width="160" height="36" rx="6" fill="rgba(6,78,59,0.6)" stroke="#34d399" stroke-width="1"/>
+        <text x="100" y="175" fill="white" font-size="11" font-weight="600" text-anchor="middle">app.py</text>
+        <text x="100" y="187" fill="#94a3b8" font-size="9" text-anchor="middle">POST /api/orders</text>
+        <rect x="195" y="157" width="164" height="36" rx="6" fill="rgba(6,78,59,0.6)" stroke="#34d399" stroke-width="1"/>
+        <text x="277" y="175" fill="white" font-size="11" font-weight="600" text-anchor="middle">fk_worker.py</text>
+        <text x="277" y="187" fill="#94a3b8" font-size="9" text-anchor="middle">FK 계산 → /robot_state</text>
+
+        <!-- Firebase RTDB (center, tall) -->
+        <rect x="390" y="124" width="360" height="200" rx="10" fill="rgba(120,53,15,0.35)" stroke="#fbbf24" stroke-width="2"/>
+        <text x="410" y="148" fill="#fbbf24" font-size="11" font-weight="700" letter-spacing="2">FIREBASE RTDB</text>
+        <rect x="400" y="157" width="155" height="34" rx="6" fill="rgba(120,53,15,0.5)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="477" y="178" fill="white" font-size="10" font-weight="700" text-anchor="middle">/orders</text>
+        <rect x="565" y="157" width="175" height="34" rx="6" fill="rgba(120,53,15,0.5)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="652" y="178" fill="white" font-size="10" font-weight="700" text-anchor="middle">/recipes</text>
+        <rect x="400" y="200" width="155" height="34" rx="6" fill="rgba(120,53,15,0.5)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="477" y="221" fill="white" font-size="10" font-weight="700" text-anchor="middle">/robot_status</text>
+        <rect x="565" y="200" width="175" height="34" rx="6" fill="rgba(120,53,15,0.5)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="652" y="221" fill="white" font-size="10" font-weight="700" text-anchor="middle">/robot_state</text>
+        <rect x="400" y="244" width="155" height="34" rx="6" fill="rgba(120,53,15,0.5)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="477" y="265" fill="white" font-size="10" font-weight="700" text-anchor="middle">/telemetry</text>
+        <rect x="565" y="244" width="175" height="34" rx="6" fill="rgba(120,53,15,0.5)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="652" y="265" fill="white" font-size="10" font-weight="700" text-anchor="middle">/logs · /dsr_log</text>
+
+        <!-- Layer 2: ROS 2 Nodes -->
+        <rect x="10" y="228" width="360" height="100" rx="10" fill="rgba(30,41,59,0.55)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="30" y="252" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="2">ROS 2  ·  main_side</text>
+        <rect x="20" y="260" width="155" height="54" rx="6" fill="rgba(30,41,59,0.7)" stroke="#94a3b8" stroke-width="1"/>
+        <text x="97" y="283" fill="white" font-size="11" font-weight="600" text-anchor="middle">firebase_bridge</text>
+        <text x="97" y="298" fill="#94a3b8" font-size="9" text-anchor="middle">주문 감시 · /recipe pub</text>
+        <rect x="190" y="260" width="170" height="54" rx="6" fill="rgba(30,41,59,0.7)" stroke="#94a3b8" stroke-width="1"/>
+        <text x="275" y="283" fill="white" font-size="11" font-weight="600" text-anchor="middle">sequence_runner</text>
+        <text x="275" y="298" fill="#94a3b8" font-size="9" text-anchor="middle">/recipe sub · 세그먼트 재생</text>
+
+        <!-- Layer 3: Telemetry -->
+        <rect x="10" y="352" width="360" height="70" rx="10" fill="rgba(30,41,59,0.45)" stroke="#7AB4FF" stroke-width="1.5"/>
+        <text x="30" y="373" fill="#7AB4FF" font-size="11" font-weight="700" letter-spacing="2">TELEMETRY  ·  realtime_scan</text>
+        <rect x="20" y="382" width="160" height="30" rx="6" fill="rgba(30,41,59,0.6)" stroke="#7AB4FF" stroke-width="1"/>
+        <text x="100" y="400" fill="white" font-size="10" font-weight="600" text-anchor="middle">coord_service.py</text>
+        <rect x="195" y="382" width="164" height="30" rx="6" fill="rgba(30,41,59,0.6)" stroke="#7AB4FF" stroke-width="1"/>
+        <text x="277" y="400" fill="white" font-size="10" font-weight="600" text-anchor="middle">log_bridge / order_receiver</text>
+
+        <!-- Layer 4: Hardware -->
+        <rect x="10" y="446" width="360" height="96" rx="10" fill="rgba(136,19,55,0.35)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="30" y="468" fill="#fb7185" font-size="11" font-weight="700" letter-spacing="2">HARDWARE</text>
+        <rect x="20" y="476" width="110" height="54" rx="6" fill="rgba(136,19,55,0.5)" stroke="#fb7185" stroke-width="1"/>
+        <text x="75" y="499" fill="white" font-size="11" font-weight="600" text-anchor="middle">m0609</text>
+        <text x="75" y="514" fill="#94a3b8" font-size="9" text-anchor="middle">DSR_ROBOT2</text>
+        <rect x="145" y="476" width="110" height="54" rx="6" fill="rgba(136,19,55,0.5)" stroke="#fb7185" stroke-width="1"/>
+        <text x="200" y="499" fill="white" font-size="11" font-weight="600" text-anchor="middle">RG2 그리퍼</text>
+        <text x="200" y="514" fill="#94a3b8" font-size="9" text-anchor="middle">Modbus TCP</text>
+        <rect x="270" y="476" width="100" height="54" rx="6" fill="rgba(136,19,55,0.5)" stroke="#fb7185" stroke-width="1"/>
+        <text x="320" y="499" fill="white" font-size="11" font-weight="600" text-anchor="middle">DualSense</text>
+        <text x="320" y="514" fill="#94a3b8" font-size="9" text-anchor="middle">조이스틱 조작</text>
+
+        <!-- ros2_move_recoder -->
+        <rect x="390" y="352" width="360" height="110" rx="10" fill="rgba(76,29,149,0.35)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="410" y="374" fill="#a78bfa" font-size="11" font-weight="700" letter-spacing="2">ROS2_MOVE_RECODER  ·  common</text>
+        <rect x="400" y="385" width="155" height="34" rx="6" fill="rgba(76,29,149,0.5)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="477" y="406" fill="white" font-size="10" font-weight="700" text-anchor="middle">recorder.py · gui.py</text>
+        <rect x="565" y="385" width="175" height="34" rx="6" fill="rgba(76,29,149,0.5)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="652" y="406" fill="white" font-size="10" font-weight="700" text-anchor="middle">playback.py</text>
+        <text x="477" y="430" fill="#94a3b8" font-size="9" text-anchor="middle">smooth.json 생성</text>
+        <text x="652" y="430" fill="#94a3b8" font-size="9" text-anchor="middle">세그먼트 재생 엔진</text>
+
+        <!-- Arrows: Web ↔ Firebase -->
+        <line x1="380" y1="55" x2="390" y2="55" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arr)" opacity="0.7"/>
+        <!-- Flask → Firebase -->
+        <line x1="370" y1="164" x2="390" y2="164" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr)" opacity="0.7"/>
+        <!-- Firebase ↔ firebase_bridge -->
+        <line x1="390" y1="240" x2="375" y2="258" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arr)" opacity="0.6"/>
+        <!-- firebase_bridge → sequence_runner -->
+        <line x1="177" y1="287" x2="190" y2="287" stroke="#7AB4FF" stroke-width="1.5" marker-end="url(#arr-acc)" opacity="0.9"/>
+        <!-- sequence_runner → playback -->
+        <path d="M 360 300 Q 380 330 390 400" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#arr)" opacity="0.7"/>
+        <!-- Telemetry → Firebase -->
+        <line x1="370" y1="395" x2="390" y2="280" stroke="#7AB4FF" stroke-width="1.5" marker-end="url(#arr-acc)" opacity="0.5" stroke-dasharray="4,3"/>
+        <!-- sequence_runner → hardware -->
+        <line x1="185" y1="314" x2="185" y2="352" stroke="#fb7185" stroke-width="1.5" marker-end="url(#arr)" opacity="0.8"/>
+      </svg>
+    </div>
+    <!-- Right: callouts -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="callout" style="padding:14px 18px;">
+        <div>
+          <div class="callout-title" style="font-size:20px;">주문 흐름</div>
+          <div class="callout-cap" style="font-size:16px;">Kiosk → POST /api/orders → Firebase /orders → firebase_bridge → /recipe → sequence_runner</div>
+        </div>
+        <i data-lucide="arrow-right" style="width:24px;height:24px;color:var(--accent);flex-shrink:0;stroke-width:2;"></i>
+      </div>
+      <div class="callout warm" style="padding:14px 18px;">
+        <div>
+          <div class="callout-title" style="font-size:20px;">상태 반영</div>
+          <div class="callout-cap" style="font-size:16px;">/cooking_status → firebase_bridge → Firebase /robot_status → 고객 화면</div>
+        </div>
+        <i data-lucide="refresh-cw" style="width:24px;height:24px;color:var(--accent-warm);flex-shrink:0;stroke-width:2;"></i>
+      </div>
+      <div class="card" style="gap:10px;">
+        <div class="card-head" style="font-size:18px;">
+          <i data-lucide="layout-dashboard" style="width:20px;height:20px;color:var(--accent);stroke-width:1.5;"></i>
+          물리 배치
+        </div>
+        <table class="tbl" style="font-size:17px;">
+          <thead><tr><th>Side</th><th>역할</th></tr></thead>
+          <tbody>
+            <tr><td class="k">main_side</td><td>로봇 연결 PC · 조리 실행</td></tr>
+            <tr><td class="k">sub1_side</td><td>키오스크 · 대시보드 · Flask</td></tr>
+            <tr><td class="k">common</td><td>녹화/재생 엔진 (공용)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="gap:8px;">
+        <div class="card-head" style="font-size:18px;">
+          <i data-lucide="radio" style="width:20px;height:20px;color:var(--good);stroke-width:1.5;"></i>
+          통신 규약
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="cat-chip" style="font-size:15px;padding:4px 10px;">ROS_DOMAIN_ID=24</span>
+            <span style="font-size:17px;color:var(--text-2);">main ↔ sub 통합</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="cat-chip gray" style="font-size:15px;padding:4px 10px;">FastDDS</span>
+            <span style="font-size:17px;color:var(--text-2);">기본 RMW</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>05 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     06  WORKFLOW (swimlane)
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="workflow">
+  <div class="s-head">
+    <div class="s-title">전체 워크플로우</div>
+    <div class="s-meta">ROBO CHEF / FLOW</div>
+  </div>
+  <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;">
+    <svg viewBox="0 0 1620 720" style="width:100%;height:100%;font-family:'JetBrains Mono','IBM Plex Mono',monospace;">
+      <defs>
+        <marker id="farr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#7AB4FF"/>
+        </marker>
+        <marker id="farr-g" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#5EE2A6"/>
+        </marker>
+        <marker id="farr-w" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#FF6B5C"/>
+        </marker>
+        <marker id="farr-y" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#fbbf24"/>
+        </marker>
+      </defs>
+      <!-- Lane backgrounds -->
+      <!-- Lane 1: Customer / Kiosk -->
+      <rect x="0" y="0" width="1620" height="112" rx="0" fill="rgba(8,51,68,0.25)"/>
+      <text x="10" y="56" fill="#22d3ee" font-size="14" font-weight="700" letter-spacing="1" dominant-baseline="middle">Kiosk / Customer</text>
+      <!-- Lane 2: Firebase -->
+      <rect x="0" y="112" width="1620" height="112" rx="0" fill="rgba(120,53,15,0.2)"/>
+      <text x="10" y="168" fill="#fbbf24" font-size="14" font-weight="700" letter-spacing="1" dominant-baseline="middle">Firebase RTDB</text>
+      <!-- Lane 3: firebase_bridge -->
+      <rect x="0" y="224" width="1620" height="112" rx="0" fill="rgba(30,41,59,0.35)"/>
+      <text x="10" y="280" fill="#94a3b8" font-size="14" font-weight="700" letter-spacing="1" dominant-baseline="middle">firebase_bridge</text>
+      <!-- Lane 4: sequence_runner -->
+      <rect x="0" y="336" width="1620" height="112" rx="0" fill="rgba(76,29,149,0.2)"/>
+      <text x="10" y="392" fill="#a78bfa" font-size="14" font-weight="700" letter-spacing="1" dominant-baseline="middle">sequence_runner</text>
+      <!-- Lane 5: Hardware -->
+      <rect x="0" y="448" width="1620" height="112" rx="0" fill="rgba(136,19,55,0.25)"/>
+      <text x="10" y="504" fill="#fb7185" font-size="14" font-weight="700" letter-spacing="1" dominant-baseline="middle">m0609 Hardware</text>
+      <!-- Lane 6: Status back -->
+      <rect x="0" y="560" width="1620" height="160" rx="0" fill="rgba(6,78,59,0.15)"/>
+      <text x="10" y="640" fill="#34d399" font-size="14" font-weight="700" letter-spacing="1" dominant-baseline="middle">Status Flow (역방향)</text>
+      <!-- Lane separators -->
+      <line x1="0" y1="112" x2="1620" y2="112" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <line x1="0" y1="224" x2="1620" y2="224" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <line x1="0" y1="336" x2="1620" y2="336" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <line x1="0" y1="448" x2="1620" y2="448" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <line x1="0" y1="560" x2="1620" y2="560" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+
+      <!-- Step boxes — col offsets: 120, 340, 560, 780, 1000, 1220, 1440 -->
+      <!-- S1: 메뉴 선택 & 주문 -->
+      <rect x="120" y="16" width="190" height="80" rx="8" fill="rgba(8,51,68,0.7)" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="215" y="50" fill="white" font-size="13" font-weight="700" text-anchor="middle">메뉴 선택</text>
+      <text x="215" y="68" fill="#94a3b8" font-size="10" text-anchor="middle">POST /api/orders</text>
+      <text x="215" y="84" fill="#94a3b8" font-size="10" text-anchor="middle">{items, total}</text>
+
+      <!-- S2: Flask creates order in Firebase -->
+      <rect x="340" y="128" width="190" height="80" rx="8" fill="rgba(120,53,15,0.6)" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="435" y="162" fill="white" font-size="13" font-weight="700" text-anchor="middle">/orders 생성</text>
+      <text x="435" y="180" fill="#94a3b8" font-size="10" text-anchor="middle">status: pending</text>
+      <text x="435" y="196" fill="#94a3b8" font-size="10" text-anchor="middle">recipe_data 포함</text>
+
+      <!-- S3: firebase_bridge detects -->
+      <rect x="560" y="240" width="190" height="80" rx="8" fill="rgba(30,41,59,0.8)" stroke="#94a3b8" stroke-width="1.5"/>
+      <text x="655" y="274" fill="white" font-size="13" font-weight="700" text-anchor="middle">pending 감지</text>
+      <text x="655" y="292" fill="#94a3b8" font-size="10" text-anchor="middle">select_next_pending()</text>
+      <text x="655" y="308" fill="#94a3b8" font-size="10" text-anchor="middle">status → cooking</text>
+
+      <!-- S4: publish /recipe -->
+      <rect x="780" y="240" width="190" height="80" rx="8" fill="rgba(30,41,59,0.8)" stroke="#7AB4FF" stroke-width="1.5"/>
+      <text x="875" y="274" fill="white" font-size="13" font-weight="700" text-anchor="middle">/recipe 발행</text>
+      <text x="875" y="292" fill="#94a3b8" font-size="10" text-anchor="middle">build_jobs() → pub</text>
+      <text x="875" y="308" fill="#94a3b8" font-size="10" text-anchor="middle">{order_id, jobs[]}</text>
+
+      <!-- S5: sequence_runner -->
+      <rect x="1000" y="352" width="190" height="80" rx="8" fill="rgba(76,29,149,0.65)" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="1095" y="386" fill="white" font-size="13" font-weight="700" text-anchor="middle">run_jobs() 실행</text>
+      <text x="1095" y="404" fill="#94a3b8" font-size="10" text-anchor="middle">item→qty→segment</text>
+      <text x="1095" y="420" fill="#94a3b8" font-size="10" text-anchor="middle">play_segment(smooth.json)</text>
+
+      <!-- S6: m0609 moves -->
+      <rect x="1220" y="464" width="190" height="80" rx="8" fill="rgba(136,19,55,0.65)" stroke="#fb7185" stroke-width="1.5"/>
+      <text x="1315" y="498" fill="white" font-size="13" font-weight="700" text-anchor="middle">amovesj 실행</text>
+      <text x="1315" y="516" fill="#94a3b8" font-size="10" text-anchor="middle">waypoints 재생</text>
+      <text x="1315" y="532" fill="#94a3b8" font-size="10" text-anchor="middle">그리퍼 타임라인</text>
+
+      <!-- Status flow (bottom) -->
+      <rect x="1000" y="580" width="190" height="60" rx="8" fill="rgba(6,78,59,0.65)" stroke="#34d399" stroke-width="1.5"/>
+      <text x="1095" y="606" fill="white" font-size="13" font-weight="700" text-anchor="middle">/cooking_status</text>
+      <text x="1095" y="626" fill="#94a3b8" font-size="10" text-anchor="middle">EXECUTING·DONE·ERROR</text>
+
+      <rect x="780" y="580" width="190" height="60" rx="8" fill="rgba(6,78,59,0.65)" stroke="#34d399" stroke-width="1.5"/>
+      <text x="875" y="606" fill="white" font-size="13" font-weight="700" text-anchor="middle">Firebase 갱신</text>
+      <text x="875" y="626" fill="#94a3b8" font-size="10" text-anchor="middle">/robot_status mirror</text>
+
+      <rect x="340" y="580" width="190" height="60" rx="8" fill="rgba(8,51,68,0.65)" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="435" y="606" fill="white" font-size="13" font-weight="700" text-anchor="middle">화면 업데이트</text>
+      <text x="435" y="626" fill="#94a3b8" font-size="10" text-anchor="middle">customer_status 표시</text>
+
+      <!-- Connecting arrows -->
+      <!-- S1 → S2 (down to Firebase) -->
+      <path d="M 215 96 Q 215 140 340 168" stroke="#22d3ee" stroke-width="1.5" fill="none" marker-end="url(#farr-y)" opacity="0.8"/>
+      <!-- S2 → S3 -->
+      <path d="M 530 168 Q 545 168 545 280 Q 545 280 560 280" stroke="#fbbf24" stroke-width="1.5" fill="none" marker-end="url(#farr)" opacity="0.8"/>
+      <!-- S3 → S4 -->
+      <line x1="750" y1="280" x2="780" y2="280" stroke="#7AB4FF" stroke-width="1.5" marker-end="url(#farr)" opacity="0.9"/>
+      <!-- S4 → S5 (down to sequence) -->
+      <path d="M 875 320 Q 875 350 1000 392" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#farr)" opacity="0.8"/>
+      <!-- S5 → S6 (down to hardware) -->
+      <path d="M 1095 432 Q 1095 460 1220 504" stroke="#fb7185" stroke-width="1.5" fill="none" marker-end="url(#farr-w)" opacity="0.8"/>
+      <!-- S5 → status -->
+      <line x1="1095" y1="432" x2="1095" y2="580" stroke="#34d399" stroke-width="1.5" marker-end="url(#farr-g)" opacity="0.7" stroke-dasharray="5,3"/>
+      <!-- status → Firebase update -->
+      <line x1="1000" y1="610" x2="970" y2="610" stroke="#34d399" stroke-width="1.5" marker-end="url(#farr-g)" opacity="0.8"/>
+      <!-- Firebase update → screen -->
+      <line x1="780" y1="610" x2="530" y2="610" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#farr)" opacity="0.8"/>
+      <!-- Step numbers -->
+      <circle cx="215" cy="56" r="14" fill="#22d3ee" opacity="0.9"/>
+      <text x="215" y="61" fill="#0A0F1C" font-size="12" font-weight="800" text-anchor="middle">1</text>
+      <circle cx="435" cy="168" r="14" fill="#fbbf24" opacity="0.9"/>
+      <text x="435" y="173" fill="#0A0F1C" font-size="12" font-weight="800" text-anchor="middle">2</text>
+      <circle cx="655" cy="280" r="14" fill="#94a3b8" opacity="0.9"/>
+      <text x="655" y="285" fill="#0A0F1C" font-size="12" font-weight="800" text-anchor="middle">3</text>
+      <circle cx="875" cy="280" r="14" fill="#7AB4FF" opacity="0.9"/>
+      <text x="875" y="285" fill="#0A0F1C" font-size="12" font-weight="800" text-anchor="middle">4</text>
+      <circle cx="1095" cy="392" r="14" fill="#a78bfa" opacity="0.9"/>
+      <text x="1095" y="397" fill="#0A0F1C" font-size="12" font-weight="800" text-anchor="middle">5</text>
+      <circle cx="1315" cy="504" r="14" fill="#fb7185" opacity="0.9"/>
+      <text x="1315" y="509" fill="#0A0F1C" font-size="12" font-weight="800" text-anchor="middle">6</text>
+    </svg>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>06 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     07  NODE ARCHITECTURE — Before / After
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="nodes">
+  <div class="s-head">
+    <div class="s-title">노드 아키텍처 — Before · After</div>
+    <div class="s-meta">ROBO CHEF / NODES</div>
+  </div>
+  <div class="g2" style="flex:1;min-height:0;">
+    <!-- Before -->
+    <div class="card" style="display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="cat-chip warm" style="font-size:18px;padding:6px 14px;">BEFORE</span>
+        <span style="font-size:20px;color:var(--text-2);">5 노드 · 동적 Action 엔진</span>
+      </div>
+      <div class="media contain fill" style="background:#4a4a4a;flex:1;min-height:0;">
+        <img src="assets_v2/media/image26.png" alt="Before 5-node"
+             style="object-fit:contain;width:100%;height:100%;">
+      </div>
+      <div class="callout warm" style="padding:12px 16px;">
+        <div>
+          <div class="callout-title" style="font-size:18px;">문제점</div>
+          <div class="callout-cap" style="font-size:16px;">ActionManager + PluginLoader 복잡도 ↑, 메시지 스키마 불일치, 세그먼트 동기화 불안정</div>
+        </div>
+      </div>
+    </div>
+    <!-- After -->
+    <div class="card" style="display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="cat-chip good" style="font-size:18px;padding:6px 14px;">AFTER</span>
+        <span style="font-size:20px;color:var(--text-2);">2 노드 · 세그먼트 체인 재생</span>
+      </div>
+      <!-- After SVG -->
+      <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 640 400" style="width:100%;height:100%;font-family:'JetBrains Mono',monospace;">
+          <defs>
+            <marker id="narr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#7AB4FF"/>
+            </marker>
+            <marker id="narr-g" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#5EE2A6"/>
+            </marker>
+          </defs>
+          <!-- Firebase RTDB -->
+          <rect x="10" y="60" width="140" height="60" rx="8" fill="rgba(120,53,15,0.5)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="80" y="87" fill="white" font-size="12" font-weight="700" text-anchor="middle">Firebase RTDB</text>
+          <text x="80" y="103" fill="#94a3b8" font-size="9" text-anchor="middle">/orders · /robot_status</text>
+
+          <!-- firebase_bridge -->
+          <rect x="220" y="40" width="190" height="80" rx="10" fill="rgba(30,41,59,0.7)" stroke="#7AB4FF" stroke-width="2"/>
+          <text x="315" y="75" fill="white" font-size="13" font-weight="700" text-anchor="middle">firebase_bridge</text>
+          <text x="315" y="93" fill="#94a3b8" font-size="9" text-anchor="middle">order FIFO · /recipe pub</text>
+          <text x="315" y="110" fill="#94a3b8" font-size="9" text-anchor="middle">/cooking_status sub</text>
+
+          <!-- sequence_runner -->
+          <rect x="220" y="170" width="190" height="80" rx="10" fill="rgba(76,29,149,0.5)" stroke="#a78bfa" stroke-width="2"/>
+          <text x="315" y="205" fill="white" font-size="13" font-weight="700" text-anchor="middle">sequence_runner</text>
+          <text x="315" y="223" fill="#94a3b8" font-size="9" text-anchor="middle">/recipe sub · IDLE/EXEC/ERROR</text>
+          <text x="315" y="239" fill="#94a3b8" font-size="9" text-anchor="middle">cooking_core.run_jobs()</text>
+
+          <!-- playback -->
+          <rect x="460" y="170" width="165" height="60" rx="8" fill="rgba(76,29,149,0.35)" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="542" y="197" fill="white" font-size="12" font-weight="700" text-anchor="middle">playback.py</text>
+          <text x="542" y="213" fill="#94a3b8" font-size="9" text-anchor="middle">play_segment(smooth.json)</text>
+          <text x="542" y="225" fill="#94a3b8" font-size="9" text-anchor="middle">amovesj + RG2 timeline</text>
+
+          <!-- m0609 -->
+          <rect x="460" y="270" width="165" height="55" rx="8" fill="rgba(136,19,55,0.45)" stroke="#fb7185" stroke-width="1.5"/>
+          <text x="542" y="298" fill="white" font-size="12" font-weight="700" text-anchor="middle">Doosan m0609</text>
+          <text x="542" y="314" fill="#94a3b8" font-size="9" text-anchor="middle">DSR_ROBOT2 / DRFL</text>
+
+          <!-- order_core -->
+          <rect x="220" y="300" width="190" height="55" rx="8" fill="rgba(30,41,59,0.5)" stroke="#5EE2A6" stroke-width="1.5"/>
+          <text x="315" y="325" fill="white" font-size="12" font-weight="700" text-anchor="middle">order_core</text>
+          <text x="315" y="341" fill="#94a3b8" font-size="9" text-anchor="middle">select_next · build_jobs · transition</text>
+
+          <!-- Arrows -->
+          <line x1="150" y1="90" x2="220" y2="80" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#narr)" opacity="0.9"/>
+          <line x1="315" y1="120" x2="315" y2="170" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#narr)" opacity="0.9"/>
+          <text x="325" y="150" fill="#7AB4FF" font-size="9">/recipe</text>
+          <line x1="410" y1="210" x2="460" y2="210" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#narr)" opacity="0.9"/>
+          <line x1="542" y1="230" x2="542" y2="270" stroke="#fb7185" stroke-width="1.5" marker-end="url(#narr)" opacity="0.9"/>
+          <path d="M 315 250 Q 315 290 220 327" stroke="#5EE2A6" stroke-width="1.5" fill="none" marker-end="url(#narr-g)" opacity="0.7" stroke-dasharray="4,3"/>
+          <path d="M 315 250 Q 315 370 200 380 Q 80 380 80 150" stroke="#fbbf24" stroke-width="1.5" fill="none" marker-end="url(#narr)" opacity="0.5" stroke-dasharray="4,3"/>
+          <text x="75" y="375" fill="#fbbf24" font-size="8">/cooking_status</text>
+        </svg>
+      </div>
+      <div class="callout good" style="padding:12px 16px;">
+        <div>
+          <div class="callout-title" style="font-size:18px;">개선 효과</div>
+          <div class="callout-cap" style="font-size:16px;">노드 수 5→2, pre-flight 검사, crash recovery, FIFO 큐 보장</div>
+        </div>
+        <span class="verdict pass" style="font-size:16px;">PASS</span>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>07 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     08  EQUIPMENT & DEV ENV
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="equip-env">
+  <div class="s-head">
+    <div class="s-title">활용 장비 &amp; 개발 환경</div>
+    <div class="s-meta">ROBO CHEF / SETUP</div>
+  </div>
+  <div class="g-3-2" style="flex:1;min-height:0;">
+    <!-- Left: equipment specs -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div class="card-head">
+          <i data-lucide="bot" style="width:22px;height:22px;color:var(--accent-warm);stroke-width:1.5;"></i>
+          Doosan m0609 사양
+        </div>
+        <table class="tbl" style="font-size:17px;">
+          <tbody>
+            <tr><td class="k">자유도</td><td>6-DOF</td></tr>
+            <tr><td class="k">최대 가반하중</td><td>6 kg</td></tr>
+            <tr><td class="k">최대 작업 반경</td><td>900 mm</td></tr>
+            <tr><td class="k">반복 정밀도</td><td>± 0.05 mm</td></tr>
+            <tr><td class="k">제어 SDK</td><td>DSR_ROBOT2 / DRFL</td></tr>
+            <tr><td class="k">ROS 인터페이스</td><td>dsr_controller2 노드</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="g2" style="gap:14px;">
+        <div class="card" style="padding:16px;">
+          <div class="card-head" style="font-size:17px;margin-bottom:10px;">
+            <i data-lucide="grip" style="width:18px;height:18px;color:var(--accent);stroke-width:1.5;"></i>
+            OnRobot RG2
+          </div>
+          <div style="font-size:17px;color:var(--text-2);">전동 그리퍼<br>Modbus TCP · 0~110 mm</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div class="card-head" style="font-size:17px;margin-bottom:10px;">
+            <i data-lucide="monitor" style="width:18px;height:18px;color:var(--accent);stroke-width:1.5;"></i>
+            PC 구성
+          </div>
+          <div style="font-size:17px;color:var(--text-2);">Main: 로봇 연결<br>Sub1: 웹 서버</div>
+        </div>
+      </div>
+    </div>
+    <!-- Right: dev env image -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="media contain fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image8.jpg" alt="개발환경"
+             style="object-fit:contain;width:100%;height:100%;">
+      </div>
+      <div class="media contain" style="background:rgba(0,0,0,.35);height:200px;">
+        <img src="assets_v2/media/image4.png" alt="작업보드"
+             style="object-fit:contain;width:100%;height:100%;">
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>08 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     09  RECORDING — ros2_move_recoder
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="recording">
+  <div class="s-head">
+    <div class="s-title">동작 녹화 — ros2_move_recoder</div>
+    <div class="s-meta">ROBO CHEF / RECORDING</div>
+  </div>
+  <div class="g-7-5" style="flex:1;min-height:0;">
+    <!-- Left: GIFs grid -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1;min-height:0;">
+        <div class="card" style="display:flex;flex-direction:column;gap:10px;padding:14px;">
+          <span class="cat-chip warm" style="font-size:16px;align-self:flex-start;">충돌 감지</span>
+          <div class="media ar-16-9 fill" style="flex:1;min-height:0;">
+            <img src="assets_v2/media/image32.gif" alt="충돌 감지"
+                 style="object-fit:cover;width:100%;height:100%;">
+          </div>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;gap:10px;padding:14px;">
+          <span class="cat-chip" style="font-size:16px;align-self:flex-start;">범위 제한</span>
+          <div class="media ar-16-9 fill" style="flex:1;min-height:0;">
+            <img src="assets_v2/media/image52.gif" alt="범위 제한"
+                 style="object-fit:cover;width:100%;height:100%;">
+          </div>
+        </div>
+      </div>
+      <!-- Pipeline label -->
+      <div class="callout" style="padding:12px 18px;">
+        <div>
+          <div class="callout-title" style="font-size:18px;">녹화 파이프라인</div>
+          <div class="callout-cap" style="font-size:16px;">조이스틱 조작 → joint_states 수집 → raw.json → Savitzky-Golay 스무딩 → smooth.json</div>
+        </div>
+        <i data-lucide="arrow-right" style="width:22px;height:22px;color:var(--accent);flex-shrink:0;"></i>
+      </div>
+    </div>
+    <!-- Right: pipeline steps -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="media" style="background:rgba(0,0,0,.35);aspect-ratio:16/9;">
+        <img src="assets_v2/media/image54.gif" alt="특이점 회피"
+             style="object-fit:cover;width:100%;height:100%;">
+        <div style="position:absolute;top:10px;left:12px;">
+          <span class="cat-chip gray" style="font-size:15px;">특이점 회피</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head" style="font-size:18px;">
+          <i data-lucide="file-code-2" style="width:20px;height:20px;color:var(--accent);stroke-width:1.5;"></i>
+          smooth.json 구조
+        </div>
+        <div class="snip" style="font-size:16px;line-height:1.6;">
+<span class="c-kw">{</span>
+  <span class="c-s">"waypoints_deg"</span>: [[J1..J6], ...],
+  <span class="c-s">"vel"</span>: <span class="c-n">30.0</span>,
+  <span class="c-s">"acc"</span>: <span class="c-n">60.0</span>,
+  <span class="c-s">"gripper_events"</span>: [{<span class="c-s">"t_norm"</span>: 0.0, <span class="c-s">"width_mm"</span>: <span class="c-n">110</span>}]
+<span class="c-kw">}</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <i data-lucide="folder-open" style="width:20px;height:20px;color:var(--text-3);stroke-width:1.5;flex-shrink:0;"></i>
+        <code style="font-size:16px;">~/cobot_ws/src/ros2_move_recoder/records/&lt;seg&gt;/smooth.json</code>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>09 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     10  BOARD LAYOUT
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="board-layout">
+  <div class="s-head">
+    <div class="s-title">작업보드 배치도</div>
+    <div class="s-meta">ROBO CHEF / BOARD</div>
+  </div>
+  <div class="g-5-7" style="flex:1;min-height:0;">
+    <!-- Left: notes -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div class="card-head">
+          <i data-lucide="layout-grid" style="width:22px;height:22px;color:var(--accent);stroke-width:1.5;"></i>
+          배치 설계 원칙
+        </div>
+        <div class="steps" style="gap:10px;">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">안전 영역 최우선</div>
+              <div class="step-desc">로봇 동작 반경 900mm 내 장애물 0</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">재료 접근 동선 최소화</div>
+              <div class="step-desc">그리퍼 이동 거리 최소화로 사이클 타임 단축</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">라면/스테이크 존 분리</div>
+              <div class="step-desc">메뉴별 재료·도구 별도 배치</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div>
+              <div class="step-title">특이점 회피 경로 확보</div>
+              <div class="step-desc">사전 녹화 시 특이점 없는 경로 검증</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Right: layout image -->
+    <div class="media contain fill" style="background:rgba(0,0,0,.35);">
+      <img src="assets_v2/media/image37.png" alt="작업보드 배치도"
+           style="object-fit:contain;width:100%;height:100%;">
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>10 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     11  KIOSK UI
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="ui-order">
+  <div class="s-head">
+    <div class="s-title">키오스크 UI — 주문 흐름</div>
+    <div class="s-meta">ROBO CHEF / KIOSK</div>
+  </div>
+  <div class="g2" style="flex:1;min-height:0;">
+    <!-- Kiosk menu screen -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="card-head" style="margin:0;">
+          <i data-lucide="shopping-cart" style="width:22px;height:22px;color:var(--accent);stroke-width:1.5;"></i>
+          메뉴 선택
+        </div>
+        <span class="cat-chip" style="font-size:16px;">STEP 1</span>
+      </div>
+      <div class="media contain fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image29.png" alt="키오스크 메뉴"
+             style="object-fit:contain;width:100%;height:100%;">
+      </div>
+    </div>
+    <!-- Order receipt -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="card-head" style="margin:0;">
+          <i data-lucide="receipt" style="width:22px;height:22px;color:var(--accent);stroke-width:1.5;"></i>
+          주문 확인 &amp; 결제
+        </div>
+        <span class="cat-chip" style="font-size:16px;">STEP 2</span>
+      </div>
+      <div class="media contain fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image39.png" alt="주문서"
+             style="object-fit:contain;width:100%;height:100%;">
+      </div>
+      <div class="callout" style="padding:12px 16px;">
+        <div>
+          <div class="callout-title" style="font-size:18px;">POST /api/orders</div>
+          <div class="callout-cap" style="font-size:16px;">Firebase /orders 생성 → firebase_bridge 감지 → 조리 시작</div>
+        </div>
+        <i data-lucide="send" style="width:22px;height:22px;color:var(--accent);flex-shrink:0;"></i>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>11 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     12  COOKING STATUS UI
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="ui-status">
+  <div class="s-head">
+    <div class="s-title">조리 현황 UI — 진행 / 완료 알림</div>
+    <div class="s-meta">ROBO CHEF / STATUS UI</div>
+  </div>
+  <div class="g2" style="flex:1;min-height:0;">
+    <!-- Progress view -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--accent);
+                    box-shadow:0 0 10px var(--accent);animation:pulse 1.5s infinite;"></div>
+        <div class="card-head" style="margin:0;">조리 진행 중</div>
+        <span class="cat-chip" style="font-size:16px;">LIVE</span>
+      </div>
+      <div class="media contain fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image36.png" alt="조리 진행"
+             style="object-fit:contain;width:100%;height:100%;">
+      </div>
+      <p class="lead-sm" style="font-size:18px;text-align:center;">
+        세그먼트 단위로 진행 상황 실시간 표시<br>
+        <code style="font-size:16px;">/cooking_status → Firebase /robot_status</code>
+      </p>
+    </div>
+    <!-- Completion view -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--good);
+                    box-shadow:0 0 10px var(--good);"></div>
+        <div class="card-head" style="margin:0;">조리 완료 알림</div>
+        <span class="cat-chip good" style="font-size:16px;">DONE</span>
+      </div>
+      <div class="media contain fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image43.png" alt="조리 완료"
+             style="object-fit:contain;width:100%;height:100%;">
+      </div>
+      <div class="callout good" style="padding:12px 16px;">
+        <div>
+          <div class="callout-title" style="font-size:18px;">상태 전이</div>
+          <div class="callout-cap" style="font-size:16px;">pending → cooking → delivered / failed</div>
+        </div>
+        <span class="verdict pass" style="font-size:16px;">DELIVERED</span>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>12 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     13  ADMIN MONITOR
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="ui-admin">
+  <div class="s-head">
+    <div class="s-title">관리자 모니터</div>
+    <div class="s-meta">ROBO CHEF / ADMIN</div>
+  </div>
+  <div class="g-5-7" style="flex:1;min-height:0;">
+    <!-- Left: feature list -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div class="card-head">
+          <i data-lucide="monitor-dot" style="width:22px;height:22px;color:var(--accent);stroke-width:1.5;"></i>
+          실시간 모니터링
+        </div>
+        <div class="steps" style="gap:8px;">
+          <div class="step" style="padding:8px 12px;">
+            <div class="step-num" style="background:linear-gradient(135deg,#fb7185,#f43f5e);">J</div>
+            <div>
+              <div class="step-title">조인트 포지션</div>
+              <div class="step-desc">J1~J6 실시간 각도 (deg)</div>
+            </div>
+          </div>
+          <div class="step" style="padding:8px 12px;">
+            <div class="step-num" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);">T</div>
+            <div>
+              <div class="step-title">TCP 위치</div>
+              <div class="step-desc">FK 계산 X/Y/Z/Rx/Ry/Rz (mm, deg)</div>
+            </div>
+          </div>
+          <div class="step" style="padding:8px 12px;">
+            <div class="step-num" style="background:linear-gradient(135deg,#fbbf24,#d97706);">L</div>
+            <div>
+              <div class="step-title">시스템 로그</div>
+              <div class="step-desc">/logs + /dsr_log ROS 로그 집계</div>
+            </div>
+          </div>
+          <div class="step" style="padding:8px 12px;">
+            <div class="step-num" style="background:linear-gradient(135deg,#34d399,#059669);">C</div>
+            <div>
+              <div class="step-title">원격 제어</div>
+              <div class="step-desc">/commands/robot: pause · resume · stop</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Right: Firebase paths table -->
+    <div class="card" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card-head">
+        <img src="https://cdn.simpleicons.org/firebase/FFCA28" alt="Firebase" style="width:22px;height:22px;object-fit:contain;">
+        Firebase RTDB 경로
+      </div>
+      <table class="tbl" style="font-size:17px;flex:1;">
+        <thead>
+          <tr><th style="font-size:16px;">경로</th><th style="font-size:16px;">내용</th><th style="font-size:16px;">주기</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="k" style="font-family:var(--font-mono);font-size:15px;">/robot_state</td><td>joint + TCP + 모드</td><td>2 Hz</td></tr>
+          <tr><td class="k" style="font-family:var(--font-mono);font-size:15px;">/robot_status</td><td>조리 세그먼트 진행</td><td>이벤트</td></tr>
+          <tr><td class="k" style="font-family:var(--font-mono);font-size:15px;">/telemetry</td><td>raw 5Hz 스냅샷</td><td>5 Hz</td></tr>
+          <tr><td class="k" style="font-family:var(--font-mono);font-size:15px;">/logs</td><td>Flask app 로그</td><td>이벤트</td></tr>
+          <tr><td class="k" style="font-family:var(--font-mono);font-size:15px;">/dsr_log</td><td>/rosout 집계</td><td>이벤트</td></tr>
+          <tr><td class="k" style="font-family:var(--font-mono);font-size:15px;">/commands/robot</td><td>pause/resume/stop</td><td>쓰기</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>13 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     14  COMM FLOW — ORDER
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="comm-order">
+  <div class="s-head">
+    <div class="s-title">통신 흐름 — 주문 경로</div>
+    <div class="s-meta">ROBO CHEF / COMM 1</div>
+  </div>
+  <div class="g2" style="flex:1;min-height:0;">
+    <!-- Kiosk → Firebase GIF -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="card-head" style="margin:0;">
+          <i data-lucide="shopping-cart" style="width:20px;height:20px;color:var(--accent);stroke-width:1.5;"></i>
+          키오스크 주문
+        </div>
+        <span class="cat-chip" style="font-size:16px;">sub1_side</span>
+      </div>
+      <div class="media fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image49.gif" alt="키오스크 주문 흐름"
+             style="object-fit:cover;width:100%;height:100%;">
+      </div>
+      <p class="lead-sm" style="font-size:18px;">Kiosk → POST /api/orders → Firebase /orders 생성</p>
+    </div>
+    <!-- main PC log GIF -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="card-head" style="margin:0;">
+          <i data-lucide="terminal" style="width:20px;height:20px;color:var(--accent-warm);stroke-width:1.5;"></i>
+          Main PC 수신
+        </div>
+        <span class="cat-chip warm" style="font-size:16px;">main_side</span>
+      </div>
+      <div class="media fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image56.gif" alt="Main PC 로그"
+             style="object-fit:cover;width:100%;height:100%;">
+      </div>
+      <p class="lead-sm" style="font-size:18px;">firebase_bridge 감지 → /recipe 발행 → sequence_runner 시작</p>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>14 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     15  COMM FLOW — COOKING STATUS
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="comm-cooking">
+  <div class="s-head">
+    <div class="s-title">통신 흐름 — 조리 상황</div>
+    <div class="s-meta">ROBO CHEF / COMM 2</div>
+  </div>
+  <div class="g2" style="flex:1;min-height:0;">
+    <!-- Real cooking GIF -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="card-head" style="margin:0;">
+          <i data-lucide="bot" style="width:20px;height:20px;color:var(--accent-warm);stroke-width:1.5;"></i>
+          실제 조리 동작
+        </div>
+        <span class="cat-chip warm" style="font-size:16px;">m0609</span>
+      </div>
+      <div class="media fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image59.gif" alt="실제 조리"
+             style="object-fit:cover;width:100%;height:100%;">
+      </div>
+      <p class="lead-sm" style="font-size:18px;">sequence_runner → play_segment() → amovesj 재생</p>
+    </div>
+    <!-- Customer status update GIF -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="card-head" style="margin:0;">
+          <i data-lucide="monitor" style="width:20px;height:20px;color:var(--good);stroke-width:1.5;"></i>
+          고객 화면 업데이트
+        </div>
+        <span class="cat-chip good" style="font-size:16px;">customer_status</span>
+      </div>
+      <div class="media fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image60.gif" alt="customer_status"
+             style="object-fit:cover;width:100%;height:100%;">
+      </div>
+      <p class="lead-sm" style="font-size:18px;">/cooking_status → Firebase /robot_status → 화면 실시간 반영</p>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>15 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     16  SAFETY SYSTEM
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="safety">
+  <div class="s-head">
+    <div class="s-title">안전 시스템</div>
+    <div class="s-meta">ROBO CHEF / SAFETY</div>
+  </div>
+  <div class="g-3-2" style="flex:1;min-height:0;">
+    <!-- Left: safety zone image + guard list -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="media contain" style="background:rgba(0,0,0,.35);height:700px;">
+        <img src="assets_v2/media/image48.png" alt="안전 영역"
+             style="object-fit:contain;width:100%;height:100%;">
+      </div>
+      <div class="callout warm" style="padding:12px 18px;">
+        <div>
+          <div class="callout-title" style="font-size:18px;">안전 영역 설정</div>
+          <div class="callout-cap" style="font-size:16px;">로봇 작동 반경 내 허가 영역 / 금지 영역 정의 — 침입 시 즉시 정지</div>
+        </div>
+        <i data-lucide="shield-alert" style="width:28px;height:28px;color:var(--accent-warm);flex-shrink:0;stroke-width:1.5;"></i>
+      </div>
+    </div>
+    <!-- Right: guard mechanisms -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div class="card-head">
+          <i data-lucide="shield-check" style="width:22px;height:22px;color:var(--good);stroke-width:1.5;"></i>
+          무결성 가드 3종
+        </div>
+        <div class="steps" style="gap:10px;">
+          <div class="step" style="border-color:rgba(94,226,166,.30);">
+            <div class="step-num" style="background:linear-gradient(135deg,#5EE2A6,#34D399);">1</div>
+            <div>
+              <div class="step-title" style="font-size:18px;">Pre-flight Check</div>
+              <div class="step-desc" style="font-size:16px;">조리 시작 전 모든 세그먼트 smooth.json 존재 검증<br>
+                <code style="font-size:14px;">sequence_runner._on_recipe()</code></div>
+            </div>
+          </div>
+          <div class="step" style="border-color:rgba(255,176,96,.30);">
+            <div class="step-num" style="background:linear-gradient(135deg,#FFB060,#FF8C00);">2</div>
+            <div>
+              <div class="step-title" style="font-size:18px;">Crash Recovery</div>
+              <div class="step-desc" style="font-size:16px;">재시작 시 고아 주문 탐지 → status 복구<br>
+                <code style="font-size:14px;">firebase_bridge._recover_orphans()</code></div>
+            </div>
+          </div>
+          <div class="step" style="border-color:rgba(122,180,255,.30);">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title" style="font-size:18px;">Publish Guard</div>
+              <div class="step-desc" style="font-size:16px;">busy 상태에서 중복 주문 발행 차단<br>
+                <code style="font-size:14px;">_busy 플래그 + lock</code></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="padding:14px 18px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:18px;color:var(--text-2);">긴급 정지 서비스</span>
+          <code style="font-size:15px;">/dsr01/motion/move_stop</code>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
+          <span style="font-size:18px;color:var(--text-2);">ERROR 복구 서비스</span>
+          <code style="font-size:15px;">unlock_system (Trigger)</code>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>16 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     17  TEST TC-003 / TC-007
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="test-order">
+  <div class="s-head">
+    <div class="s-title">메뉴 주문 / 조리 완료 테스트</div>
+    <div class="s-meta">ROBO CHEF / VERIFY</div>
+  </div>
+  <div class="g2" style="flex:1;min-height:0;">
+    <!-- TC-003 -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="card-head" style="margin:0;">
+          <i data-lucide="clipboard-list" style="width:20px;height:20px;color:var(--accent);stroke-width:1.5;"></i>
+          메뉴 주문 테스트
+        </div>
+      </div>
+      <div class="media fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image51.gif" alt="TC-003"
+             style="object-fit:cover;width:100%;height:100%;">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i data-lucide="check" style="width:18px;height:18px;color:var(--good);stroke-width:2.5;flex-shrink:0;"></i>
+          <span style="font-size:18px;color:var(--text-2);">키오스크 주문 → Firebase 저장 확인</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i data-lucide="check" style="width:18px;height:18px;color:var(--good);stroke-width:2.5;flex-shrink:0;"></i>
+          <span style="font-size:18px;color:var(--text-2);">firebase_bridge 감지 후 /recipe 발행 확인</span>
+        </div>
+      </div>
+    </div>
+    <!-- TC-007 -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="card-head" style="margin:0;">
+          <i data-lucide="bell" style="width:20px;height:20px;color:var(--good);stroke-width:1.5;"></i>
+          조리 완료 알림 테스트
+        </div>
+      </div>
+      <div class="media fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image50.gif" alt="TC-007"
+             style="object-fit:cover;width:100%;height:100%;">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i data-lucide="check" style="width:18px;height:18px;color:var(--good);stroke-width:2.5;flex-shrink:0;"></i>
+          <span style="font-size:18px;color:var(--text-2);">DONE 상태 → Firebase delivered 전이 확인</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i data-lucide="check" style="width:18px;height:18px;color:var(--good);stroke-width:2.5;flex-shrink:0;"></i>
+          <span style="font-size:18px;color:var(--text-2);">고객 화면 완료 알림 팝업 표시 확인</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>17 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     18  TEST TC-008 — SAFETY
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="test-safety">
+  <div class="s-head">
+    <div class="s-title">안전 감지 테스트</div>
+    <div class="s-meta">ROBO CHEF / SAFETY TEST</div>
+  </div>
+  <div class="g2" style="flex:1;min-height:0;">
+    <!-- Collision detection GIF -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="card-head" style="margin:0;">
+          <i data-lucide="zap" style="width:20px;height:20px;color:var(--accent-warm);stroke-width:1.5;"></i>
+          충돌 감지
+        </div>
+      </div>
+      <div class="media fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image57.gif" alt="충돌 감지"
+             style="object-fit:cover;width:100%;height:100%;">
+      </div>
+      <p class="lead-sm" style="font-size:18px;">충돌 이벤트 감지 시 즉각 모션 중단 확인</p>
+    </div>
+    <!-- Emergency stop GIF -->
+    <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="card-head" style="margin:0;">
+          <i data-lucide="octagon-x" style="width:20px;height:20px;color:var(--bad);stroke-width:1.5;"></i>
+          비상 정지
+        </div>
+      </div>
+      <div class="media fill" style="background:rgba(0,0,0,.35);flex:1;min-height:0;">
+        <img src="assets_v2/media/image58.gif" alt="비상 정지"
+             style="object-fit:cover;width:100%;height:100%;">
+      </div>
+      <p class="lead-sm" style="font-size:18px;">관리자 정지 명령 → <code style="font-size:16px;">/dsr01/motion/move_stop</code> → ERROR 상태 전이</p>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>18 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     19  SWOT
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="swot">
+  <div class="s-head">
+    <div class="s-title">SWOT 분석 / 회고</div>
+    <div class="s-meta">ROBO CHEF / SECTION 07</div>
+  </div>
+  <div class="swot" style="flex:1;min-height:0;">
+    <!-- S -->
+    <div class="swot-card s" style="display:flex;flex-direction:column;gap:10px;">
+      <div class="swot-head">
+        <span class="swot-tag">S</span>
+        Strengths — 강점
+      </div>
+      <ul style="font-size:19px;line-height:1.7;">
+        <li><b>세그먼트 재생 모델</b> — 코드 변경 없이 레시피 확장</li>
+        <li><b>Firebase 실시간 동기화</b> — 고객/관리자 즉시 반영</li>
+        <li><b>노드 2개로 단순화</b> — 유지보수성·안정성 향상</li>
+        <li><b>3단계 무결성 가드</b> — 운영 안정성 확보</li>
+      </ul>
+    </div>
+    <!-- W -->
+    <div class="swot-card w" style="display:flex;flex-direction:column;gap:10px;">
+      <div class="swot-head">
+        <span class="swot-tag">W</span>
+        Weaknesses — 약점
+      </div>
+      <ul style="font-size:19px;line-height:1.7;">
+        <li>녹화 품질이 <b>조작자 숙련도에 의존</b></li>
+        <li>Firebase 무료 플랜 <b>동시 연결 제한</b></li>
+        <li>세그먼트 재녹화 시 <b>재현성 편차</b> 발생 가능</li>
+        <li>단일 카메라 비전 피드백 <b>미구현</b></li>
+      </ul>
+    </div>
+    <!-- O -->
+    <div class="swot-card o" style="display:flex;flex-direction:column;gap:10px;">
+      <div class="swot-head">
+        <span class="swot-tag">O</span>
+        Opportunities — 기회
+      </div>
+      <ul style="font-size:19px;line-height:1.7;">
+        <li>메뉴 추가는 <b>녹화+Firebase 등록</b>만으로 가능</li>
+        <li>비전 피드백 추가 시 <b>적응형 조리</b> 가능</li>
+        <li>클라우드 확장으로 <b>다중 로봇 관리</b></li>
+        <li>DualSense → 더 정교한 <b>힘 제어 녹화</b></li>
+      </ul>
+    </div>
+    <!-- T -->
+    <div class="swot-card t" style="display:flex;flex-direction:column;gap:10px;">
+      <div class="swot-head">
+        <span class="swot-tag">T</span>
+        Threats — 위협
+      </div>
+      <ul style="font-size:19px;line-height:1.7;">
+        <li>Firebase 서비스 장애 시 <b>전체 주문 시스템 중단</b></li>
+        <li>DSR_ROBOT2 API 버전 변경 시 <b>재검증 필요</b></li>
+        <li>ROS 2 버전 업그레이드 시 <b>호환성 리스크</b></li>
+        <li>물리적 레이아웃 변경 시 <b>전체 재녹화</b> 필요</li>
+      </ul>
+    </div>
+  </div>
+  <div class="s-foot">
+    <span class="robochef-mark">RoboChef</span>
+    <span>19 / 20</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     20  CLOSING
+══════════════════════════════════════════════════════════ -->
+<section class="slide" data-name="closing">
+  <div style="display:grid;grid-template-columns:5fr 7fr;gap:48px;height:100%;align-items:center;">
+    <!-- Left: Q&A text -->
+    <div style="display:flex;flex-direction:column;gap:32px;justify-content:center;">
+      <div>
+        <div class="h-eyebrow" style="font-size:18px;margin-bottom:16px;">ROBO CHEF · 2026</div>
+        <h2 style="font-family:var(--font-serif);font-size:80px;font-weight:700;line-height:.95;
+                   letter-spacing:-.04em;margin:0;color:var(--text-1);">
+          감사합니다
+        </h2>
+        <p style="font-size:26px;color:var(--text-2);margin-top:20px;line-height:1.4;">
+          <span style="color:var(--accent);font-weight:700;">Q &amp; A</span> 시간입니다
+        </p>
+      </div>
+      <div style="height:1px;background:linear-gradient(90deg,var(--border),transparent);"></div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <i data-lucide="github" style="width:24px;height:24px;color:var(--text-3);stroke-width:1.5;flex-shrink:0;"></i>
+          <span style="font-size:20px;color:var(--text-2);font-family:var(--font-mono);">github.com/cobot_ws / cobot1</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <i data-lucide="user" style="width:24px;height:24px;color:var(--text-3);stroke-width:1.5;flex-shrink:0;"></i>
+          <span style="font-size:20px;color:var(--text-2);">김재훈 — 로봇 자동화 프로젝트</span>
+        </div>
+      </div>
+      <!-- Keyword chips -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <span class="cat-chip" style="font-size:17px;">ROS 2 Humble</span>
+        <span class="cat-chip warm" style="font-size:17px;">Doosan m0609</span>
+        <span class="cat-chip gray" style="font-size:17px;">Firebase</span>
+        <span class="cat-chip good" style="font-size:17px;">Flask</span>
+      </div>
+    </div>
+    <!-- Right: robot image -->
+    <div class="media contain fill" style="background:rgba(0,0,0,.30);border-color:var(--border);">
+      <img src="assets_v2/media/image55.png" alt="Doosan m0609"
+           style="object-fit:contain;width:100%;height:100%;padding:32px;opacity:.85;">
+    </div>
+  </div>
+  <div class="s-foot" style="position:absolute;bottom:36px;left:72px;right:72px;">
+    <span class="robochef-mark">RoboChef</span>
+    <span>20 / 20</span>
+  </div>
+</section>
+
+</div><!-- .deck -->
+
+<script src="assets_v2/runtime.js"></script>
+<script>
+  if(typeof lucide!=='undefined') lucide.createIcons();
+  document.addEventListener('DOMContentLoaded',function(){
+    if(typeof lucide!=='undefined') lucide.createIcons();
+  });
+</script>
+<script src="https://unpkg.com/lucide@0.511.0/dist/umd/lucide.min.js"
+  integrity="sha384-YCxwI7HW+hlnktW3yOnKN44k9F/E859McBSCz+NoK45Sww88vGY9Kqfdo794td6J"
+  crossorigin="anonymous"></script>
+<script>lucide.createIcons();</script>
+
+</body>
+</html>

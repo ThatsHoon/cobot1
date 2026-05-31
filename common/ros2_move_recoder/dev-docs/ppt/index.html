@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark-corporate">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ros2_move_recoder — 협동로봇 모션 티칭 도구</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" id="theme-link" href="assets/themes/dark-corporate.css">
+<link rel="stylesheet" href="assets/animations/animations.css">
+<!-- Korean web font: Pretendard -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{ --rail:400px; }
+body{letter-spacing:-.012em}
+
+/* ===== Fixed 16:9 stage — scales to fit viewport, letterboxed ===== */
+html,body{width:100%;height:100%;margin:0;overflow:hidden}
+body{display:flex;align-items:center;justify-content:center;background:#04060a}
+.deck{width:1920px;height:1080px;flex:0 0 auto;transform-origin:center center}
+
+/* ===== Structured, top-aligned slide ===== */
+.slide{justify-content:flex-start;padding:56px 80px 56px}
+
+/* consistent top header band */
+.shead{flex:0 0 auto;display:flex;flex-direction:column;gap:10px}
+.shead .top{display:flex;align-items:center;gap:14px}
+.shead .num{font-family:var(--font-mono);font-weight:600;font-size:14px;letter-spacing:.14em;color:var(--accent-2)}
+.shead .eyebrow{margin:0;font-size:14px}
+.shead h2{margin:0;font-size:56px;line-height:1.08;font-weight:700;color:var(--text-1);letter-spacing:-.025em}
+.shead .sub{margin:3px 0 0;font-size:20px;line-height:1.5;color:var(--text-2);font-weight:400;max-width:96ch}
+.shead .rule{height:3px;width:56px;background:var(--accent-2);border-radius:2px;margin-top:8px}
+
+/* body fills remaining space, no dead air */
+.sbody{flex:1 1 auto;min-height:0;margin-top:30px;display:flex;flex-direction:column}
+
+/* fill grids — cards stretch to fill the body */
+.fillgrid{flex:1 1 auto;min-height:0;display:grid;gap:22px}
+.fillgrid.r2{grid-template-rows:1fr 1fr}
+.fillgrid.c2{grid-template-columns:1fr 1fr}
+.fillgrid.c3{grid-template-columns:repeat(3,1fr)}
+.fillgrid.c4{grid-template-columns:repeat(4,1fr)}
+.fillgrid > .panel{min-height:0}
+/* tall single-row grids: cap row height + center so cards aren't absurdly tall */
+.fillgrid.usecase{align-content:center;grid-auto-rows:minmax(0,500px)}
+.fillgrid.usecase .panel .ico{width:58px;height:58px}
+.fillgrid.usecase .panel h4{font-size:32px}
+.fillgrid.usecase .panel p{font-size:20px}
+.fillgrid.howto{align-content:center;grid-auto-rows:minmax(0,540px)}
+.fillgrid.howto .panel .ico{width:54px;height:54px}
+.fillgrid.howto .panel h4{font-size:32px}
+.fillgrid.howto .squig svg.curve{height:44px}
+
+/* lucide icon base — element becomes <svg> after createIcons() */
+.ico{width:48px;height:48px;color:var(--accent-2);stroke-width:1.7}
+
+/* structured panel */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:30px 34px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.panel.soft{background:var(--surface-2)}
+.panel.accent-top{border-top:2px solid var(--accent)}
+.panel h4{margin:18px 0 10px;font-size:30px;color:var(--text-1);font-weight:700;letter-spacing:-.01em}
+.panel p{margin:0;font-size:19px;line-height:1.65;color:var(--text-2)}
+.panel .lead-num{font-family:var(--font-mono);font-size:40px;font-weight:700;color:color-mix(in srgb,var(--accent-2) 38%,transparent);line-height:1}
+
+/* closing message strip */
+.note-strip{flex:0 0 auto;margin-top:20px;background:var(--surface-2);border:1px solid var(--border);
+  border-left:3px solid var(--accent-2);border-radius:var(--radius);color:var(--text-1);
+  padding:20px 28px;font-size:20px;font-weight:500;display:flex;align-items:center;gap:14px}
+.note-strip .tag{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;color:#fff;
+  background:var(--accent);padding:5px 12px;border-radius:5px;text-transform:uppercase}
+
+/* ===== Slide 2: problem → solution (vs) ===== */
+.vsgrid{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 70px 1fr;gap:8px;align-items:stretch}
+.vs-col{border-radius:var(--radius-lg);padding:38px 42px;display:flex;flex-direction:column;justify-content:center}
+.vs-prob{background:var(--surface-2);border:1px solid var(--border)}
+.vs-sol{background:linear-gradient(160deg,rgba(79,140,255,.12),var(--surface));border:1px solid color-mix(in srgb,var(--accent-2) 32%,transparent);border-top:3px solid var(--accent-2)}
+.vs-arrow{display:flex;align-items:center;justify-content:center}
+.vs-arrow .ico{width:42px;height:42px;color:var(--accent-2)}
+.vs-head{font-family:var(--font-mono);font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3);margin-bottom:24px}
+.vs-head.sol{color:var(--accent-2)}
+.vs-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:24px}
+.vs-list li{display:flex;gap:16px;align-items:flex-start}
+.vs-list li .ico{width:38px;height:38px;color:var(--text-3);flex-shrink:0;margin-top:2px}
+.vs-list li h5{font-size:25px;color:var(--text-1);margin:0 0 6px;font-weight:700}
+.vs-list li p{font-size:18px;color:var(--text-2);margin:0;line-height:1.5}
+.vs-tagline{font-size:42px;font-weight:800;color:var(--text-1);letter-spacing:-.025em;margin-bottom:30px}
+.mini-flow{display:flex;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.mini-flow .chip{display:flex;align-items:center;gap:11px;background:rgba(79,140,255,.13);
+  border:1px solid color-mix(in srgb,var(--accent-2) 34%,transparent);border-radius:9px;padding:13px 18px}
+.mini-flow .chip .ico{width:24px;height:24px;color:var(--accent-2)}
+.mini-flow .chip .t{font-size:19px;font-weight:700;color:var(--text-1)}
+.mini-flow .mc{width:18px;height:18px;color:var(--accent-2);stroke-width:2.4}
+.vs-note{font-size:21px;color:var(--accent-2);font-weight:700;display:flex;align-items:center;gap:11px}
+.vs-note .ico{width:24px;height:24px;color:var(--accent-2)}
+
+/* ===== Demo slides: left rail + big GIF ===== */
+.demo{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:var(--rail) 1fr;gap:28px}
+.rail{display:flex;flex-direction:column;gap:16px;min-height:0}
+.rail .item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.rail .item .ico{width:38px;height:38px}
+.rail .item .lbl{font-size:23px;font-weight:700;color:var(--text-1)}
+.rail .item .txt{font-size:17px;line-height:1.5;color:var(--text-2)}
+.rail .item.hl{background:linear-gradient(135deg,#1d4ed8,#4f8cff);border-color:transparent}
+.rail .item.hl .lbl,.rail .item.hl .txt,.rail .item.hl .ico{color:#fff}
+.rail .item.hl .txt{color:rgba(255,255,255,.9)}
+
+.gifcard{position:relative;min-height:0;background:#05080e;border:1px solid var(--border-strong);
+  border-radius:var(--radius-lg);overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg)}
+.gifcard img{width:100%;height:100%;object-fit:contain}
+.gifcard .cap{position:absolute;left:0;right:0;bottom:0;padding:16px 24px;color:#fff;
+  background:linear-gradient(transparent,rgba(3,6,12,.9));font-size:16px;display:flex;align-items:center;gap:11px}
+.gifcard .cap .dot{width:10px;height:10px;border-radius:50%;background:#ff5252;box-shadow:0 0 0 0 rgba(255,82,82,.6);animation:rec 1.4s infinite;flex-shrink:0}
+@keyframes rec{0%{box-shadow:0 0 0 0 rgba(255,82,82,.55)}70%{box-shadow:0 0 0 9px rgba(255,82,82,0)}100%{box-shadow:0 0 0 0 rgba(255,82,82,0)}}
+.gifcard .mode{position:absolute;top:18px;right:18px;font-family:var(--font-mono);font-size:13px;letter-spacing:.1em;
+  background:rgba(255,255,255,.12);color:#fff;padding:7px 13px;border-radius:7px;backdrop-filter:blur(6px);
+  display:flex;align-items:center;gap:8px}
+.gifcard .mode .ico{width:16px;height:16px;color:#fff}
+
+/* ===== Cover (big type + bg glow + grid) ===== */
+.slide.cover{justify-content:center;align-items:center;text-align:center;overflow:hidden}
+.slide.cover::before{content:"";position:absolute;inset:0;z-index:0;
+  background-image:radial-gradient(rgba(255,255,255,.055) 1.4px, transparent 1.4px);
+  background-size:36px 36px;
+  -webkit-mask:radial-gradient(circle at 50% 44%, #000 0%, transparent 70%);
+  mask:radial-gradient(circle at 50% 44%, #000 0%, transparent 70%);}
+.slide.cover::after{content:"";position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:0;
+  width:1200px;height:760px;pointer-events:none;
+  background:radial-gradient(ellipse,rgba(79,140,255,.26),transparent 62%);filter:blur(10px)}
+.cover-wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%}
+.cover-brand{font-family:var(--font-mono);font-size:15px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--accent-2);display:flex;align-items:center;gap:14px}
+.cover-brand::before,.cover-brand::after{content:"";width:30px;height:1px;background:color-mix(in srgb,var(--accent-2) 60%,transparent)}
+.cover-title{font-size:88px;line-height:1.08;font-weight:800;letter-spacing:-.04em;color:var(--text-1);margin:30px 0 0;max-width:22ch}
+.cover-title .hl{color:var(--accent-2)}
+.cover-sub{margin:26px 0 0;font-size:23px;line-height:1.5;color:var(--text-2);max-width:72ch}
+.cover-flow{margin-top:58px;display:flex;align-items:center;gap:18px}
+.cover-flow .fstep{display:flex;align-items:center;gap:16px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--radius);padding:20px 28px;box-shadow:var(--shadow)}
+.cover-flow .fstep .ico{width:34px;height:34px;color:var(--accent-2)}
+.cover-flow .fstep .ft{display:flex;flex-direction:column;text-align:left}
+.cover-flow .fstep .ft .s{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--accent-2);font-weight:600}
+.cover-flow .fstep .ft .b{font-size:21px;font-weight:700;color:var(--text-1);margin-top:3px}
+.cover-flow .conn{width:24px;height:24px;color:var(--accent-2);stroke-width:2.2;flex-shrink:0}
+
+/* ===== Summary slide ===== */
+.sumgrid{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1.12fr;gap:26px}
+.keywords{display:flex;flex-direction:column;gap:16px;min-height:0}
+.keywords .kw{flex:1;border-radius:var(--radius);padding:26px 32px;display:flex;flex-direction:column;justify-content:center;gap:7px;color:#fff;border:1px solid transparent}
+.keywords .kw .big{font-size:54px;font-weight:800;letter-spacing:-.03em}
+.keywords .kw .sm{font-size:18px;opacity:.92;line-height:1.45}
+.kw.k1{background:linear-gradient(120deg,#15233c,#1c2f4f)}
+.kw.k2{background:linear-gradient(120deg,#1c2f4f,#1d4ed8)}
+.kw.k3{background:linear-gradient(120deg,#1d4ed8,#4f8cff)}
+.future{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px 36px;display:flex;flex-direction:column;justify-content:center}
+.future h4{margin:0 0 26px;font-size:26px;color:var(--text-1);font-weight:700}
+.future ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:22px;flex:1;justify-content:center}
+.future li{display:flex;gap:14px;font-size:21px;color:var(--text-2);line-height:1.45;align-items:center}
+.future li .arw{width:24px;height:24px;color:var(--accent-2);flex-shrink:0;stroke-width:2.4}
+
+/* before/after squiggle for "auto-correct" */
+.squig{display:flex;align-items:center;gap:16px;margin-top:12px}
+.squig svg.curve{height:38px}
+.squig .arr{width:22px;height:22px;color:var(--accent-2)}
+.squig .lab{font-size:13px;color:var(--text-3);font-family:var(--font-mono);letter-spacing:.08em}
+</style>
+</head>
+<body>
+<div class="deck" data-themes="dark-corporate,aurora,minimal-white" data-theme-base="assets/themes/">
+
+  <!-- ===== global chrome ===== -->
+  <div class="deck-header">
+    <span class="eyebrow">ros2_move_recoder</span>
+    <span class="eyebrow">협동로봇 모션 티칭</span>
+  </div>
+  <div class="deck-footer">
+    <span class="dim2">Doosan m0609 · DualSense</span>
+    <span class="slide-number" data-current="1" data-total="9"></span>
+  </div>
+
+  <!-- ===== 1. COVER ===== -->
+  <section class="slide cover is-active" data-title="표지">
+    <div class="cover-wrap">
+      <div class="cover-brand anim-fade-up" data-anim="fade-up">코딩 없는 로봇 티칭</div>
+      <h1 class="cover-title anim-fade-up" data-anim="fade-up">컨트롤러로 움직이면,<br><span class="hl">로봇이 기억하고</span> 따라 합니다</h1>
+      <p class="cover-sub anim-fade-up" data-anim="fade-up">무선 컨트롤러로 협동로봇의 동작을 직접 녹화하고, 자동으로 다듬어, 재생하는 모션 티칭 도구</p>
+      <div class="cover-flow anim-fade-up" data-anim="fade-up">
+        <div class="fstep"><i data-lucide="circle-dot" class="ico"></i><div class="ft"><span class="s">STEP 01</span><span class="b">녹화</span></div></div>
+        <i data-lucide="chevron-right" class="conn"></i>
+        <div class="fstep"><i data-lucide="wand-2" class="ico"></i><div class="ft"><span class="s">STEP 02</span><span class="b">자동 다듬기</span></div></div>
+        <i data-lucide="chevron-right" class="conn"></i>
+        <div class="fstep"><i data-lucide="play" class="ico"></i><div class="ft"><span class="s">STEP 03</span><span class="b">재생</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2. PROBLEM → SOLUTION (merged) ===== -->
+  <section class="slide" data-title="문제와 해결">
+    <div class="shead">
+      <div class="top"><span class="num">01</span><span class="eyebrow">왜 필요한가 · 무엇인가</span></div>
+      <h2>기존 로봇 티칭의 한계, 그리고 해결</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="sbody">
+      <div class="vsgrid anim-fade-up" data-anim="fade-up">
+        <div class="vs-col vs-prob">
+          <div class="vs-head">지금은</div>
+          <ul class="vs-list">
+            <li><i data-lucide="keyboard" class="ico"></i><div><h5>좌표를 일일이 입력</h5><p>자세마다 숫자 좌표를 넣고 프로그램을 직접 작성해야 합니다.</p></div></li>
+            <li><i data-lucide="hard-hat" class="ico"></i><div><h5>전문가가 있어야</h5><p>엔지니어 없이는 동작을 만들거나 고치기 어렵습니다.</p></div></li>
+            <li><i data-lucide="refresh-cw" class="ico"></i><div><h5>수정이 번거롭다</h5><p>작은 변경에도 다시 손이 많이 가, 유연하게 못 씁니다.</p></div></li>
+          </ul>
+        </div>
+        <div class="vs-arrow"><i data-lucide="arrow-right" class="ico"></i></div>
+        <div class="vs-col vs-sol">
+          <div class="vs-head sol">이제는</div>
+          <div class="vs-tagline">움직여서 가르치면 끝</div>
+          <div class="mini-flow">
+            <div class="chip"><i data-lucide="circle-dot" class="ico"></i><span class="t">녹화</span></div>
+            <i data-lucide="chevron-right" class="mc"></i>
+            <div class="chip"><i data-lucide="wand-2" class="ico"></i><span class="t">자동 다듬기</span></div>
+            <i data-lucide="chevron-right" class="mc"></i>
+            <div class="chip"><i data-lucide="play" class="ico"></i><span class="t">재생</span></div>
+          </div>
+          <div class="vs-note"><i data-lucide="circle-check-big" class="ico"></i>전문 지식·코딩 불필요 — 누구나 직접 티칭</div>
+        </div>
+      </div>
+      <div class="note-strip"><span class="tag">핵심</span>가르치는 비용을 없애, 비싼 로봇을 현장에서 유연하게 활용합니다.</div>
+    </div>
+  </section>
+
+  <!-- ===== 3. DEMO 1 — JOINT ===== -->
+  <section class="slide" data-title="데모 ① 관절 좌표">
+    <div class="shead">
+      <div class="top"><span class="num">02</span><span class="eyebrow">데모 ① · 관절(Joint) 좌표계</span></div>
+      <h2>관절 단위로 정밀하게</h2>
+      <p class="sub">관절 하나하나를 컨트롤러로 미세 조정해 자세를 잡고 녹화 → 그대로 재생됩니다.</p>
+    </div>
+    <div class="sbody">
+      <div class="demo">
+        <div class="rail anim-fade-right" data-anim="fade-right">
+          <div class="item"><i data-lucide="gamepad-2" class="ico"></i><span class="lbl">무선 컨트롤러</span><span class="txt">선 없이 로봇 곁에서 직접 조작</span></div>
+          <div class="item hl"><i data-lucide="crosshair" class="ico"></i><span class="lbl">관절별 미세 조정</span><span class="txt">6개 관절을 하나씩 골라 정밀하게</span></div>
+          <div class="item"><i data-lucide="circle-play" class="ico"></i><span class="lbl">녹화 후 재생</span><span class="txt">잡은 동작을 버튼 한 번으로 반복</span></div>
+        </div>
+        <div class="gifcard">
+          <span class="mode"><i data-lucide="bone" class="ico"></i>JOINT MODE</span>
+          <img src="media/joint.gif" alt="관절 좌표계 녹화·재생 데모">
+          <div class="cap"><span class="dot"></span>관절 단위로 직접 미세 조정하며 녹화하고, 그대로 재생</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. DEMO 2 — TCP ===== -->
+  <section class="slide" data-title="데모 ② 작업 좌표">
+    <div class="shead">
+      <div class="top"><span class="num">03</span><span class="eyebrow">데모 ② · 작업(TCP) 좌표계</span></div>
+      <h2>생각하는 방향 그대로</h2>
+      <p class="sub">앞·옆·위아래(X·Y·Z) 직관적 이동으로 녹화 → 재생. 상황에 따라 관절 모드와 전환합니다.</p>
+    </div>
+    <div class="sbody">
+      <div class="demo">
+        <div class="rail anim-fade-right" data-anim="fade-right">
+          <div class="item"><i data-lucide="move-3d" class="ico"></i><span class="lbl">작업 공간 기준</span><span class="txt">로봇 끝(손)을 기준으로 이동</span></div>
+          <div class="item hl"><i data-lucide="move" class="ico"></i><span class="lbl">앞·옆·위아래</span><span class="txt">사람이 생각하는 방향 그대로</span></div>
+          <div class="item"><i data-lucide="shuffle" class="ico"></i><span class="lbl">두 모드 전환</span><span class="txt">정밀 조정(관절) · 직관 이동(작업)</span></div>
+        </div>
+        <div class="gifcard">
+          <span class="mode"><i data-lucide="move-3d" class="ico"></i>TCP MODE</span>
+          <img src="media/tcp.gif" alt="작업 좌표계 녹화·재생 데모">
+          <div class="cap"><span class="dot"></span>앞·옆·위아래로 직관적으로 이동하며 녹화하고, 그대로 재생</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5. DEMO 3 — PAUSE / RESUME ===== -->
+  <section class="slide" data-title="데모 ③ 일시정지·재개">
+    <div class="shead">
+      <div class="top"><span class="num">04</span><span class="eyebrow">데모 ③ · 안전 제어</span></div>
+      <h2>위험하면 멈추고, 확인 후 이어가기</h2>
+      <p class="sub">재생 도중 버튼 한 번으로 멈추고, 안전을 확인한 뒤 다시 이어서 재생합니다.</p>
+    </div>
+    <div class="sbody">
+      <div class="demo">
+        <div class="rail anim-fade-right" data-anim="fade-right">
+          <div class="item"><i data-lucide="pause" class="ico"></i><span class="lbl">즉시 일시정지</span><span class="txt">재생 중 언제든 그 자리에서 정지</span></div>
+          <div class="item hl"><i data-lucide="play" class="ico"></i><span class="lbl">버튼 한 번 재개</span><span class="txt">멈춘 지점부터 자연스럽게 이어서</span></div>
+          <div class="item"><i data-lucide="octagon-x" class="ico"></i><span class="lbl">비상정지·홈복귀</span><span class="txt">위급 시 즉시 정지, 안전 자세 복귀</span></div>
+        </div>
+        <div class="gifcard">
+          <span class="mode"><i data-lucide="pause" class="ico"></i>PAUSE / RESUME</span>
+          <img src="media/pause_resume.gif" alt="재생 중 일시정지·재개 데모">
+          <div class="cap"><span class="dot"></span>재생 중 멈췄다가, 확인 후 다시 이어서 재생</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 6. HOW IT WORKS ===== -->
+  <section class="slide" data-title="동작 원리">
+    <div class="shead">
+      <div class="top"><span class="num">05</span><span class="eyebrow">동작 원리</span></div>
+      <h2>원리는 단순합니다 — 단 3단계</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="sbody">
+      <div class="fillgrid c3 howto anim-stagger-list">
+        <div class="panel"><i data-lucide="pencil-line" class="ico"></i><h4>① 움직임을 기록</h4><p>손으로 직접(매뉴얼 모드) 움직이든, 무선 컨트롤러로 움직이든 — 어떻게 움직여도 로봇의 모든 자세를 그대로 받아 적습니다.</p></div>
+        <div class="panel">
+          <i data-lucide="wand-2" class="ico"></i><h4>② 자동 보정</h4>
+          <p>손의 떨림과 잡음을 프로그램이 알아서 정리합니다.</p>
+          <div class="squig">
+            <svg class="curve" viewBox="0 0 90 34" fill="none"><path d="M2 17 q6 -13 12 0 t12 0 t12 0 t12 0" stroke="#f06a6a" stroke-width="2.5" fill="none"/></svg>
+            <i data-lucide="arrow-right" class="arr"></i>
+            <svg class="curve" viewBox="0 0 90 34" fill="none"><path d="M2 24 C 30 24 60 8 88 8" stroke="#3fd09a" stroke-width="2.5" fill="none"/></svg>
+          </div>
+          <div class="squig"><span class="lab">흔들림</span><span style="width:22px"></span><span class="lab">부드럽게</span></div>
+        </div>
+        <div class="panel"><i data-lucide="repeat" class="ico"></i><h4>③ 부드럽게 재생</h4><p>다듬어진 동작을 로봇이 정확하게, 원하는 만큼 반복 수행합니다.</p></div>
+      </div>
+      <div class="note-strip"><span class="tag">한 줄</span>한 번만 가르치면 — 보정은 자동, 재생은 무한 반복.</div>
+    </div>
+  </section>
+
+  <!-- ===== 7. CORE VALUE ===== -->
+  <section class="slide" data-title="핵심 가치">
+    <div class="shead">
+      <div class="top"><span class="num">06</span><span class="eyebrow">핵심 가치</span></div>
+      <h2>왜 이 도구인가</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="sbody">
+      <div class="fillgrid c3 anim-stagger-list" style="grid-template-rows:1fr 1fr">
+        <div class="panel accent-top"><i data-lucide="user-check" class="ico"></i><h4>전문 지식 불필요</h4><p>현장 작업자가 직접 가르치고, 직접 수정합니다.</p></div>
+        <div class="panel accent-top"><i data-lucide="zap" class="ico"></i><h4>빠른 티칭</h4><p>움직여서 녹화하면 끝. 동작 변경도 즉시 반영됩니다.</p></div>
+        <div class="panel accent-top"><i data-lucide="grab" class="ico"></i><h4>집게까지 동기화</h4><p>잡고 놓는 그리퍼 동작도 함께 녹화·재생됩니다.</p></div>
+        <div class="panel accent-top"><i data-lucide="shield-check" class="ico"></i><h4>안전 우선</h4><p>즉시 정지·홈 복귀, 재생 중 일시정지/재개를 지원합니다.</p></div>
+        <div class="panel accent-top"><i data-lucide="flask-conical" class="ico"></i><h4>사전 검증</h4><p>실제 로봇 없이 가상 모드에서 먼저 확인하고 적용합니다.</p></div>
+        <div class="panel accent-top"><i data-lucide="hand" class="ico"></i><h4>조작 방식 자유</h4><p>손으로 직접(매뉴얼 모드)이든, 무선 컨트롤러로든 — 편한 방식으로 가르칩니다.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 8. USE CASES ===== -->
+  <section class="slide" data-title="활용 시나리오">
+    <div class="shead">
+      <div class="top"><span class="num">07</span><span class="eyebrow">활용 시나리오</span></div>
+      <h2>이렇게 쓸 수 있습니다</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="sbody">
+      <div class="fillgrid c4 usecase anim-stagger-list">
+        <div class="panel"><i data-lucide="package" class="ico"></i><h4>반복 작업 자동화</h4><p>집기·옮기기 같은 단순 반복 동작을 한 번 가르쳐 두고 반복.</p></div>
+        <div class="panel"><i data-lucide="layers" class="ico"></i><h4>다품종 소량 생산</h4><p>품목이 바뀌어도 다시 가르치기만 하면 바로 대응.</p></div>
+        <div class="panel"><i data-lucide="presentation" class="ico"></i><h4>교육 · 시연</h4><p>로봇 동작을 쉽게 만들어 보여주는 교육·데모 용도.</p></div>
+        <div class="panel"><i data-lucide="rocket" class="ico"></i><h4>빠른 시제품 검증</h4><p>새 동작 아이디어를 즉시 만들어 현장에서 확인.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 9. SUMMARY ===== -->
+  <section class="slide" data-title="요약">
+    <div class="shead">
+      <div class="top"><span class="num">08</span><span class="eyebrow">요약</span></div>
+      <h2>코딩 없이, 움직이면 따라 하는 로봇 티칭</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="sbody">
+      <div class="sumgrid">
+        <div class="keywords anim-fade-right" data-anim="fade-right">
+          <div class="kw k1"><span class="big">쉽다</span><span class="sm">전문 지식 없이 누구나 직접 티칭</span></div>
+          <div class="kw k2"><span class="big">빠르다</span><span class="sm">움직여 녹화하면 끝, 변경도 즉시</span></div>
+          <div class="kw k3"><span class="big">안전하다</span><span class="sm">즉시 정지·일시정지·가상 검증</span></div>
+        </div>
+        <div class="future">
+          <h4>향후 발전 방향</h4>
+          <ul>
+            <li><i data-lucide="chevron-right" class="arw"></i><span>다양한 로봇 기종으로 지원 확대</span></li>
+            <li><i data-lucide="chevron-right" class="arw"></i><span>여러 대 로봇 동시 운용</span></li>
+            <li><i data-lucide="chevron-right" class="arw"></i><span>더 길고 복잡한 동작·속도 프로파일 보존</span></li>
+            <li><i data-lucide="chevron-right" class="arw"></i><span>음성·비전 연동으로 더 똑똑한 자동화</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+<script src="assets/lucide.min.js"></script>
+<script>if(window.lucide&&lucide.createIcons)lucide.createIcons();</script>
+<script>
+/* Keep the deck at a fixed 16:9 (1920x1080) and scale it to fit any viewport. */
+(function(){
+  var deck=document.querySelector('.deck');
+  if(!deck) return;
+  function fit(){
+    var s=Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    deck.style.transform='scale('+s+')';
+  }
+  fit();
+  window.addEventListener('resize',fit);
+})();
+</script>
+<script src="assets/runtime.js"></script>
+</body>
+</html>

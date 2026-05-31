@@ -24,23 +24,33 @@ from firebase_admin import credentials, db
 
 from fk_m0609 import compute_tcp_from_joint
 
-DATABASE_URL    = "https://robochef-5d9b6-default-rtdb.asia-southeast1.firebasedatabase.app"
-CRED_PATH       = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                               "serviceAccountKey.json")
+DATABASE_URL_DEFAULT = "https://robochef-5d9b6-default-rtdb.asia-southeast1.firebasedatabase.app"
+CRED_PATH_DEFAULT    = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                    "serviceAccountKey.json")
 
 POLL_HZ         = 2               # Hz — joint_positions 폴링 주기
 ROUND_DECIMALS  = 3               # mm/deg 반올림 자리수
 
 
+def _resolve_cred() -> str:
+    env = os.environ.get("FIREBASE_CRED_PATH")
+    return env if (env and os.path.isfile(env)) else CRED_PATH_DEFAULT
+
+
+def _resolve_db_url() -> str:
+    return os.environ.get("FIREBASE_DB_URL", DATABASE_URL_DEFAULT)
+
+
 def _init_firebase():
     if firebase_admin._apps:
         return
-    if not os.path.isfile(CRED_PATH):
-        print(f"[fk_worker] ❌ credential 없음: {CRED_PATH}", flush=True)
-        raise FileNotFoundError(CRED_PATH)
+    cred_path = _resolve_cred()
+    if not os.path.isfile(cred_path):
+        print(f"[fk_worker] ❌ credential 없음: {cred_path}", flush=True)
+        raise FileNotFoundError(cred_path)
     firebase_admin.initialize_app(
-        credentials.Certificate(CRED_PATH),
-        {"databaseURL": DATABASE_URL},
+        credentials.Certificate(cred_path),
+        {"databaseURL": _resolve_db_url()},
     )
 
 
@@ -68,6 +78,7 @@ def run():
                 key = tuple(round(float(x), 2) for x in j[:6])       # 소수 2자리 dedup
                 if key != last_joint:
                     tcp = _round(compute_tcp_from_joint(j[:6]))
+                    # Ownership: fk_worker 가 tcp_position 필드 단독 소유 (architecture.md §6).
                     tcp_ref.update({
                         "tcp_position": tcp,
                         "tcp_updated_at": datetime.now(timezone.utc).isoformat(),

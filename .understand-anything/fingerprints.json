@@ -1,0 +1,3528 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "4de1e74fc9e3d61834800800543a84329523b909",
+  "generatedAt": "2026-05-31T12:43:58.670Z",
+  "files": {
+    ".understand-anything/.understandignore": {
+      "filePath": ".understand-anything/.understandignore",
+      "contentHash": "3e3ddbca20f9f49f344657c9393e55290884f177941718d3a65f0c0481db1835",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 38,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/dev-docs/architecture.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/architecture.md",
+      "contentHash": "fc0f4d03f7cdcdb62d6095290f6e3a6ce2399a3f1de74ca4b13a0c06aa0e0669",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 186,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/build-and-run.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/build-and-run.md",
+      "contentHash": "6a631e72ded9289537a1b65f59c7103704f40dc3afc401561850a2f0f27541f2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 179,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/CHANGELOG.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/CHANGELOG.md",
+      "contentHash": "b528c0e4b40c47e5b163bec90c7997dbe59a085328e2ec08a43f489c39a583cd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 123,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/data-formats.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/data-formats.md",
+      "contentHash": "8e712d8bf1bc6b07b7b702b3e7eb3a8eddf7eed66c68df164a32a5eceb7054af",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 147,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/dev-essentials.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/dev-essentials.md",
+      "contentHash": "5ed802a49241870526e03895a6302971a837c9346bdfe6a987aedae69bcf620a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 222,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/dualsense-mapping.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/dualsense-mapping.md",
+      "contentHash": "6a1c4f35ccba2940eb0aca6802cb1fcec6f37b71d44ca9ed7203b5ddd8dac6a6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 149,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/dualsense-plan.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/dualsense-plan.md",
+      "contentHash": "29a5508e153809d65f71dd41deecc8f5c255e22d1b1a5230feefe06ee6fad22b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 184,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/extending.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/extending.md",
+      "contentHash": "66751d39e18a31c1b0ff67deac0189aab976c982c324be965743974ff383a81a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 265,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/gripper.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/gripper.md",
+      "contentHash": "9cdbb43c770dda4cd5ea8299346f05304d7151f19516ca3af5e03b8eb9011d81",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 199,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/gui.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/gui.md",
+      "contentHash": "02bc31e65b1d80c74224386bbff1d0339911391c3cf0e5385f6f4d8e0f7acf43",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 311,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/pipeline.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/pipeline.md",
+      "contentHash": "779b6e4eaf38d0bae8b48cf3f02160f45423843d9d0baf99f6730ed6d90fe753",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 213,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/ppt/assets/animations/animations.css": {
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/animations/animations.css",
+      "contentHash": "3bc36127d7e491b0a723fe5788682824c9b9e8849cf2a5ceb72dc3ebb951e3e8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 139,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/dev-docs/ppt/assets/base.css": {
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/base.css",
+      "contentHash": "04e7c427d1d9401ff080bf72c5c9c0161c1a4759b5efdb2a64bed4e09830e688",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 151,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/dev-docs/ppt/assets/fonts.css": {
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/fonts.css",
+      "contentHash": "1e93c54e2a4c5f27a2404cc2c8f682d50f5d41a95ebecd11ed41f925e3a79572",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 10,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/dev-docs/ppt/assets/runtime.js": {
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/runtime.js",
+      "contentHash": "d7b066a96b99fcf5c9e15b593283a57a3d43ac2bcf795d172adc7f3ba0844f79",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 961,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/ppt/assets/themes/aurora.css": {
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/themes/aurora.css",
+      "contentHash": "c966dd1dbf9b15c03d01bc6e94cbb7cee5d2c051a421373cef8b6593c754f466",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/dev-docs/ppt/assets/themes/corporate-clean.css": {
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/themes/corporate-clean.css",
+      "contentHash": "cee1a778416fc849d5812036d58fc4d8d99c886f258e7d8a3052f4f358ed5ea1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 20,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/dev-docs/ppt/assets/themes/dark-corporate.css": {
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/themes/dark-corporate.css",
+      "contentHash": "5c5ecf2a98151b643076d0c84ad915b50bd2d910c4d581148b355e631b055c25",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/dev-docs/ppt/assets/themes/minimal-white.css": {
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/themes/minimal-white.css",
+      "contentHash": "993453010bdcb3c9530d387d66085ae18242636a702cf7ef88f32a8bb940497d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/dev-docs/ppt/index.html": {
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/index.html",
+      "contentHash": "d3010875ba69cd3586fe81c8c850cab73dcdd62967d8c42fb3f0901759253231",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 410,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/dev-docs/presentation-plan.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/presentation-plan.md",
+      "contentHash": "57da43f89baea40592439841d91001b82d6b68eb1d9edf8c9c709179e0793bce",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 176,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/README.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/README.md",
+      "contentHash": "81ecd459f1cd4a91a9137e03323dc32397ff95b712e65454b541167c255c1c0a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 95,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/troubleshooting.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/troubleshooting.md",
+      "contentHash": "318faf69c1e3f43e0e75ac4e83667c173cfd146358709605812dab6409165a50",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 218,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/dev-docs/voice-vision-async-workflow.md": {
+      "filePath": "common/ros2_move_recoder/dev-docs/voice-vision-async-workflow.md",
+      "contentHash": "914592a0ab8a62634ddbf0addc1071841cadbe31f8e91d74d06aa76822e497cc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 545,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/package.xml": {
+      "filePath": "common/ros2_move_recoder/package.xml",
+      "contentHash": "9781dc575e8e9d320861df20ddb5f7adcff510053c90e9a9c89c56c74b0d5c67",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 26,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/README.md": {
+      "filePath": "common/ros2_move_recoder/README.md",
+      "contentHash": "565110322cffb05d0b58e375fc6d4ba30ce89bad7a8ae3a8ffbe956c2ea86dd7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 163,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/resource/ros2_move_recoder": {
+      "filePath": "common/ros2_move_recoder/resource/ros2_move_recoder",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/ros2_move_recoder/__init__.py": {
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py": {
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+      "contentHash": "40a3cceb0d52f2488c1646b0c0cd4bfad133f6ec532065a847611421935d503a",
+      "functions": [],
+      "classes": [
+        {
+          "name": "DualSenseWorker",
+          "methods": [
+            "__init__",
+            "set_selected_joint",
+            "set_jog_max_vel",
+            "set_jog_dispatcher",
+            "set_modal_active",
+            "set_verbose",
+            "_log_v",
+            "_post_main",
+            "start",
+            "stop",
+            "_ensure_pygame",
+            "_try_open",
+            "_close",
+            "_run"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 535
+        }
+      ],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "pygame",
+          "specifiers": [
+            "pygame"
+          ]
+        },
+        {
+          "source": "PyQt5",
+          "specifiers": [
+            "QtCore"
+          ]
+        }
+      ],
+      "exports": [
+        "DualSenseWorker"
+      ],
+      "totalLines": 619,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py": {
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py",
+      "contentHash": "0e8b5360aa0cfe5bd5eaf5825797a330349fd6bbcf1de050631175d81fec7d36",
+      "functions": [],
+      "classes": [
+        {
+          "name": "GripperWorker",
+          "methods": [
+            "__init__",
+            "start",
+            "stop",
+            "open",
+            "close",
+            "move",
+            "is_connected",
+            "last_width",
+            "last_state",
+            "_enqueue",
+            "_ensure_rg",
+            "_safe_disconnect",
+            "_do_command",
+            "_do_width_poll",
+            "_run"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 204
+        }
+      ],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "queue",
+          "specifiers": [
+            "queue"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "PyQt5",
+          "specifiers": [
+            "QtCore"
+          ]
+        }
+      ],
+      "exports": [
+        "GripperWorker"
+      ],
+      "totalLines": 239,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/ros2_move_recoder/gui.py": {
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "contentHash": "d0a41bba15031c0c3a6a61f9798d33ee2f1ee59faa74016689192469a4baaf02",
+      "functions": [
+        {
+          "name": "_dr_set_node",
+          "params": [
+            "node"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_dr_get_node",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_dr_set_id",
+          "params": [
+            "rid"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_dr_set_model",
+          "params": [
+            "model"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "build_stylesheet",
+          "params": [
+            "t"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 108
+        },
+        {
+          "name": "btn_variants_for_theme",
+          "params": [
+            "t"
+          ],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "classes": [
+        {
+          "name": "MacroNode",
+          "methods": [
+            "__init__"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "JointStateNode",
+          "methods": [
+            "__init__",
+            "_handle_joint",
+            "diag_snapshot"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 59
+        },
+        {
+          "name": "BringupDialog",
+          "methods": [
+            "__init__",
+            "_select"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 38
+        },
+        {
+          "name": "BringupManager",
+          "methods": [
+            "__init__",
+            "launch",
+            "shutdown"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 66
+        },
+        {
+          "name": "_JogDispatcher",
+          "methods": [
+            "__init__",
+            "set_jog_fn",
+            "set",
+            "stop",
+            "shutdown",
+            "_send",
+            "_loop"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 78
+        },
+        {
+          "name": "DsrWorker",
+          "methods": [
+            "__init__",
+            "_ensure_dsr",
+            "_service_ready",
+            "query_mode",
+            "go_home",
+            "play",
+            "_play_impl",
+            "set_operation_speed",
+            "set_mode",
+            "query_posx",
+            "emergency_stop",
+            "jog",
+            "stop_jog"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 356
+        },
+        {
+          "name": "DsrInterruptWorker",
+          "methods": [
+            "__init__",
+            "_fn",
+            "_call_srv",
+            "pause",
+            "resume",
+            "abort",
+            "is_paused",
+            "reset"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 121
+        },
+        {
+          "name": "RosSpinThread",
+          "methods": [
+            "__init__",
+            "run",
+            "stop"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 54
+        },
+        {
+          "name": "JointStateThread",
+          "methods": [
+            "__init__",
+            "run",
+            "stop",
+            "diag_snapshot"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 48
+        },
+        {
+          "name": "MainWindow",
+          "methods": [
+            "__init__",
+            "_build_ui",
+            "_apply_btn_style",
+            "_mkbtn",
+            "_build_menu",
+            "_build_statusbar",
+            "_refresh_action_list",
+            "_on_load_from_list",
+            "_open_action_folder",
+            "_load_action",
+            "_delete_action",
+            "_on_ros_ready",
+            "_on_joint",
+            "_update_hz",
+            "_on_mode_updated",
+            "_apply_mode_toggle_style",
+            "_request_mode_change",
+            "_on_toggle_mode",
+            "_on_record",
+            "_start_record",
+            "_on_stop",
+            "_record_diag_tick",
+            "_save_raw",
+            "_on_smooth",
+            "_on_play",
+            "_on_play_started",
+            "_on_play_finished",
+            "_on_pause",
+            "_on_resume",
+            "_on_abort",
+            "_on_paused_changed",
+            "_on_aborted",
+            "_apply_speed_preset",
+            "_suggest_speed_from_raw",
+            "_on_ops_slider_changed",
+            "_on_ops_slider_released",
+            "_update_effective_label",
+            "_on_home",
+            "_on_estop",
+            "_set_dualsense_pill",
+            "_on_toggle_dualsense",
+            "_on_dualsense_connection_changed",
+            "_on_joint_selection_changed",
+            "_on_dualsense_jog_mode_changed",
+            "_on_posx_received",
+            "_on_dualsense_record_toggle",
+            "_do_play_no_confirm",
+            "_try_dialog_button",
+            "_on_dualsense_smooth_play",
+            "_on_dualsense_pause_resume_toggle",
+            "_on_dualsense_estop",
+            "_on_dualsense_home",
+            "_on_dualsense_new_profile",
+            "_on_dualsense_mode_toggle",
+            "_on_toggle_dualsense_debug",
+            "_on_show_dualsense_cheatsheet",
+            "_check_modal_active",
+            "_set_gripper_pill",
+            "_set_gripper_ui_enabled",
+            "_on_toggle_gripper",
+            "_on_gripper_connection_changed",
+            "_on_gripper_width_changed",
+            "_start_gripper_play_timeline",
+            "_ensure_gripper_final_state",
+            "_update_measured_duration",
+            "_stop_gripper_play_timeline",
+            "_on_dualsense_gripper_toggle",
+            "_on_dualsense_speed_step",
+            "_highlight_joint_row",
+            "_on_jog_pressed",
+            "_on_jog_released",
+            "_set_jog_enabled",
+            "_refresh_jog_enabled",
+            "_log",
+            "_log_debug",
+            "_on_debug_toggle",
+            "_update_debug_btn_style",
+            "_set_status",
+            "_apply_theme",
+            "_restyle_static_widgets",
+            "_on_mode_updated_style_only",
+            "_on_theme_change",
+            "closeEvent"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 2337
+        }
+      ],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "math",
+          "specifiers": [
+            "math"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "signal",
+          "specifiers": [
+            "signal"
+          ]
+        },
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "numpy",
+          "specifiers": [
+            "np"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "PyQt5",
+          "specifiers": [
+            "QtCore",
+            "QtGui",
+            "QtWidgets"
+          ]
+        },
+        {
+          "source": "rclpy.callback_groups",
+          "specifiers": [
+            "ReentrantCallbackGroup"
+          ]
+        },
+        {
+          "source": "rclpy.executors",
+          "specifiers": [
+            "MultiThreadedExecutor",
+            "SingleThreadedExecutor"
+          ]
+        },
+        {
+          "source": "rclpy.node",
+          "specifiers": [
+            "Node"
+          ]
+        },
+        {
+          "source": "rclpy.qos",
+          "specifiers": [
+            "QoSProfile",
+            "ReliabilityPolicy",
+            "HistoryPolicy"
+          ]
+        },
+        {
+          "source": "sensor_msgs.msg",
+          "specifiers": [
+            "JointState"
+          ]
+        },
+        {
+          "source": "DR_init",
+          "specifiers": [
+            "DR_init"
+          ]
+        },
+        {
+          "source": "ros2_move_recoder.dualsense_worker",
+          "specifiers": [
+            "DualSenseWorker"
+          ]
+        },
+        {
+          "source": "ros2_move_recoder.gripper_worker",
+          "specifiers": [
+            "GripperWorker"
+          ]
+        },
+        {
+          "source": "ros2_move_recoder.smoother",
+          "specifiers": [
+            "smooth_and_save"
+          ]
+        },
+        {
+          "source": "ros2_move_recoder.playback",
+          "specifiers": [
+            "play_segment"
+          ]
+        }
+      ],
+      "exports": [
+        "_dr_set_node",
+        "_dr_get_node",
+        "_dr_set_id",
+        "_dr_set_model",
+        "MacroNode",
+        "JointStateNode",
+        "BringupDialog",
+        "BringupManager",
+        "_JogDispatcher",
+        "DsrWorker",
+        "DsrInterruptWorker",
+        "RosSpinThread",
+        "JointStateThread",
+        "MainWindow",
+        "build_stylesheet",
+        "btn_variants_for_theme",
+        "main"
+      ],
+      "totalLines": 3557,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/ros2_move_recoder/onrobot.py": {
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/onrobot.py",
+      "contentHash": "2f4f27ac6c7bbfbeeddd6dab5cd5e3cd11956a675c024b3e6cb3dbb73d126b09",
+      "functions": [],
+      "classes": [
+        {
+          "name": "RG",
+          "methods": [
+            "__init__",
+            "open_connection",
+            "close_connection",
+            "get_fingertip_offset",
+            "get_width",
+            "get_status",
+            "get_width_with_offset",
+            "set_control_mode",
+            "set_target_force",
+            "set_target_width",
+            "close_gripper",
+            "open_gripper",
+            "move_gripper"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 179
+        }
+      ],
+      "imports": [
+        {
+          "source": "pymodbus.client.sync",
+          "specifiers": [
+            "ModbusClient"
+          ]
+        }
+      ],
+      "exports": [
+        "RG"
+      ],
+      "totalLines": 185,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/ros2_move_recoder/playback.py": {
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "contentHash": "ab8253bf9dcb3722b7ed0e0b4d74bed3f8fcba88d5fb489b6059dc5ab679a0e0",
+      "functions": [
+        {
+          "name": "_dsr",
+          "params": [],
+          "returnType": "_DSR",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "_log",
+          "params": [
+            "logger",
+            "msg"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "play_segment",
+          "params": [
+            "smooth_path",
+            "gripper",
+            "require_autonomous",
+            "on_progress",
+            "abort_event",
+            "logger"
+          ],
+          "returnType": "PlayResult",
+          "exported": true,
+          "lineCount": 50
+        }
+      ],
+      "classes": [
+        {
+          "name": "PlayResult",
+          "methods": [],
+          "properties": [
+            "ok",
+            "duration_sec",
+            "error",
+            "measured_duration_sec"
+          ],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "_DSR",
+          "methods": [],
+          "properties": [
+            "amovesj",
+            "check_motion",
+            "posj",
+            "get_robot_mode",
+            "ROBOT_MODE_AUTONOMOUS",
+            "sstop"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "_GripperTimeline",
+          "methods": [
+            "__init__",
+            "_est_duration",
+            "_apply",
+            "_run",
+            "start",
+            "stop",
+            "finish"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 74
+        }
+      ],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "dataclasses",
+          "specifiers": [
+            "dataclass"
+          ]
+        }
+      ],
+      "exports": [
+        "PlayResult",
+        "_DSR",
+        "_dsr",
+        "_log",
+        "play_segment",
+        "_GripperTimeline"
+      ],
+      "totalLines": 175,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/ros2_move_recoder/player.py": {
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/player.py",
+      "contentHash": "771975bc2aaf99fbb46cc0502725c1cd2547bda35df9fa1ad2a2d95371dc04d8",
+      "functions": [
+        {
+          "name": "main",
+          "params": [
+            "args"
+          ],
+          "exported": true,
+          "lineCount": 31
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "DR_init",
+          "specifiers": [
+            "DR_init"
+          ]
+        },
+        {
+          "source": "ros2_move_recoder.playback",
+          "specifiers": [
+            "play_segment"
+          ]
+        }
+      ],
+      "exports": [
+        "main"
+      ],
+      "totalLines": 53,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/ros2_move_recoder/recorder.py": {
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+      "contentHash": "63cbdbd5d40983f224313a36f73448f25eb4f631f9006304a891db7f856b0785",
+      "functions": [
+        {
+          "name": "_wait_enter",
+          "params": [
+            "prompt"
+          ],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "_input_thread",
+          "params": [
+            "node",
+            "done_event"
+          ],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "main",
+          "params": [
+            "args"
+          ],
+          "exported": true,
+          "lineCount": 23
+        }
+      ],
+      "classes": [
+        {
+          "name": "RecorderNode",
+          "methods": [
+            "__init__",
+            "_on_joint",
+            "start",
+            "stop",
+            "_dump"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 87
+        }
+      ],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "math",
+          "specifiers": [
+            "math"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "rclpy.executors",
+          "specifiers": [
+            "MultiThreadedExecutor"
+          ]
+        },
+        {
+          "source": "rclpy.callback_groups",
+          "specifiers": [
+            "ReentrantCallbackGroup"
+          ]
+        },
+        {
+          "source": "rclpy.node",
+          "specifiers": [
+            "Node"
+          ]
+        },
+        {
+          "source": "rclpy.qos",
+          "specifiers": [
+            "QoSProfile",
+            "ReliabilityPolicy",
+            "HistoryPolicy"
+          ]
+        },
+        {
+          "source": "sensor_msgs.msg",
+          "specifiers": [
+            "JointState"
+          ]
+        }
+      ],
+      "exports": [
+        "RecorderNode",
+        "_wait_enter",
+        "_input_thread",
+        "main"
+      ],
+      "totalLines": 164,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/ros2_move_recoder/run.py": {
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/run.py",
+      "contentHash": "2c35e58edf5ae05496d5a157f17dfb432eec22b87818afae7e06dc9ca8400cc2",
+      "functions": [
+        {
+          "name": "_wait_motion",
+          "params": [
+            "check_motion",
+            "poll_sec"
+          ],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "my_motion",
+          "params": [
+            "amovej",
+            "amovel",
+            "posj",
+            "posx",
+            "DR_MV_MOD_REL",
+            "DR_TOOL",
+            "check_motion"
+          ],
+          "exported": true,
+          "lineCount": 23
+        },
+        {
+          "name": "main",
+          "params": [
+            "args"
+          ],
+          "exported": true,
+          "lineCount": 30
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "DR_init",
+          "specifiers": [
+            "DR_init"
+          ]
+        }
+      ],
+      "exports": [
+        "_wait_motion",
+        "my_motion",
+        "main"
+      ],
+      "totalLines": 88,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/ros2_move_recoder/smoother.py": {
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+      "contentHash": "747fd4971556aeb6870ef5dee33c573041d3ad03b1b338e948d6131fbb461bc3",
+      "functions": [
+        {
+          "name": "smooth_and_save",
+          "params": [
+            "action_name",
+            "window",
+            "polyorder",
+            "max_pts",
+            "vel",
+            "acc",
+            "stationary_eps_deg",
+            "turning_prominence_deg"
+          ],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 223
+        },
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 44
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "argparse",
+          "specifiers": [
+            "argparse"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "numpy",
+          "specifiers": [
+            "np"
+          ]
+        }
+      ],
+      "exports": [
+        "smooth_and_save",
+        "main"
+      ],
+      "totalLines": 303,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/setup.cfg": {
+      "filePath": "common/ros2_move_recoder/setup.cfg",
+      "contentHash": "c5929f84b1ea636b276d91e87475424dcf7137ef6fde7698a4021d89df402eed",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 5,
+      "hasStructuralAnalysis": false
+    },
+    "common/ros2_move_recoder/setup.py": {
+      "filePath": "common/ros2_move_recoder/setup.py",
+      "contentHash": "30ebcb60478ed3690a3c3b0d04a5e0c0bba8cf8f17d26931ced90b11d7fa5b36",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "setuptools",
+          "specifiers": [
+            "find_packages",
+            "setup"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    "common/ros2_move_recoder/test/test_playback.py": {
+      "filePath": "common/ros2_move_recoder/test/test_playback.py",
+      "contentHash": "b1b92b7dd39fdaabb759180a30ba9637bcbf089e40b09c47533960ce1e0d00e4",
+      "functions": [
+        {
+          "name": "_write_smooth",
+          "params": [
+            "d"
+          ],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "test_missing_file_returns_failure",
+          "params": [],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "test_not_autonomous_returns_failure",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "test_gripper_events_fire_in_order",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 20
+        }
+      ],
+      "classes": [
+        {
+          "name": "FakeGripper",
+          "methods": [
+            "__init__",
+            "open",
+            "close",
+            "move",
+            "last_state",
+            "width_mm"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "tempfile",
+          "specifiers": [
+            "tempfile"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "ros2_move_recoder.playback",
+          "specifiers": [
+            "pb"
+          ]
+        }
+      ],
+      "exports": [
+        "_write_smooth",
+        "test_missing_file_returns_failure",
+        "test_not_autonomous_returns_failure",
+        "FakeGripper",
+        "test_gripper_events_fire_in_order"
+      ],
+      "totalLines": 60,
+      "hasStructuralAnalysis": true
+    },
+    "docs/architecture.md": {
+      "filePath": "docs/architecture.md",
+      "contentHash": "c44fc90f8806da3e042d213049da8434344e5669615c3dedfb2ed3e280004676",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 311,
+      "hasStructuralAnalysis": true
+    },
+    "docs/presentation-outline.md": {
+      "filePath": "docs/presentation-outline.md",
+      "contentHash": "8c2ab090e56dab4ef206081d9834e83506ee483ffc34a056c7ad4c356bd451f9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 478,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/realtime_scan/install.sh": {
+      "filePath": "main_side/realtime_scan/install.sh",
+      "contentHash": "c4922da17532f71390c79781a5da54bc66567109e1d47001726f6f334cf5df29",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 70,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/realtime_scan/package.xml": {
+      "filePath": "main_side/realtime_scan/package.xml",
+      "contentHash": "45acc4461d693f60658e75eeaa5e4a119ff9a54f0f0ff3918cd438bd8b1e9a56",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": false
+    },
+    "main_side/realtime_scan/realtime_scan/__init__.py": {
+      "filePath": "main_side/realtime_scan/realtime_scan/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/realtime_scan/realtime_scan/coord_service.py": {
+      "filePath": "main_side/realtime_scan/realtime_scan/coord_service.py",
+      "contentHash": "742637e91d11cef6af4c7fdefef531d188a6efa518066721c12b9031c07e4a41",
+      "functions": [
+        {
+          "name": "_resolve_firebase_cred",
+          "params": [],
+          "returnType": "str | None",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "_log",
+          "params": [
+            "level",
+            "msg"
+          ],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "_on_joint_states",
+          "params": [
+            "msg"
+          ],
+          "exported": true,
+          "lineCount": 37
+        },
+        {
+          "name": "_snapshot",
+          "params": [],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "_handle_get_coords",
+          "params": [
+            "request",
+            "response"
+          ],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "_await_future",
+          "params": [
+            "future",
+            "timeout"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "_print_display",
+          "params": [
+            "snap",
+            "ok",
+            "req_cnt"
+          ],
+          "exported": true,
+          "lineCount": 48
+        },
+        {
+          "name": "_display_loop",
+          "params": [],
+          "exported": true,
+          "lineCount": 28
+        },
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 75
+        }
+      ],
+      "classes": [
+        {
+          "name": "_FirebasePublisher",
+          "methods": [
+            "__init__",
+            "start",
+            "_loop",
+            "_robot_state_loop"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 110
+        },
+        {
+          "name": "SafetyBridge",
+          "methods": [
+            "__init__",
+            "start",
+            "_on_cmd_event",
+            "_worker_loop",
+            "_execute",
+            "_write_ack",
+            "_state_poll_loop"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 205
+        }
+      ],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "math",
+          "specifiers": [
+            "math"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "queue",
+          "specifiers": [
+            "queue"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "rclpy.executors",
+          "specifiers": [
+            "MultiThreadedExecutor"
+          ]
+        },
+        {
+          "source": "rclpy.callback_groups",
+          "specifiers": [
+            "MutuallyExclusiveCallbackGroup",
+            "ReentrantCallbackGroup"
+          ]
+        },
+        {
+          "source": "sensor_msgs.msg",
+          "specifiers": [
+            "JointState"
+          ]
+        },
+        {
+          "source": "std_msgs.msg",
+          "specifiers": [
+            "String"
+          ]
+        },
+        {
+          "source": "std_srvs.srv",
+          "specifiers": [
+            "Trigger"
+          ]
+        }
+      ],
+      "exports": [
+        "_resolve_firebase_cred",
+        "_log",
+        "_on_joint_states",
+        "_snapshot",
+        "_handle_get_coords",
+        "_FirebasePublisher",
+        "_await_future",
+        "SafetyBridge",
+        "_print_display",
+        "_display_loop",
+        "main"
+      ],
+      "totalLines": 708,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/realtime_scan/realtime_scan/log_bridge.py": {
+      "filePath": "main_side/realtime_scan/realtime_scan/log_bridge.py",
+      "contentHash": "01f6fbfa7cf481d7429ec85cb57c10e52e5a7ab0ec37f0075bc38a9540828b5a",
+      "functions": [
+        {
+          "name": "_resolve_firebase_cred",
+          "params": [],
+          "returnType": "str | None",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "_lv_to_int",
+          "params": [
+            "v"
+          ],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "_stderr",
+          "params": [
+            "level",
+            "msg"
+          ],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "main",
+          "params": [
+            "args"
+          ],
+          "exported": true,
+          "lineCount": 11
+        }
+      ],
+      "classes": [
+        {
+          "name": "LogBridgeNode",
+          "methods": [
+            "__init__",
+            "_on_log",
+            "_init_firebase",
+            "_push_loop",
+            "_trim"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 124
+        }
+      ],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "queue",
+          "specifiers": [
+            "queue"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "rclpy.node",
+          "specifiers": [
+            "Node"
+          ]
+        },
+        {
+          "source": "rclpy.qos",
+          "specifiers": [
+            "QoSProfile",
+            "DurabilityPolicy",
+            "ReliabilityPolicy",
+            "HistoryPolicy"
+          ]
+        },
+        {
+          "source": "rcl_interfaces.msg",
+          "specifiers": [
+            "Log"
+          ]
+        }
+      ],
+      "exports": [
+        "_resolve_firebase_cred",
+        "_lv_to_int",
+        "_stderr",
+        "LogBridgeNode",
+        "main"
+      ],
+      "totalLines": 225,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/realtime_scan/realtime_scan/order_receiver.py": {
+      "filePath": "main_side/realtime_scan/realtime_scan/order_receiver.py",
+      "contentHash": "379e7f40ce6c2bffc2ae374536c3e69d1e156624c78b14a04d1141c66b84b170",
+      "functions": [
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 11
+        }
+      ],
+      "classes": [
+        {
+          "name": "OrderLogReceiver",
+          "methods": [
+            "__init__",
+            "_on_order"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 20
+        }
+      ],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "rclpy.node",
+          "specifiers": [
+            "Node"
+          ]
+        },
+        {
+          "source": "std_msgs.msg",
+          "specifiers": [
+            "String"
+          ]
+        }
+      ],
+      "exports": [
+        "OrderLogReceiver",
+        "main"
+      ],
+      "totalLines": 68,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/realtime_scan/resource/realtime_scan": {
+      "filePath": "main_side/realtime_scan/resource/realtime_scan",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": false
+    },
+    "main_side/realtime_scan/run_coord_service.sh": {
+      "filePath": "main_side/realtime_scan/run_coord_service.sh",
+      "contentHash": "94106781a590f64efec134a1e24f35a5eda3cf23a07c3e1b3ce1283b973a60b9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/realtime_scan/run_receiver.sh": {
+      "filePath": "main_side/realtime_scan/run_receiver.sh",
+      "contentHash": "1710792b4ad792b06ee0e826b46267d6ccc7a8a2b023e7e38cea140a5191cf99",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 40,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/realtime_scan/setup.cfg": {
+      "filePath": "main_side/realtime_scan/setup.cfg",
+      "contentHash": "97060801d925aa08f7254a2a1b3fe0633f25aced5ed045c0b3652133a5c5e4b6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 5,
+      "hasStructuralAnalysis": false
+    },
+    "main_side/realtime_scan/setup.py": {
+      "filePath": "main_side/realtime_scan/setup.py",
+      "contentHash": "467232ad4d15ac513c14fc2d93655db1dd2f7b13c8b2bd6a619366b0c2eaeca4",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "setuptools",
+          "specifiers": [
+            "find_packages",
+            "setup"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 31,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/nodes/__init__.py": {
+      "filePath": "main_side/robo_chef/nodes/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/nodes/cooking_core.py": {
+      "filePath": "main_side/robo_chef/nodes/cooking_core.py",
+      "contentHash": "9fc6544a1ad64110d371639678f8581743bb85d5857891e01580958e8f7e895d",
+      "functions": [
+        {
+          "name": "_status",
+          "params": [
+            "state",
+            "order_id",
+            "recipe_id",
+            "item_index",
+            "item_total",
+            "qty_index",
+            "qty_total",
+            "segment_name",
+            "segment_index",
+            "segment_total",
+            "error_msg"
+          ],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "run_jobs",
+          "params": [
+            "order_id",
+            "jobs",
+            "play_fn",
+            "emit_fn",
+            "seg_path"
+          ],
+          "exported": true,
+          "lineCount": 21
+        }
+      ],
+      "classes": [],
+      "imports": [],
+      "exports": [
+        "_status",
+        "run_jobs"
+      ],
+      "totalLines": 43,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/nodes/firebase_bridge.py": {
+      "filePath": "main_side/robo_chef/nodes/firebase_bridge.py",
+      "contentHash": "65a7d44633353658c38d44914f836254b13908b4546e7c01126de6f977ae8f81",
+      "functions": [
+        {
+          "name": "_resolve_cred_path",
+          "params": [],
+          "returnType": "str | None",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "_resolve_db_url",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_now",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "main",
+          "params": [
+            "args"
+          ],
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "FirebaseBridge",
+          "methods": [
+            "__init__",
+            "_recover_orphans",
+            "_on_orders_event",
+            "_try_dispatch_next",
+            "_on_status"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 124
+        }
+      ],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "rclpy.node",
+          "specifiers": [
+            "Node"
+          ]
+        },
+        {
+          "source": "std_msgs.msg",
+          "specifiers": [
+            "String"
+          ]
+        },
+        {
+          "source": "firebase_admin",
+          "specifiers": [
+            "firebase_admin"
+          ]
+        },
+        {
+          "source": "firebase_admin",
+          "specifiers": [
+            "credentials",
+            "db"
+          ]
+        },
+        {
+          "source": "order_core",
+          "specifiers": [
+            "oc"
+          ]
+        }
+      ],
+      "exports": [
+        "_resolve_cred_path",
+        "_resolve_db_url",
+        "FirebaseBridge",
+        "_now",
+        "main"
+      ],
+      "totalLines": 183,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/nodes/order_core.py": {
+      "filePath": "main_side/robo_chef/nodes/order_core.py",
+      "contentHash": "65293d039541d068262f7c37c470209a76bead5ccffe9438a22a80dbeef2ea45",
+      "functions": [
+        {
+          "name": "select_next_pending",
+          "params": [
+            "orders"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "build_jobs",
+          "params": [
+            "order"
+          ],
+          "returnType": "list",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "order_transition",
+          "params": [
+            "state"
+          ],
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "OrderError",
+          "methods": [],
+          "properties": [],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "imports": [],
+      "exports": [
+        "OrderError",
+        "select_next_pending",
+        "build_jobs",
+        "order_transition"
+      ],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/nodes/sequence_runner.py": {
+      "filePath": "main_side/robo_chef/nodes/sequence_runner.py",
+      "contentHash": "9b057d67f6fb4a9c6bdd8918d922144bae018353da364454b2c6133b126c8f87",
+      "functions": [
+        {
+          "name": "main",
+          "params": [
+            "args"
+          ],
+          "exported": true,
+          "lineCount": 22
+        }
+      ],
+      "classes": [
+        {
+          "name": "SequenceRunner",
+          "methods": [
+            "__init__",
+            "_init_gripper",
+            "init_dsr",
+            "_emit",
+            "_seg_path",
+            "_play",
+            "_missing_segments",
+            "_on_recipe",
+            "_on_unlock"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 114
+        }
+      ],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "DR_init",
+          "specifiers": [
+            "DR_init"
+          ]
+        },
+        {
+          "source": "rclpy.node",
+          "specifiers": [
+            "Node"
+          ]
+        },
+        {
+          "source": "rclpy.executors",
+          "specifiers": [
+            "MultiThreadedExecutor"
+          ]
+        },
+        {
+          "source": "std_msgs.msg",
+          "specifiers": [
+            "String"
+          ]
+        },
+        {
+          "source": "std_srvs.srv",
+          "specifiers": [
+            "Trigger"
+          ]
+        },
+        {
+          "source": "ros2_move_recoder.playback",
+          "specifiers": [
+            "play_segment"
+          ]
+        },
+        {
+          "source": "cooking_core",
+          "specifiers": [
+            "cc"
+          ]
+        }
+      ],
+      "exports": [
+        "SequenceRunner",
+        "main"
+      ],
+      "totalLines": 172,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/package.xml": {
+      "filePath": "main_side/robo_chef/package.xml",
+      "contentHash": "a926e0eb964112e62ac73c870902f92e6241a9c578e285d26601f6e1a41e6776",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 29,
+      "hasStructuralAnalysis": false
+    },
+    "main_side/robo_chef/README.md": {
+      "filePath": "main_side/robo_chef/README.md",
+      "contentHash": "07ed3641e4acf37c0f6320d9e054757df469e8efb48b23099e110f96582f96fd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 20,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/resource/robo_chef": {
+      "filePath": "main_side/robo_chef/resource/robo_chef",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": false
+    },
+    "main_side/robo_chef/setup.cfg": {
+      "filePath": "main_side/robo_chef/setup.cfg",
+      "contentHash": "89c23a201b110f0e85d2d241e64e2a9578a78f4e7804b4eeaa0be8b945f16e99",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 5,
+      "hasStructuralAnalysis": false
+    },
+    "main_side/robo_chef/setup.py": {
+      "filePath": "main_side/robo_chef/setup.py",
+      "contentHash": "d2ae9384f2fb3cc13875a9a219d41feacb72fd21b076c2c0ce5bca7322d4e6e2",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "setuptools",
+          "specifiers": [
+            "find_packages",
+            "setup"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 32,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/test/test_cooking_core.py": {
+      "filePath": "main_side/robo_chef/test/test_cooking_core.py",
+      "contentHash": "41dced38fa7df88bb01c5dc18157a9ad7e4e165e25eb87b0869ee08a9f29ae94",
+      "functions": [
+        {
+          "name": "test_run_jobs_emits_status_sequence_and_completes",
+          "params": [],
+          "exported": true,
+          "lineCount": 27
+        },
+        {
+          "name": "test_run_jobs_stops_on_failure_with_error_state",
+          "params": [],
+          "exported": true,
+          "lineCount": 14
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "cooking_core",
+          "specifiers": [
+            "cc"
+          ]
+        }
+      ],
+      "exports": [
+        "test_run_jobs_emits_status_sequence_and_completes",
+        "test_run_jobs_stops_on_failure_with_error_state"
+      ],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/test/test_copyright.py": {
+      "filePath": "main_side/robo_chef/test/test_copyright.py",
+      "contentHash": "ea71bbbc6247b5c14d176ed09f39ee274d563cc9b2ec355828ea451ceff31757",
+      "functions": [
+        {
+          "name": "test_copyright",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "ament_copyright.main",
+          "specifiers": [
+            "main"
+          ]
+        },
+        {
+          "source": "pytest",
+          "specifiers": [
+            "pytest"
+          ]
+        }
+      ],
+      "exports": [
+        "test_copyright"
+      ],
+      "totalLines": 26,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/test/test_flake8.py": {
+      "filePath": "main_side/robo_chef/test/test_flake8.py",
+      "contentHash": "37a813a0507f0ce51a2d0b57312d2cc078a0307a3ca85580ea801b0d2f9755d2",
+      "functions": [
+        {
+          "name": "test_flake8",
+          "params": [],
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "ament_flake8.main",
+          "specifiers": [
+            "main_with_errors"
+          ]
+        },
+        {
+          "source": "pytest",
+          "specifiers": [
+            "pytest"
+          ]
+        }
+      ],
+      "exports": [
+        "test_flake8"
+      ],
+      "totalLines": 26,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/test/test_order_core.py": {
+      "filePath": "main_side/robo_chef/test/test_order_core.py",
+      "contentHash": "ac16e4a9e9d0df6c1ebe5e82cef0482aacd67d97140e1b213e975b2c4caf22f8",
+      "functions": [
+        {
+          "name": "test_select_next_pending_fifo_by_order_time",
+          "params": [],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "test_select_next_pending_none_when_no_pending",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "test_build_jobs_expands_items_in_order_with_segments",
+          "params": [],
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "test_build_jobs_raises_when_segments_missing",
+          "params": [],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "test_status_transition_for_cooking_status",
+          "params": [],
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "order_core",
+          "specifiers": [
+            "oc"
+          ]
+        }
+      ],
+      "exports": [
+        "test_select_next_pending_fifo_by_order_time",
+        "test_select_next_pending_none_when_no_pending",
+        "test_build_jobs_expands_items_in_order_with_segments",
+        "test_build_jobs_raises_when_segments_missing",
+        "test_status_transition_for_cooking_status"
+      ],
+      "totalLines": 52,
+      "hasStructuralAnalysis": true
+    },
+    "main_side/robo_chef/test/test_pep257.py": {
+      "filePath": "main_side/robo_chef/test/test_pep257.py",
+      "contentHash": "e8b88d49ee296987b1b40069f81019b5fa09b1aa1bfee9a1faae45bb5cf53eda",
+      "functions": [
+        {
+          "name": "test_pep257",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "ament_pep257.main",
+          "specifiers": [
+            "main"
+          ]
+        },
+        {
+          "source": "pytest",
+          "specifiers": [
+            "pytest"
+          ]
+        }
+      ],
+      "exports": [
+        "test_pep257"
+      ],
+      "totalLines": 24,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/backend/app.py": {
+      "filePath": "sub1_side/web/backend/app.py",
+      "contentHash": "fab10e4a6c467fcacee60925ff9cbd7d80a293bb041218bbeb69b397a5f07af1",
+      "functions": [
+        {
+          "name": "startup",
+          "params": [],
+          "exported": true,
+          "lineCount": 21
+        },
+        {
+          "name": "list_recipes",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "get_recipe",
+          "params": [
+            "recipe_id"
+          ],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "create_recipe",
+          "params": [],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "list_orders",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "get_order",
+          "params": [
+            "order_id"
+          ],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "create_order",
+          "params": [],
+          "exported": true,
+          "lineCount": 28
+        },
+        {
+          "name": "update_order_status",
+          "params": [
+            "order_id"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "robot_state",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "get_robot_coords",
+          "params": [],
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "robot_stop",
+          "params": [],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "robot_home",
+          "params": [],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "set_autonomous",
+          "params": [],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "get_logs",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "add_log",
+          "params": [],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "health",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "ros2_status",
+          "params": [],
+          "exported": true,
+          "lineCount": 21
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "config",
+          "specifiers": [
+            "config"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "flask",
+          "specifiers": [
+            "Flask",
+            "jsonify",
+            "request",
+            "abort"
+          ]
+        },
+        {
+          "source": "flask_cors",
+          "specifiers": [
+            "CORS"
+          ]
+        },
+        {
+          "source": "firebase_client",
+          "specifiers": [
+            "fb"
+          ]
+        },
+        {
+          "source": "robot_bridge",
+          "specifiers": [
+            "rb"
+          ]
+        },
+        {
+          "source": "ros2_coord_client",
+          "specifiers": [
+            "coord_client"
+          ]
+        }
+      ],
+      "exports": [
+        "startup",
+        "list_recipes",
+        "get_recipe",
+        "create_recipe",
+        "list_orders",
+        "get_order",
+        "create_order",
+        "update_order_status",
+        "robot_state",
+        "get_robot_coords",
+        "robot_stop",
+        "robot_home",
+        "set_autonomous",
+        "get_logs",
+        "add_log",
+        "health",
+        "ros2_status"
+      ],
+      "totalLines": 251,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/backend/config.py": {
+      "filePath": "sub1_side/web/backend/config.py",
+      "contentHash": "85534684563c9e10924c18cba56e2b350cbf1ff4cbd8825424765e7bcaabbc5a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 41,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/backend/firebase_client.py": {
+      "filePath": "sub1_side/web/backend/firebase_client.py",
+      "contentHash": "38b1a3f38bc7d047e8b770ef07a1c3e5e8de5a9ef0fbfeb992e124090f233879",
+      "functions": [
+        {
+          "name": "_resolve_cred_path",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "_resolve_db_url",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "init",
+          "params": [],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "ref",
+          "params": [
+            "path"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "now_iso",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "get_all_recipes",
+          "params": [],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "get_recipe",
+          "params": [
+            "recipe_id"
+          ],
+          "returnType": "dict | None",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "upsert_recipe",
+          "params": [
+            "recipe_id",
+            "data"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "create_order",
+          "params": [
+            "items",
+            "total"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 43
+        },
+        {
+          "name": "prune_orders",
+          "params": [
+            "keep"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "update_order_status",
+          "params": [
+            "order_id",
+            "status",
+            "**kwargs"
+          ],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "get_orders",
+          "params": [
+            "limit"
+          ],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "get_order",
+          "params": [
+            "order_id"
+          ],
+          "returnType": "dict | None",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "update_robot_state",
+          "params": [
+            "state"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "get_robot_state",
+          "params": [],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "push_log",
+          "params": [
+            "level",
+            "message",
+            "source"
+          ],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "_prune_logs",
+          "params": [],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "get_recent_logs",
+          "params": [
+            "limit"
+          ],
+          "returnType": "list",
+          "exported": true,
+          "lineCount": 3
+        }
+      ],
+      "classes": [
+        {
+          "name": "RecipeNotSeededError",
+          "methods": [],
+          "properties": [],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "firebase_admin",
+          "specifiers": [
+            "firebase_admin"
+          ]
+        },
+        {
+          "source": "firebase_admin",
+          "specifiers": [
+            "credentials",
+            "db"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "uuid",
+          "specifiers": [
+            "uuid"
+          ]
+        },
+        {
+          "source": "config",
+          "specifiers": [
+            "config"
+          ]
+        }
+      ],
+      "exports": [
+        "_resolve_cred_path",
+        "_resolve_db_url",
+        "init",
+        "ref",
+        "now_iso",
+        "get_all_recipes",
+        "get_recipe",
+        "upsert_recipe",
+        "RecipeNotSeededError",
+        "create_order",
+        "prune_orders",
+        "update_order_status",
+        "get_orders",
+        "get_order",
+        "update_robot_state",
+        "get_robot_state",
+        "push_log",
+        "_prune_logs",
+        "get_recent_logs"
+      ],
+      "totalLines": 173,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/backend/fk_m0609.py": {
+      "filePath": "sub1_side/web/backend/fk_m0609.py",
+      "contentHash": "8df2fc2dfda9bba29514638c673b389a97c9f95c55f238fe491e80d967f17a39",
+      "functions": [
+        {
+          "name": "_mat_mul",
+          "params": [
+            "A",
+            "B"
+          ],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "_origin",
+          "params": [
+            "rpy",
+            "xyz"
+          ],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "_rotz",
+          "params": [
+            "theta"
+          ],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "compute_tcp_from_joint",
+          "params": [
+            "joint_deg"
+          ],
+          "exported": true,
+          "lineCount": 27
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "math",
+          "specifiers": [
+            "math"
+          ]
+        }
+      ],
+      "exports": [
+        "_mat_mul",
+        "_origin",
+        "_rotz",
+        "compute_tcp_from_joint"
+      ],
+      "totalLines": 102,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/backend/fk_worker.py": {
+      "filePath": "sub1_side/web/backend/fk_worker.py",
+      "contentHash": "23c2973609727df9e48ccf48d7e23813f977867b309c72f74da6f95fd55ae8c5",
+      "functions": [
+        {
+          "name": "_resolve_cred",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "_resolve_db_url",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_init_firebase",
+          "params": [],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "_round",
+          "params": [
+            "d"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "run",
+          "params": [],
+          "exported": true,
+          "lineCount": 39
+        },
+        {
+          "name": "start_fk_worker_thread",
+          "params": [],
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "firebase_admin",
+          "specifiers": [
+            "firebase_admin"
+          ]
+        },
+        {
+          "source": "firebase_admin",
+          "specifiers": [
+            "credentials",
+            "db"
+          ]
+        },
+        {
+          "source": "fk_m0609",
+          "specifiers": [
+            "compute_tcp_from_joint"
+          ]
+        }
+      ],
+      "exports": [
+        "_resolve_cred",
+        "_resolve_db_url",
+        "_init_firebase",
+        "_round",
+        "run",
+        "start_fk_worker_thread"
+      ],
+      "totalLines": 116,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/backend/recipe_seeder.py": {
+      "filePath": "sub1_side/web/backend/recipe_seeder.py",
+      "contentHash": "43ecbba52b7c95018efc0f4364f942efd9a9acd33f673b4d83227f5c6b7ebcc4",
+      "functions": [
+        {
+          "name": "seed",
+          "params": [],
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "firebase_client",
+          "specifiers": [
+            "fb"
+          ]
+        }
+      ],
+      "exports": [
+        "seed"
+      ],
+      "totalLines": 136,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/backend/requirements.txt": {
+      "filePath": "sub1_side/web/backend/requirements.txt",
+      "contentHash": "d11a4ce7bca08d5be51fa254803d30ba3a372c85dfd53d30ad1dfcb1bb2bdc98",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": false
+    },
+    "sub1_side/web/backend/robot_bridge.py": {
+      "filePath": "sub1_side/web/backend/robot_bridge.py",
+      "contentHash": "e69f6ea6f60210f6b0ee7ffa21385bc3d8102083ac5c25ead95241852e082818",
+      "functions": [
+        {
+          "name": "_spin_worker",
+          "params": [],
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "start",
+          "params": [],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "_call",
+          "params": [
+            "cli",
+            "req",
+            "timeout"
+          ],
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "stop_robot",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "move_joint",
+          "params": [
+            "positions",
+            "vel",
+            "acc",
+            "time_sec",
+            "sync"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 20
+        },
+        {
+          "name": "set_robot_mode_autonomous",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "start_state_monitor",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "stop_state_monitor",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "rclpy",
+          "specifiers": [
+            "rclpy"
+          ]
+        },
+        {
+          "source": "rclpy.node",
+          "specifiers": [
+            "Node"
+          ]
+        },
+        {
+          "source": "dsr_msgs2.srv",
+          "specifiers": [
+            "MoveStop",
+            "MoveJoint",
+            "SetRobotMode"
+          ]
+        },
+        {
+          "source": "config",
+          "specifiers": [
+            "config"
+          ]
+        },
+        {
+          "source": "firebase_client",
+          "specifiers": [
+            "fb"
+          ]
+        }
+      ],
+      "exports": [
+        "_spin_worker",
+        "start",
+        "_call",
+        "stop_robot",
+        "move_joint",
+        "set_robot_mode_autonomous",
+        "start_state_monitor",
+        "stop_state_monitor"
+      ],
+      "totalLines": 135,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/backend/ros2_coord_client.py": {
+      "filePath": "sub1_side/web/backend/ros2_coord_client.py",
+      "contentHash": "24897f779f57ca8989a859768bc4ae4e07749e5c110283c622ebb63fe3423c85",
+      "functions": [
+        {
+          "name": "_spin_worker",
+          "params": [],
+          "exported": true,
+          "lineCount": 43
+        },
+        {
+          "name": "start",
+          "params": [],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "get_coords",
+          "params": [
+            "timeout"
+          ],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 15
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        }
+      ],
+      "exports": [
+        "_spin_worker",
+        "start",
+        "get_coords"
+      ],
+      "totalLines": 99,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/backend/ros2_pub_once.py": {
+      "filePath": "sub1_side/web/backend/ros2_pub_once.py",
+      "contentHash": "b14942968a989d7a4b9563a39e6cdc5782bbb035e3eb3ecbcc8883894dfaf3b1",
+      "functions": [
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 36
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        }
+      ],
+      "exports": [
+        "main"
+      ],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/panel/admin_monitor/firebase_config.js": {
+      "filePath": "sub1_side/web/panel/admin_monitor/firebase_config.js",
+      "contentHash": "6f697a3e47f8fb3f5d5738ee6c0391ac691c82a47e987f19dda8080be6b75236",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 16,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/panel/admin_monitor/index.html": {
+      "filePath": "sub1_side/web/panel/admin_monitor/index.html",
+      "contentHash": "3ee7eae69c041de04a584e35db5fda4d4718401b33f91053d1f87b7efc94737c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2349,
+      "hasStructuralAnalysis": false
+    },
+    "sub1_side/web/panel/customer_status/firebase_config.js": {
+      "filePath": "sub1_side/web/panel/customer_status/firebase_config.js",
+      "contentHash": "6f697a3e47f8fb3f5d5738ee6c0391ac691c82a47e987f19dda8080be6b75236",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 16,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/panel/customer_status/index.html": {
+      "filePath": "sub1_side/web/panel/customer_status/index.html",
+      "contentHash": "94853a25f80c4cdf42698af1057b6e2c3e88a7457e84a77a89b4d1bb7dfcf61b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2382,
+      "hasStructuralAnalysis": false
+    },
+    "sub1_side/web/panel/firebase_config.js": {
+      "filePath": "sub1_side/web/panel/firebase_config.js",
+      "contentHash": "6f697a3e47f8fb3f5d5738ee6c0391ac691c82a47e987f19dda8080be6b75236",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 16,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/panel/kiosk/firebase_config.js": {
+      "filePath": "sub1_side/web/panel/kiosk/firebase_config.js",
+      "contentHash": "6f697a3e47f8fb3f5d5738ee6c0391ac691c82a47e987f19dda8080be6b75236",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 16,
+      "hasStructuralAnalysis": true
+    },
+    "sub1_side/web/panel/kiosk/images/ramen.webp": {
+      "filePath": "sub1_side/web/panel/kiosk/images/ramen.webp",
+      "contentHash": "9d565af7607b558c12806730f286d63204737a7dbd30423fcdbe17421382825c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1837,
+      "hasStructuralAnalysis": false
+    },
+    "sub1_side/web/panel/kiosk/images/steak.webp": {
+      "filePath": "sub1_side/web/panel/kiosk/images/steak.webp",
+      "contentHash": "869a906e6984fac367acaae11c4cf9ea41dff306a941a7668355b4a90345a95e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 107,
+      "hasStructuralAnalysis": false
+    },
+    "sub1_side/web/panel/kiosk/index.html": {
+      "filePath": "sub1_side/web/panel/kiosk/index.html",
+      "contentHash": "8acee15e9dda6b6450647187e01f315c05c070f96ded92c9a9c6a968547ce71a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1760,
+      "hasStructuralAnalysis": false
+    },
+    "sub1_side/web/start_all.sh": {
+      "filePath": "sub1_side/web/start_all.sh",
+      "contentHash": "d1dd1cc7118d633d9c4dafc9edec7c2e36bb27020aef9922b0991528eb04b061",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 72,
+      "hasStructuralAnalysis": true
+    }
+  }
+}

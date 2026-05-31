@@ -228,6 +228,9 @@ class BringupManager:
         if mode == "skip":
             self.mode = "external"
             return
+        # 이전 proc 가 남아있으면 leak 방지를 위해 먼저 정리
+        if self.proc and self.proc.poll() is None:
+            self.shutdown()
         host = self.HOST_BY_MODE.get(mode, "127.0.0.1")
         cmd = [
             "ros2", "launch", "dsr_bringup2", "dsr_bringup2_rviz.launch.py",
@@ -244,15 +247,35 @@ class BringupManager:
         self.mode = mode
 
     def shutdown(self):
-        if self.proc and self.proc.poll() is None:
-            try:
-                os.killpg(os.getpgid(self.proc.pid), signal.SIGINT)
-                self.proc.wait(timeout=5)
-            except Exception:
-                try:
-                    os.killpg(os.getpgid(self.proc.pid), signal.SIGKILL)
-                except Exception:
-                    pass
+        """SIGINT → wait(5s) → SIGKILL → wait(2s, reap) 의 3-단 종료.
+        마지막 wait 까지 해야 좀비(<defunct>) 가 남지 않는다."""
+        if not self.proc or self.proc.poll() is not None:
+            return
+        try:
+            pgid = os.getpgid(self.proc.pid)
+        except ProcessLookupError:
+            return
+
+        try:
+            os.killpg(pgid, signal.SIGINT)
+            self.proc.wait(timeout=5)
+            return
+        except subprocess.TimeoutExpired:
+            pass
+        except Exception:
+            pass
+
+        # graceful 실패 → 강제 종료 + reap
+        try:
+            os.killpg(pgid, signal.SIGKILL)
+        except ProcessLookupError:
+            return
+        except Exception:
+            pass
+        try:
+            self.proc.wait(timeout=2)
+        except Exception:
+            pass
 
 
 # ════════════════════════════════════════════════════════════════════

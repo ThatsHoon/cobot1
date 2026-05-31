@@ -7,12 +7,18 @@ import os
 import sys
 import subprocess
 
+import config
+# rclpy 가 import 되기 전에 ROS_DOMAIN_ID 를 강제 주입.
+# (호스트 ~/.bashrc 가 다른 도메인을 export 해도 main_side 와 통신 가능하도록.)
+os.environ["ROS_DOMAIN_ID"] = str(config.ROS2_DOMAIN_ID)
+
+import rclpy
+
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 
 import firebase_client as fb
 import robot_bridge as rb
-import config
 import ros2_coord_client as coord_client
 
 
@@ -36,8 +42,12 @@ def startup():
         "joint_positions": [0, 0, 90, 0, 90, 0],
         "tcp_position":   {"x": 0, "y": 0, "z": 0, "rx": 0, "ry": 0, "rz": 0},
     })
-    rb.start_state_monitor()
-    coord_client.start()   # 영속 ROS2 서비스 클라이언트 시작
+    # rclpy.init() 은 프로세스 1회만 호출. 이후 robot_bridge / ros2_coord_client
+    # 백그라운드 노드들은 같은 context 를 공유한다.
+    if not rclpy.ok():
+        rclpy.init()
+    coord_client.start()   # /robo_chef/coords 영속 구독 노드
+    rb.start()             # 명령 클라이언트 노드 (stop/move/mode)
     # 주문 처리는 메인노드 firebase_bridge 가 RTDB /orders(pending) 감시 후 전담
 
 
@@ -88,16 +98,32 @@ def get_order(order_id):
 
 @app.route("/api/orders", methods=["POST"])
 def create_order():
+    """주문 생성 단일 경로. kiosk 가 보내는 페이로드: {items: [{recipe_id, qty, name,
+    price, subtotal}], total}. backend 가 /recipes/<id>.segments 를 lookup 해서
+    /orders/<id>.recipe_data 에 채워 넣는다. recipe_id 유효성/segments 시드 검증도
+    여기서 일괄 처리 — 클라이언트는 Firebase 에 직접 write 하지 않는다."""
     data = request.get_json(force=True)
-    recipe_id = data.get("recipe_id")
-    items     = data.get("items", [])
-    total     = data.get("total", 0)
-    if not recipe_id:
-        abort(400, "recipe_id required")
-    order_id = fb.create_order(recipe_id, items, total)
+    items = data.get("items", []) or []
+    total = int(data.get("total", 0))
+    if not isinstance(items, list) or not items:
+        abort(400, "items (list) required")
+    for it in items:
+        if not isinstance(it, dict):
+            abort(400, "each item must be an object")
+        if not it.get("recipe_id"):
+            abort(400, "item.recipe_id required")
+        qty = it.get("qty", 1)
+        if not isinstance(qty, int) or qty < 1:
+            abort(400, f"item.qty must be positive int (got {qty!r})")
+    try:
+        order_id = fb.create_order(items, total)
+    except fb.RecipeNotSeededError as e:
+        abort(400, str(e))
+    except ValueError as e:
+        abort(400, str(e))
     fb.push_log("INFO", f"새 주문 접수: {order_id}", source="kiosk")
+    fb.prune_orders(keep=10)
     # 조리 트리거는 메인노드 firebase_bridge 가 RTDB /orders 감시로 전담(웹 발행 없음)
-
     return jsonify({"ok": True, "order_id": order_id}), 201
 
 
@@ -188,8 +214,7 @@ def health():
 
 @app.route("/api/ros2/status", methods=["GET"])
 def ros2_status():
-    """ROS2 토픽 설정 및 상태 반환."""
-    import subprocess, os
+    """ROS2 토픽 설정 및 상태 반환 (관리자 진단용)."""
     env = os.environ.copy()
     env["ROS_DOMAIN_ID"] = str(config.ROS2_DOMAIN_ID)
     # 토픽 목록 확인 (타임아웃 2초)

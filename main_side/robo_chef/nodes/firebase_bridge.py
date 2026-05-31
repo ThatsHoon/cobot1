@@ -3,6 +3,7 @@
 
 order_count 방식 폐기. 동시 1건(busy), order_time FIFO.
 """
+import os
 import json
 import datetime
 import threading
@@ -15,8 +16,28 @@ from firebase_admin import credentials, db
 
 import order_core as oc
 
-CRED_PATH = "/home/kibeom/cobot_ws/src/robo_chef/config/serviceAccountKey.json"
-DB_URL = "https://robochef-5d9b6-default-rtdb.asia-southeast1.firebasedatabase.app"
+# Firebase 자격증명 해석 순서: FIREBASE_CRED_PATH 환경변수 → 후보 리스트.
+# 워크스페이스 위치/사용자 디렉토리가 PC 마다 다르므로 하드코딩을 피한다.
+DB_URL_DEFAULT = "https://robochef-5d9b6-default-rtdb.asia-southeast1.firebasedatabase.app"
+CRED_CANDIDATES = [
+    os.path.expanduser("~/.config/cobot1/firebase-key.json"),
+    os.path.expanduser("~/cobot_ws/src/cobot1/main_side/robo_chef/config/serviceAccountKey.json"),
+    os.path.expanduser("~/cobot_ws/src/robo_chef/config/serviceAccountKey.json"),
+]
+
+
+def _resolve_cred_path() -> str | None:
+    env = os.environ.get("FIREBASE_CRED_PATH")
+    if env and os.path.exists(env):
+        return env
+    for p in CRED_CANDIDATES:
+        if os.path.exists(p):
+            return p
+    return None
+
+
+def _resolve_db_url() -> str:
+    return os.environ.get("FIREBASE_DB_URL", DB_URL_DEFAULT)
 
 
 class FirebaseBridge(Node):
@@ -28,17 +49,50 @@ class FirebaseBridge(Node):
         self._busy = False
         self._cur_order = None
         self._lock = threading.Lock()
-        try:
-            cred = credentials.Certificate(CRED_PATH)
-            firebase_admin.initialize_app(cred, {"databaseURL": DB_URL})
-            self.get_logger().info("✅ Firebase Connected")
-        except Exception as e:  # noqa: BLE001
-            self.get_logger().error(f"❌ Firebase init 실패: {e}")
+        cred_path = _resolve_cred_path()
+        db_url = _resolve_db_url()
+        if not cred_path:
+            self.get_logger().error(
+                "❌ Firebase 자격증명 없음 — FIREBASE_CRED_PATH 환경변수 또는 "
+                f"후보 경로 중 하나 필요: {CRED_CANDIDATES}")
+        else:
+            try:
+                cred = credentials.Certificate(cred_path)
+                firebase_admin.initialize_app(cred, {"databaseURL": db_url})
+                self.get_logger().info(
+                    f"✅ Firebase Connected (cred={cred_path})")
+            except Exception as e:  # noqa: BLE001
+                self.get_logger().error(f"❌ Firebase init 실패: {e}")
         self.orders_ref = db.reference("orders")
         self.status_ref = db.reference("robot_status")
         self.log_ref = db.reference("error_logs")
+        # 노드 재기동 직후, 이전 인스턴스가 cooking 중 죽어 남긴 orphan 정리.
+        # in-memory _cur_order 가 비어있으면 어떤 cooking 주문도 우리 것이 아님 →
+        # status=failed 로 명시 종결해 RTDB 가 영구 "cooking" 으로 잠기는 일을 막는다.
+        self._recover_orphans()
         self._try_dispatch_next()                      # 기동 시 1회 스캔
         self.orders_ref.listen(self._on_orders_event)  # 이후 실시간
+
+    def _recover_orphans(self):
+        try:
+            orders = self.orders_ref.get() or {}
+        except Exception as e:  # noqa: BLE001
+            self.get_logger().warn(f"orphan recovery 스킵 (fetch 실패): {e}")
+            return
+        recovered = 0
+        for oid, o in orders.items():
+            if not isinstance(o, dict):
+                continue
+            if o.get("status") == "cooking":
+                db.reference(f"orders/{oid}").update({
+                    "status": "failed",
+                    "failed_reason": "bridge restart — orphaned cooking order",
+                    "completed_at": _now(),
+                })
+                recovered += 1
+        if recovered:
+            self.get_logger().warn(
+                f"⚠ orphan cooking 주문 {recovered} 건 → failed 로 정리 (재기동 복구)")
 
     # ---- 주문 인지/디스패치 ----
     def _on_orders_event(self, event):
@@ -65,7 +119,18 @@ class FirebaseBridge(Node):
                 {"status": "cooking", "started_at": _now()})
             msg = String()
             msg.data = json.dumps({"order_id": oid, "jobs": jobs})
-            self.recipe_pub.publish(msg)
+            try:
+                self.recipe_pub.publish(msg)
+            except Exception as e:  # noqa: BLE001
+                # publish 실패 = 디스패치 미완료. RTDB 의 cooking 표기를 되돌리고
+                # busy 해제해서 다음 시도가 같은 주문(또는 다음 주문)을 픽업하게 한다.
+                self.get_logger().error(
+                    f"❌ /recipe publish 실패 → 주문 {oid} pending 으로 복귀: {e}")
+                db.reference(f"orders/{oid}").update(
+                    {"status": "pending", "started_at": None})
+                self._busy = False
+                self._cur_order = None
+                return
             self.get_logger().info(f"▶️ 주문 {oid} 디스패치 ({len(jobs)} jobs)")
 
     # ---- 상태 수신 ----
@@ -75,6 +140,10 @@ class FirebaseBridge(Node):
         except Exception as e:  # noqa: BLE001
             self.get_logger().error(f"잘못된 /cooking_status: {e}")
             return
+        # 패널 (customer_status, admin_monitor) 가 stale 검출에 사용.
+        # cooking_core 가 emit 시점에 채우지 않고 RTDB 직전 단계에서 부여 — 네트워크
+        # 시각이 아니라 메시지 발행 시각을 단일 출처로 유지.
+        st["last_updated"] = _now()
         self.status_ref.set(st)
         new_status, release = oc.order_transition(st.get("state", ""))
         oid = st.get("order_id") or self._cur_order

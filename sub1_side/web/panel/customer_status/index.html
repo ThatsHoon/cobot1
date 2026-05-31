@@ -1980,12 +1980,15 @@ function updateProgress() {
 //     5 = 준비 완료 (phase=finished 유지)
 //
 //  상태 파생 규칙:
-//   A. /robot_status (신 스키마, sequence_runner) — segment 단위 진행
+//   A. /robot_status (신 스키마, sequence_runner) — segment 단위 진행 (main_side 발행)
 //        state == 'IDLE'      → _onPhase('ready')
 //        state == 'EXECUTING' → _renderProgress (segment_index/total)
 //        state == 'DONE'      → _renderDone (done 오버레이)
 //        state == 'ERROR*'    → _onPhase('error')
-//   B. /phase — 'ready' / 'error' 제어 신호 (취소·긴급 복구 등)
+//   B. /phase — 'ready' / 'error' 제어 신호 (이 패널 + 키오스크 자체용 — main_side 무관)
+//        confirmCancel() 같은 사용자 조작이 'ready' 를 발행해 양쪽 패널의 상태 시퀀스
+//        (대기 → 조리 → 서빙 → 완료) 를 리셋한다. main_side firebase_bridge 는 /phase
+//        를 발행하지 않는다 — 실제 조리 진행은 /robot_status 단독으로 충분.
 //        'ready' → 즉시 WAITING(-1)
 //        'error' → 에러 오버레이 후 3s 뒤 키오스크 복귀
 //

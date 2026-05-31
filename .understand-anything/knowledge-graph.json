@@ -1,0 +1,4776 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "cobot1",
+    "languages": [
+      "css",
+      "html",
+      "javascript",
+      "markdown",
+      "python",
+      "shell",
+      "xml"
+    ],
+    "frameworks": [
+      "Flask",
+      "firebase-admin"
+    ],
+    "description": "ROS 2 Humble workspace for a kiosk-driven ramen and steak cooking robot. A Flask + Firebase RTDB front-end (kiosk, customer status, admin monitor) dispatches orders to a Doosan m0609 arm through a firebase_bridge → sequence_runner pipeline that replays prerecorded motion segments via ros2_move_recoder.",
+    "analyzedAt": "2026-05-31T12:43:28Z",
+    "gitCommitHash": "4de1e74fc9e3d61834800800543a84329523b909"
+  },
+  "nodes": [
+    {
+      "id": "file:sub1_side/web/backend/app.py",
+      "type": "file",
+      "name": "app.py",
+      "filePath": "sub1_side/web/backend/app.py",
+      "summary": "Flask REST API entry point for the kiosk sub-node, exposing endpoints for recipes, orders, robot control, logs, and ROS 2 status; bootstraps Firebase, rclpy, the robot bridge, and the coordinate subscriber on startup.",
+      "tags": [
+        "entry-point",
+        "api-handler",
+        "flask",
+        "rest-api",
+        "bootstrap"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Combines a Flask app factory (with @app.before_request startup) with ROS 2 rclpy initialization, wrapping long-running robot/coordinate clients in background threads."
+    },
+    {
+      "id": "file:sub1_side/web/backend/config.py",
+      "type": "file",
+      "name": "config.py",
+      "filePath": "sub1_side/web/backend/config.py",
+      "summary": "Module-level constants holding Firebase credentials, Flask host/port, ROS 2 domain/namespace, and order topic conventions used as the single source of truth across the backend.",
+      "tags": [
+        "configuration",
+        "constants",
+        "firebase",
+        "ros2"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Treated as code (module of constants) rather than a config file because it is imported as a Python module by sibling backend files."
+    },
+    {
+      "id": "file:sub1_side/web/backend/firebase_client.py",
+      "type": "file",
+      "name": "firebase_client.py",
+      "filePath": "sub1_side/web/backend/firebase_client.py",
+      "summary": "Thin wrapper around firebase_admin Realtime Database providing recipe, order, robot-state, and log CRUD helpers with pruning policies and credential resolution.",
+      "tags": [
+        "data-access",
+        "firebase",
+        "service",
+        "realtime-database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:sub1_side/web/backend/recipe_seeder.py",
+      "type": "file",
+      "name": "recipe_seeder.py",
+      "filePath": "sub1_side/web/backend/recipe_seeder.py",
+      "summary": "One-shot CLI utility that initializes Firebase and upserts the canonical RAMEN/STEAK recipe sequences into the /recipes node of the Realtime Database.",
+      "tags": [
+        "script",
+        "seed",
+        "firebase",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sub1_side/web/backend/robot_bridge.py",
+      "type": "file",
+      "name": "robot_bridge.py",
+      "filePath": "sub1_side/web/backend/robot_bridge.py",
+      "summary": "rclpy-backed bridge that creates ROS 2 service clients for MoveJoint, MoveStop, and SetRobotMode, runs a background spin thread, and exposes synchronous helpers used by the Flask API.",
+      "tags": [
+        "service",
+        "ros2",
+        "bridge",
+        "robot-control"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses module-level state (_node, _spin_thread, _ready Event) so the Flask process owns a single shared rclpy node across HTTP workers."
+    },
+    {
+      "id": "file:sub1_side/web/backend/ros2_coord_client.py",
+      "type": "file",
+      "name": "ros2_coord_client.py",
+      "filePath": "sub1_side/web/backend/ros2_coord_client.py",
+      "summary": "Background ROS 2 subscriber that listens on a coordinate JSON topic from the main robot PC, caches the latest pose, and exposes a thread-safe get_coords helper for the Flask API.",
+      "tags": [
+        "service",
+        "ros2",
+        "subscriber",
+        "robot-state"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sub1_side/web/backend/app.py:startup",
+      "type": "function",
+      "name": "startup",
+      "filePath": "sub1_side/web/backend/app.py",
+      "lineRange": [
+        31,
+        51
+      ],
+      "summary": "before_request hook that initializes Firebase, forces the ROS_DOMAIN_ID env var, calls rclpy.init, and starts the coordinate client and robot bridge exactly once.",
+      "tags": [
+        "bootstrap",
+        "initialization",
+        "entry-point"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sub1_side/web/backend/app.py:create_order",
+      "type": "function",
+      "name": "create_order",
+      "filePath": "sub1_side/web/backend/app.py",
+      "lineRange": [
+        100,
+        127
+      ],
+      "summary": "POST /orders handler that validates incoming items and total, creates an order in Firebase, logs the event, and prunes old orders.",
+      "tags": [
+        "api-handler",
+        "validation",
+        "orders"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sub1_side/web/backend/app.py:get_robot_coords",
+      "type": "function",
+      "name": "get_robot_coords",
+      "filePath": "sub1_side/web/backend/app.py",
+      "lineRange": [
+        148,
+        159
+      ],
+      "summary": "GET /robot/coords handler that returns the latest cached coordinates from the ROS 2 coord client, or 503 when no message has been received yet.",
+      "tags": [
+        "api-handler",
+        "robot-state",
+        "ros2"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/app.py:robot_home",
+      "type": "function",
+      "name": "robot_home",
+      "filePath": "sub1_side/web/backend/app.py",
+      "lineRange": [
+        170,
+        176
+      ],
+      "summary": "POST /robot/home handler that dispatches a MoveJoint to the home pose on a daemon thread so the HTTP response is not blocked by the robot motion.",
+      "tags": [
+        "api-handler",
+        "robot-control",
+        "async"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/app.py:ros2_status",
+      "type": "function",
+      "name": "ros2_status",
+      "filePath": "sub1_side/web/backend/app.py",
+      "lineRange": [
+        216,
+        236
+      ],
+      "summary": "GET /ros2/status handler that shells out to `ros2 topic list` with the configured DOMAIN_ID and returns the discovered topics for diagnostics.",
+      "tags": [
+        "api-handler",
+        "diagnostics",
+        "ros2"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sub1_side/web/backend/firebase_client.py:init",
+      "type": "function",
+      "name": "init",
+      "filePath": "sub1_side/web/backend/firebase_client.py",
+      "lineRange": [
+        27,
+        33
+      ],
+      "summary": "Idempotent Firebase Admin SDK initialization that resolves credentials and the RTDB URL from environment variables or config defaults.",
+      "tags": [
+        "initialization",
+        "firebase"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/firebase_client.py:create_order",
+      "type": "function",
+      "name": "create_order",
+      "filePath": "sub1_side/web/backend/firebase_client.py",
+      "lineRange": [
+        64,
+        106
+      ],
+      "summary": "Validates each item against its seeded recipe, resolves recipe_ids and sequences, then writes a UUID-stamped order document to /orders.",
+      "tags": [
+        "data-access",
+        "validation",
+        "orders"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:sub1_side/web/backend/firebase_client.py:prune_orders",
+      "type": "function",
+      "name": "prune_orders",
+      "filePath": "sub1_side/web/backend/firebase_client.py",
+      "lineRange": [
+        109,
+        115
+      ],
+      "summary": "Retains only the most recent `keep` orders by lexicographic key and deletes the older entries to bound the /orders node size.",
+      "tags": [
+        "data-access",
+        "cleanup",
+        "orders"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/firebase_client.py:get_orders",
+      "type": "function",
+      "name": "get_orders",
+      "filePath": "sub1_side/web/backend/firebase_client.py",
+      "lineRange": [
+        123,
+        131
+      ],
+      "summary": "Returns the most recent orders sorted by created_at, capped to the limit and returned as a dict.",
+      "tags": [
+        "data-access",
+        "query",
+        "orders"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/firebase_client.py:push_log",
+      "type": "function",
+      "name": "push_log",
+      "filePath": "sub1_side/web/backend/firebase_client.py",
+      "lineRange": [
+        150,
+        159
+      ],
+      "summary": "Appends a structured log entry with level/message/source under a UUID key and triggers log pruning after each write.",
+      "tags": [
+        "logging",
+        "data-access"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/firebase_client.py:_prune_logs",
+      "type": "function",
+      "name": "_prune_logs",
+      "filePath": "sub1_side/web/backend/firebase_client.py",
+      "lineRange": [
+        162,
+        167
+      ],
+      "summary": "Drops the oldest log entries when /logs exceeds MAX_LOG_ENTRIES so the RTDB does not grow unbounded.",
+      "tags": [
+        "logging",
+        "cleanup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:sub1_side/web/backend/firebase_client.py:RecipeNotSeededError",
+      "type": "class",
+      "name": "RecipeNotSeededError",
+      "filePath": "sub1_side/web/backend/firebase_client.py",
+      "lineRange": [
+        60,
+        61
+      ],
+      "summary": "Domain exception raised when an ordered recipe is missing from the seeded /recipes RTDB node.",
+      "tags": [
+        "exception",
+        "domain-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/recipe_seeder.py:seed",
+      "type": "function",
+      "name": "seed",
+      "filePath": "sub1_side/web/backend/recipe_seeder.py",
+      "lineRange": [
+        123,
+        131
+      ],
+      "summary": "Initializes Firebase and upserts each predefined recipe (RAMEN, STEAK, etc.) into the /recipes node, printing progress for the operator.",
+      "tags": [
+        "seed",
+        "initialization",
+        "script"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/robot_bridge.py:_spin_worker",
+      "type": "function",
+      "name": "_spin_worker",
+      "filePath": "sub1_side/web/backend/robot_bridge.py",
+      "lineRange": [
+        35,
+        53
+      ],
+      "summary": "Background-thread entry point that creates the rclpy node, instantiates MoveJoint/MoveStop/SetRobotMode service clients, and spins the executor until shutdown.",
+      "tags": [
+        "ros2",
+        "thread",
+        "executor"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sub1_side/web/backend/robot_bridge.py:start",
+      "type": "function",
+      "name": "start",
+      "filePath": "sub1_side/web/backend/robot_bridge.py",
+      "lineRange": [
+        56,
+        65
+      ],
+      "summary": "Idempotently launches the daemon spin thread and blocks until the ROS 2 node and clients are ready.",
+      "tags": [
+        "lifecycle",
+        "initialization",
+        "ros2"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/robot_bridge.py:_call",
+      "type": "function",
+      "name": "_call",
+      "filePath": "sub1_side/web/backend/robot_bridge.py",
+      "lineRange": [
+        68,
+        79
+      ],
+      "summary": "Generic helper that awaits a ROS 2 service to be available, sends an async request, and polls for completion within a timeout.",
+      "tags": [
+        "ros2",
+        "service-call",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sub1_side/web/backend/robot_bridge.py:stop_robot",
+      "type": "function",
+      "name": "stop_robot",
+      "filePath": "sub1_side/web/backend/robot_bridge.py",
+      "lineRange": [
+        84,
+        91
+      ],
+      "summary": "Issues a MoveStop service request to the Doosan controller and logs the success/failure to Firebase.",
+      "tags": [
+        "robot-control",
+        "ros2",
+        "safety"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/robot_bridge.py:move_joint",
+      "type": "function",
+      "name": "move_joint",
+      "filePath": "sub1_side/web/backend/robot_bridge.py",
+      "lineRange": [
+        94,
+        113
+      ],
+      "summary": "Builds a MoveJoint request with the supplied 6-joint positions, velocity/acceleration, and sync mode, invokes the service, and pushes the result log.",
+      "tags": [
+        "robot-control",
+        "ros2",
+        "motion"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sub1_side/web/backend/robot_bridge.py:set_robot_mode_autonomous",
+      "type": "function",
+      "name": "set_robot_mode_autonomous",
+      "filePath": "sub1_side/web/backend/robot_bridge.py",
+      "lineRange": [
+        116,
+        121
+      ],
+      "summary": "Calls SetRobotMode to switch the Doosan arm into autonomous mode and returns the boolean success flag.",
+      "tags": [
+        "robot-control",
+        "ros2",
+        "mode"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/ros2_coord_client.py:_spin_worker",
+      "type": "function",
+      "name": "_spin_worker",
+      "filePath": "sub1_side/web/backend/ros2_coord_client.py",
+      "lineRange": [
+        28,
+        70
+      ],
+      "summary": "Background thread that creates a ROS 2 node, subscribes to the coordinate topic, parses JSON messages into a shared cache, and drives a SingleThreadedExecutor.",
+      "tags": [
+        "ros2",
+        "subscriber",
+        "thread"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sub1_side/web/backend/ros2_coord_client.py:start",
+      "type": "function",
+      "name": "start",
+      "filePath": "sub1_side/web/backend/ros2_coord_client.py",
+      "lineRange": [
+        73,
+        81
+      ],
+      "summary": "Idempotently launches the spin worker thread so a single subscriber persists for the lifetime of the Flask process.",
+      "tags": [
+        "lifecycle",
+        "ros2",
+        "initialization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/ros2_coord_client.py:get_coords",
+      "type": "function",
+      "name": "get_coords",
+      "filePath": "sub1_side/web/backend/ros2_coord_client.py",
+      "lineRange": [
+        84,
+        98
+      ],
+      "summary": "Returns the latest cached coordinates, optionally waiting up to a timeout for the first message to arrive.",
+      "tags": [
+        "robot-state",
+        "query",
+        "ros2"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+      "type": "file",
+      "name": "dualsense_worker.py",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+      "summary": "QThread-style worker that drives a PlayStation DualSense controller via pygame, emitting Qt signals for jog motion, mode toggles, gripper commands, and connection state.",
+      "tags": [
+        "worker",
+        "qthread",
+        "input-device",
+        "jog-control",
+        "pyqt"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses pygame.joystick event-driven loop running in a daemon thread, with Qt signals to marshal updates back to the GUI thread."
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py:DualSenseWorker",
+      "type": "class",
+      "name": "DualSenseWorker",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+      "lineRange": [
+        84,
+        618
+      ],
+      "summary": "Background thread that polls a DualSense controller, mapping axis/button input to jog requests, mode toggles, gripper open/close, e-stop, home, and record events via Qt signals.",
+      "tags": [
+        "worker",
+        "qthread",
+        "controller-mapping",
+        "signal-emitter",
+        "jog"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py",
+      "type": "file",
+      "name": "gripper_worker.py",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py",
+      "summary": "QThread-style worker that owns the OnRobot RG gripper connection, queues open/close/move commands, and periodically polls gripper width back to the GUI.",
+      "tags": [
+        "worker",
+        "qthread",
+        "gripper",
+        "hardware-driver",
+        "pyqt"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Single-threaded command queue (queue.Queue) serializes RG2 commands to avoid concurrent Modbus access on the gripper TCP socket."
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py:GripperWorker",
+      "type": "class",
+      "name": "GripperWorker",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py",
+      "lineRange": [
+        35,
+        238
+      ],
+      "summary": "Background worker that drives an OnRobot RG (RG2/RG6) gripper through its Python SDK, exposing async open/close/move APIs and emitting width/connection signals.",
+      "tags": [
+        "worker",
+        "gripper",
+        "rg2",
+        "command-queue",
+        "signal-emitter"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "type": "file",
+      "name": "gui.py",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "summary": "PyQt5 main application for recording, smoothing, and replaying Doosan m0609 motion segments — wires ROS 2 nodes, a DSR_ROBOT2 worker, joint-state stream, DualSense and gripper workers, and theming/styling for the operator UI.",
+      "tags": [
+        "entry-point",
+        "gui",
+        "pyqt",
+        "ros2-node-host",
+        "orchestrator"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Mixes rclpy executors (MultiThreadedExecutor + SingleThreadedExecutor) and Qt event loop via dedicated QThreads; DSR_ROBOT2 is lazily imported because DR_init.__dsr__node must be set first."
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:MacroNode",
+      "type": "class",
+      "name": "MacroNode",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        88,
+        93
+      ],
+      "summary": "Thin rclpy.Node subclass used as the singleton ROS 2 node bound into DR_init for the DSR_ROBOT2 wrapper.",
+      "tags": [
+        "ros2-node",
+        "wrapper",
+        "dsr-init"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:JointStateNode",
+      "type": "class",
+      "name": "JointStateNode",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        106,
+        164
+      ],
+      "summary": "rclpy.Node that subscribes to /joint_states, converts radians to degrees, and forwards joint position dicts plus diagnostics to the GUI via a callback.",
+      "tags": [
+        "ros2-node",
+        "subscriber",
+        "joint-state",
+        "diagnostics"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:BringupDialog",
+      "type": "class",
+      "name": "BringupDialog",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        170,
+        207
+      ],
+      "summary": "Modal QDialog asking the operator to choose between virtual, simulator, and real-robot bringup modes at application start.",
+      "tags": [
+        "dialog",
+        "pyqt",
+        "bringup",
+        "ui"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:BringupManager",
+      "type": "class",
+      "name": "BringupManager",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        213,
+        278
+      ],
+      "summary": "Spawns and tears down the dsr_bringup2 ROS 2 launch process as a subprocess group, with mode-dependent host IPs and SIGINT/SIGTERM-based shutdown.",
+      "tags": [
+        "process-manager",
+        "ros2-launch",
+        "subprocess",
+        "lifecycle"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:_JogDispatcher",
+      "type": "class",
+      "name": "_JogDispatcher",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        293,
+        370
+      ],
+      "summary": "Background dispatcher thread that coalesces high-frequency jog requests and forwards them to DSR_ROBOT2.jog without import overhead per call.",
+      "tags": [
+        "dispatcher",
+        "jog",
+        "throttle",
+        "thread",
+        "lazy-bind"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:DsrWorker",
+      "type": "class",
+      "name": "DsrWorker",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        373,
+        728
+      ],
+      "summary": "Primary DSR_ROBOT2 facade worker that handles mode queries, go-home, segment playback, operation speed, posx queries, emergency stop, and jog forwarding for the GUI.",
+      "tags": [
+        "worker",
+        "dsr-robot2",
+        "playback",
+        "mode-control",
+        "facade"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:DsrInterruptWorker",
+      "type": "class",
+      "name": "DsrInterruptWorker",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        740,
+        860
+      ],
+      "summary": "Side-band worker that invokes dsr_msgs2 pause/resume/abort services so motion can be interrupted while DsrWorker is blocked inside a playback call.",
+      "tags": [
+        "worker",
+        "interrupt",
+        "service-client",
+        "pause-resume",
+        "abort"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:RosSpinThread",
+      "type": "class",
+      "name": "RosSpinThread",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        866,
+        919
+      ],
+      "summary": "QThread that owns the rclpy MultiThreadedExecutor, spinning ROS 2 callbacks alongside the Qt event loop and cleanly shutting down on exit.",
+      "tags": [
+        "qthread",
+        "executor",
+        "rclpy",
+        "spin-loop"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:JointStateThread",
+      "type": "class",
+      "name": "JointStateThread",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        925,
+        972
+      ],
+      "summary": "Dedicated QThread/Executor pair that isolates /joint_states subscription spinning from the main rclpy executor for low-latency UI updates.",
+      "tags": [
+        "qthread",
+        "executor",
+        "joint-state",
+        "isolation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:MainWindow",
+      "type": "class",
+      "name": "MainWindow",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        978,
+        3314
+      ],
+      "summary": "Top-level QMainWindow tying together all workers, ROS threads, record/smooth/play workflow, DualSense and gripper integration, theming, and operator controls for the motion recorder.",
+      "tags": [
+        "main-window",
+        "pyqt",
+        "orchestrator",
+        "gui",
+        "operator-console"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Holds >70 slot methods covering record/save/smooth/play lifecycle, mode toggling, e-stop, jog, DualSense pairing, gripper timeline scheduling, and stylesheet swapping."
+    },
+    {
+      "id": "function:common/ros2_move_recoder/ros2_move_recoder/gui.py:build_stylesheet",
+      "type": "function",
+      "name": "build_stylesheet",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        3414,
+        3521
+      ],
+      "summary": "Builds a Qt stylesheet string for the chosen theme (light/dark/etc.), parameterizing colors, focus rings, and disabled states for the entire main window.",
+      "tags": [
+        "theming",
+        "stylesheet",
+        "ui",
+        "factory"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:common/ros2_move_recoder/ros2_move_recoder/gui.py:btn_variants_for_theme",
+      "type": "function",
+      "name": "btn_variants_for_theme",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        3524,
+        3542
+      ],
+      "summary": "Returns per-theme button color variants (primary, danger, neutral, disabled) used to style action buttons consistently with the active theme.",
+      "tags": [
+        "theming",
+        "factory",
+        "ui"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/ros2_move_recoder/ros2_move_recoder/gui.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "lineRange": [
+        3545,
+        3552
+      ],
+      "summary": "Application entry point that creates the QApplication, instantiates MainWindow, and runs the Qt event loop.",
+      "tags": [
+        "entry-point",
+        "main",
+        "qt-app"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+      "type": "file",
+      "name": "smoother.py",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+      "summary": "Offline waypoint smoother that takes a raw recorded joint trajectory and produces a downsampled, Savitzky-Golay-smoothed action JSON suitable for replay through DSR_ROBOT2.",
+      "tags": [
+        "smoothing",
+        "trajectory",
+        "scipy",
+        "numpy",
+        "cli"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Combines arc-length parameterization, Savitzky-Golay filtering, peak detection (scipy.signal.find_peaks) for turning points, and stationary segment compression."
+    },
+    {
+      "id": "function:common/ros2_move_recoder/ros2_move_recoder/smoother.py:smooth_and_save",
+      "type": "function",
+      "name": "smooth_and_save",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+      "lineRange": [
+        30,
+        252
+      ],
+      "summary": "Reads raw recorded joint waypoints, preserves gripper events, detects turning points and stationary segments, applies Savitzky-Golay smoothing with arc-length resampling, and writes the smoothed action JSON.",
+      "tags": [
+        "smoothing",
+        "savgol",
+        "downsampling",
+        "trajectory",
+        "json"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:common/ros2_move_recoder/ros2_move_recoder/smoother.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+      "lineRange": [
+        255,
+        298
+      ],
+      "summary": "Argparse-driven CLI wrapper that runs smooth_and_save on a named action and prints a short report on the resulting waypoint count and velocity caps.",
+      "tags": [
+        "cli",
+        "entry-point",
+        "argparse"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "type": "file",
+      "name": "playback.py",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "summary": "Headless playback engine that replays a recorded smooth-path JSON segment on the Doosan m0609 via DSR_ROBOT2 amovesj, with an async gripper timeline thread and autonomous-mode safety check.",
+      "tags": [
+        "playback-engine",
+        "motion-control",
+        "doosan",
+        "headless",
+        "gripper-timeline",
+        "tested"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses a dataclass-style result object, lazy DSR_ROBOT2 import inside _dsr() to allow non-ROS unit tests, and a background threading.Thread for gripper event scheduling."
+    },
+    {
+      "id": "file:common/ros2_move_recoder/ros2_move_recoder/player.py",
+      "type": "file",
+      "name": "player.py",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/player.py",
+      "summary": "Interactive CLI entry point that resolves a segment id to a smooth.json path, prompts for safety confirmation, then calls play_segment under an rclpy node context.",
+      "tags": [
+        "entry-point",
+        "cli",
+        "ros2-node",
+        "interactive",
+        "playback"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/test/test_playback.py",
+      "type": "file",
+      "name": "test_playback.py",
+      "filePath": "common/ros2_move_recoder/test/test_playback.py",
+      "summary": "Pytest suite for playback.play_segment covering missing-file failure, non-autonomous robot-mode rejection, and ordered gripper event firing using a monkeypatched fake DSR and FakeGripper.",
+      "tags": [
+        "test",
+        "pytest",
+        "monkeypatch",
+        "unit-test",
+        "fake-gripper"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/ros2_move_recoder/ros2_move_recoder/playback.py:play_segment",
+      "type": "function",
+      "name": "play_segment",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "lineRange": [
+        49,
+        98
+      ],
+      "summary": "Replays a smooth_path JSON segment by issuing amovesj to the recorded joint trajectory and running a parallel gripper timeline, while polling check_motion and an abort_event for cancellation.",
+      "tags": [
+        "playback",
+        "motion-control",
+        "doosan",
+        "abort-aware",
+        "progress-callback"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/playback.py:PlayResult",
+      "type": "class",
+      "name": "PlayResult",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "lineRange": [
+        15,
+        19
+      ],
+      "summary": "Dataclass-like result wrapper carrying success flag, requested/measured durations, and an optional error message returned from play_segment.",
+      "tags": [
+        "data-model",
+        "result-type",
+        "value-object"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/playback.py:_GripperTimeline",
+      "type": "class",
+      "name": "_GripperTimeline",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "lineRange": [
+        101,
+        174
+      ],
+      "summary": "Background thread that replays a list of gripper events (open/close/move) at their recorded timestamps, with stop and flush signals to coordinate cancellation and motion completion.",
+      "tags": [
+        "threading",
+        "gripper-control",
+        "event-scheduler",
+        "timeline"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/ros2_move_recoder/ros2_move_recoder/player.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/player.py",
+      "lineRange": [
+        18,
+        48
+      ],
+      "summary": "CLI entry point that parses a segment id argument, locates the smooth.json file, asks the operator to confirm work-area safety, and invokes play_segment inside an rclpy node lifecycle.",
+      "tags": [
+        "entry-point",
+        "cli",
+        "ros2-node",
+        "interactive"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/ros2_move_recoder/test/test_playback.py:test_gripper_events_fire_in_order",
+      "type": "function",
+      "name": "test_gripper_events_fire_in_order",
+      "filePath": "common/ros2_move_recoder/test/test_playback.py",
+      "lineRange": [
+        40,
+        59
+      ],
+      "summary": "Pytest case that monkeypatches _DSR with stubs, supplies a FakeGripper, and asserts the gripper timeline calls open/close/move in the recorded order during play_segment execution.",
+      "tags": [
+        "test",
+        "pytest",
+        "integration-test",
+        "fake-gripper",
+        "monkeypatch"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/test/test_playback.py:FakeGripper",
+      "type": "class",
+      "name": "FakeGripper",
+      "filePath": "common/ros2_move_recoder/test/test_playback.py",
+      "lineRange": [
+        29,
+        37
+      ],
+      "summary": "Test double that records open/close/move calls with timestamps so assertions can verify gripper event ordering produced by the playback timeline.",
+      "tags": [
+        "test-double",
+        "fake",
+        "fixture",
+        "gripper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "common/ros2_move_recoder/README.md",
+      "summary": "Korean-language user guide for the ros2_move_recoder package, covering installation, GUI workflow (Record / Smooth / Play), DualSense PS5 controller mappings, environment variables for the OnRobot gripper, and recorded-data layout for the Doosan m0609 macro recorder.",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "overview",
+        "user-guide",
+        "ros2"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Markdown with 15 hierarchical sections; heavy use of tables to specify controller button bindings, environment variables, and dev-docs index."
+    },
+    {
+      "id": "config:common/ros2_move_recoder/package.xml",
+      "type": "config",
+      "name": "package.xml",
+      "filePath": "common/ros2_move_recoder/package.xml",
+      "summary": "ROS 2 ament_python package manifest for ros2_move_recoder, declaring rclpy / std_msgs / sensor_msgs / dsr_msgs2 build dependencies plus numpy, scipy, PyQt5, pygame, and pymodbus runtime dependencies for the macro recorder GUI.",
+      "tags": [
+        "configuration",
+        "ros2",
+        "package-manifest",
+        "ament-python",
+        "dependencies"
+      ],
+      "complexity": "simple",
+      "languageNotes": "ROS 2 package format 3 with ament_python build type — declares rosdep keys that resolve to apt python3-* packages."
+    },
+    {
+      "id": "config:common/ros2_move_recoder/setup.cfg",
+      "type": "config",
+      "name": "setup.cfg",
+      "filePath": "common/ros2_move_recoder/setup.cfg",
+      "summary": "Python setuptools configuration redirecting develop and install script directories to the ROS 2 ament_python convention path (lib/ros2_move_recoder).",
+      "tags": [
+        "configuration",
+        "setuptools",
+        "ament-python",
+        "ros2",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/CHANGELOG.md",
+      "type": "document",
+      "name": "CHANGELOG.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/CHANGELOG.md",
+      "summary": "Chronological changelog tracking major feature additions to the ros2_move_recoder package including TCP jog mode, E-STOP integration, DualSense controller support, and OnRobot gripper integration.",
+      "tags": [
+        "documentation",
+        "changelog",
+        "history",
+        "release-notes"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/README.md",
+      "summary": "Entry-point developer documentation for the ros2_move_recoder macro recorder package, providing quick start, package structure overview, and links to all detailed docs.",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "overview",
+        "developer-guide"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/architecture.md",
+      "type": "document",
+      "name": "architecture.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/architecture.md",
+      "summary": "Detailed architecture documentation covering the 4-layer data flow, ROS 2 topic/service mapping, the 3-thread model in gui.py, and Qt signal/slot graph for the macro recorder.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "data-flow",
+        "threading",
+        "ros2"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/build-and-run.md",
+      "type": "document",
+      "name": "build-and-run.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/build-and-run.md",
+      "summary": "Build, run, and debugging guide covering colcon build steps, bringup launch for real/virtual modes, execution patterns, and ROS 2 CLI diagnostic commands.",
+      "tags": [
+        "documentation",
+        "build-system",
+        "developer-guide",
+        "debugging"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/data-formats.md",
+      "type": "document",
+      "name": "data-formats.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/data-formats.md",
+      "summary": "JSON schema reference for raw.json (raw recording) and smooth.json (smoothed playback) data formats, including gripper events and integrity check fields.",
+      "tags": [
+        "documentation",
+        "data-format",
+        "schema-definition",
+        "json"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/dev-essentials.md",
+      "type": "document",
+      "name": "dev-essentials.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/dev-essentials.md",
+      "summary": "Comprehensive developer essentials covering data flow, 5 entry points, core implementation per feature (recorder/smoother/player/GUI/DualSense/gripper), and design constraints.",
+      "tags": [
+        "documentation",
+        "developer-guide",
+        "overview",
+        "implementation"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/dualsense-mapping.md",
+      "type": "document",
+      "name": "dualsense-mapping.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/dualsense-mapping.md",
+      "summary": "DualSense PS5 controller button/axis mapping reference including joydev indices, jog stabilization policy, dialog OK/cancel mapping, and PyQt5 cross-thread signal dispatch edge cases.",
+      "tags": [
+        "documentation",
+        "controller",
+        "input-mapping",
+        "dualsense"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/dualsense-plan.md",
+      "type": "document",
+      "name": "dualsense-plan.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/dualsense-plan.md",
+      "summary": "Design plan for the DualSense dual-mapping jog controller covering the 4-mode x 3-axis pattern, pydualsense library choice, polling model, haptic feedback, and integration steps.",
+      "tags": [
+        "documentation",
+        "design-plan",
+        "controller",
+        "dualsense"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/extending.md",
+      "type": "document",
+      "name": "extending.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/extending.md",
+      "summary": "Extension guide showing patterns for adding new motion functions, smoothing algorithms, topic subscriptions, entry points, GUI parameters, robot models, and safety guards.",
+      "tags": [
+        "documentation",
+        "developer-guide",
+        "extension",
+        "patterns"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/gripper.md",
+      "type": "document",
+      "name": "gripper.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/gripper.md",
+      "summary": "OnRobot RG2/RG6 gripper integration documentation covering environment variables, gripper_worker API, GUI integration, recorder/smoother/player integration, and data format.",
+      "tags": [
+        "documentation",
+        "gripper",
+        "hardware",
+        "integration"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/gui.md",
+      "type": "document",
+      "name": "gui.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/gui.md",
+      "summary": "Detailed PyQt5 GUI documentation covering window layout, class responsibility, signal/slot graph, playback speed 3-layer control, DsrWorker concurrency guards, and known pitfalls.",
+      "tags": [
+        "documentation",
+        "gui",
+        "pyqt5",
+        "implementation"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/pipeline.md",
+      "type": "document",
+      "name": "pipeline.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/pipeline.md",
+      "summary": "Three-stage pipeline reference (recorder -> smoother -> player) describing inputs, processing, outputs, the 4-pass smoothing algorithm, and movesj-based playback.",
+      "tags": [
+        "documentation",
+        "pipeline",
+        "data-flow",
+        "algorithm"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/presentation-plan.md",
+      "type": "document",
+      "name": "presentation-plan.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/presentation-plan.md",
+      "summary": "Slide-by-slide presentation plan for introducing ros2_move_recoder, covering problem statement, solution overview, demo scenarios, value proposition, and use cases.",
+      "tags": [
+        "documentation",
+        "presentation",
+        "planning",
+        "overview"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/troubleshooting.md",
+      "type": "document",
+      "name": "troubleshooting.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/troubleshooting.md",
+      "summary": "Catalog of 17 known issues with the macro recorder including DSR client errors, name mangling, deadlocks, mode-switch failures, and PyQt5 import problems with solutions.",
+      "tags": [
+        "documentation",
+        "troubleshooting",
+        "debugging",
+        "known-issues"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:common/ros2_move_recoder/dev-docs/voice-vision-async-workflow.md",
+      "type": "document",
+      "name": "voice-vision-async-workflow.md",
+      "filePath": "common/ros2_move_recoder/dev-docs/voice-vision-async-workflow.md",
+      "summary": "Comprehensive workflow plan integrating vision (YOLO + depth-to-base transform), voice (wake-word + STT command mapping), and an asyncio-based main loop bridging ROS 2 and DSR.",
+      "tags": [
+        "documentation",
+        "planning",
+        "vision",
+        "voice",
+        "asyncio"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/aurora.css",
+      "type": "file",
+      "name": "aurora.css",
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/themes/aurora.css",
+      "summary": "Aurora-gradient dark presentation theme defining CSS custom properties (color palette, radii, shadows, fonts) plus a radial-gradient body background and glassmorphism card blur for the ros2_move_recoder dev-doc deck.",
+      "tags": [
+        "stylesheet",
+        "theme",
+        "presentation",
+        "dark-theme",
+        "css-variables"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses CSS custom properties on :root for theme tokens, layered radial-gradient backgrounds, and backdrop-filter for glass cards."
+    },
+    {
+      "id": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/corporate-clean.css",
+      "type": "file",
+      "name": "corporate-clean.css",
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/themes/corporate-clean.css",
+      "summary": "Light corporate presentation theme with navy-and-blue accent palette, tight radii, and subtle shadows, plus title/kicker/divider component styles for the ros2_move_recoder dev-doc deck.",
+      "tags": [
+        "stylesheet",
+        "theme",
+        "presentation",
+        "light-theme",
+        "css-variables"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/dark-corporate.css",
+      "type": "file",
+      "name": "dark-corporate.css",
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/themes/dark-corporate.css",
+      "summary": "Dark business presentation theme with deep-navy surfaces, blue accents, Pretendard/Noto Sans KR typography, and corner radial-gradient highlights tailored to the ros2_move_recoder deck.",
+      "tags": [
+        "stylesheet",
+        "theme",
+        "presentation",
+        "dark-theme",
+        "korean-typography"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Korean-localized font stack (Pretendard, Noto Sans KR) distinguishes this theme from the others."
+    },
+    {
+      "id": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/minimal-white.css",
+      "type": "file",
+      "name": "minimal-white.css",
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/themes/minimal-white.css",
+      "summary": "Minimal white presentation theme with near-black accents, restrained shadows, and tight letter-spacing token, providing a high-end pared-down look for the ros2_move_recoder dev-doc deck.",
+      "tags": [
+        "stylesheet",
+        "theme",
+        "presentation",
+        "light-theme",
+        "minimal"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/realtime_scan/install.sh",
+      "type": "file",
+      "name": "install.sh",
+      "filePath": "main_side/realtime_scan/install.sh",
+      "summary": "Bootstrap installer for the main-node realtime_scan package: symlinks the source into ~/cobot_ws/src, sources ROS 2 Humble, and runs colcon build with --symlink-install before printing usage hints for the coord_service and order_receiver nodes.",
+      "tags": [
+        "entry-point",
+        "build-system",
+        "ros2",
+        "installation",
+        "bootstrap"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses set -e and colcon --symlink-install so source edits propagate without rebuild; package name printed as robo_chef even though manifest is realtime_scan."
+    },
+    {
+      "id": "config:main_side/realtime_scan/package.xml",
+      "type": "config",
+      "name": "package.xml",
+      "filePath": "main_side/realtime_scan/package.xml",
+      "summary": "ROS 2 ament_python package manifest declaring realtime_scan v0.2.0 with rclpy, std_msgs/std_srvs/sensor_msgs, dsr_msgs2, and rcl_interfaces runtime dependencies plus ament lint/pytest test deps.",
+      "tags": [
+        "ros2",
+        "configuration",
+        "manifest",
+        "ament-python",
+        "dependencies"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/realtime_scan/run_coord_service.sh",
+      "type": "file",
+      "name": "run_coord_service.sh",
+      "filePath": "main_side/realtime_scan/run_coord_service.sh",
+      "summary": "Launcher script that sources ROS 2 Humble plus cobot_ws overlay, pins ROS_DOMAIN_ID=24, and runs the coord_service.py node which exposes the /robo_chef/get_coords service.",
+      "tags": [
+        "entry-point",
+        "ros2",
+        "launcher",
+        "shell-script"
+      ],
+      "complexity": "simple",
+      "languageNotes": "ROS_DOMAIN_ID=24 isolates the main-side DDS partition from other robots in the lab."
+    },
+    {
+      "id": "file:main_side/realtime_scan/run_receiver.sh",
+      "type": "file",
+      "name": "run_receiver.sh",
+      "filePath": "main_side/realtime_scan/run_receiver.sh",
+      "summary": "Launcher script for the order_receiver node: sources ROS 2 + cobot_ws, exports ROS_DOMAIN_ID=24 and PYTHONPATH, then runs order_receiver.py which subscribes to /robo_chef/order_request and triggers recipe logic.",
+      "tags": [
+        "entry-point",
+        "ros2",
+        "launcher",
+        "firebase",
+        "shell-script"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Assumes serviceAccountKey.json sits alongside the script for the firebase-admin Firestore listener."
+    },
+    {
+      "id": "config:main_side/realtime_scan/setup.cfg",
+      "type": "config",
+      "name": "setup.cfg",
+      "filePath": "main_side/realtime_scan/setup.cfg",
+      "summary": "Python setuptools configuration pointing develop/install script directories at $base/lib/realtime_scan so ament_python places console_scripts where ros2 run can find them.",
+      "tags": [
+        "configuration",
+        "ament-python",
+        "setuptools",
+        "ros2"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:main_side/robo_chef/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "main_side/robo_chef/README.md",
+      "summary": "Team onboarding document for the robo_chef ROS 2 package, listing the shared planning slide deck and the per-developer git branch workflow (clone, branch, commit, push).",
+      "tags": [
+        "documentation",
+        "onboarding",
+        "git-workflow",
+        "entry-point"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:main_side/robo_chef/package.xml",
+      "type": "config",
+      "name": "package.xml",
+      "filePath": "main_side/robo_chef/package.xml",
+      "summary": "ROS 2 ament_python package manifest declaring runtime dependencies on rclpy, std_msgs/std_srvs, the Doosan stack (dsr_common2, dsr_msgs2), and the project's ros2_move_recoder package, with a note that firebase-admin is installed via pip.",
+      "tags": [
+        "configuration",
+        "ros2",
+        "ament-python",
+        "package-manifest",
+        "dependencies"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses ROS 2 package format 3; firebase-admin sidesteps rosdep by being declared in setup.py install_requires instead."
+    },
+    {
+      "id": "config:main_side/robo_chef/setup.cfg",
+      "type": "config",
+      "name": "setup.cfg",
+      "filePath": "main_side/robo_chef/setup.cfg",
+      "summary": "setuptools configuration redirecting develop/install script targets to lib/robo_chef so that colcon's ament_python build places executable node entry points where ros2 run can locate them.",
+      "tags": [
+        "configuration",
+        "setuptools",
+        "ament-python",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.understand-anything/.understandignore",
+      "type": "config",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Ignore-list config controlling which paths the Understand-Anything analyzer skips when building the project knowledge graph.",
+      "tags": [
+        "configuration",
+        "tooling",
+        "ignore-list"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/dev-docs/ppt/assets/animations/animations.css",
+      "type": "file",
+      "name": "animations.css",
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/animations/animations.css",
+      "summary": "Slide entry-animation keyframes (fade, slide, zoom, etc.) used by the presentation runtime to animate elements marked with data-anim.",
+      "tags": [
+        "stylesheet",
+        "animation",
+        "presentation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/dev-docs/ppt/assets/base.css",
+      "type": "file",
+      "name": "base.css",
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/base.css",
+      "summary": "Base layout and theming styles for the HTML presentation, defining slide grid, typography, and theme color variables.",
+      "tags": [
+        "stylesheet",
+        "theme",
+        "presentation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/dev-docs/ppt/assets/fonts.css",
+      "type": "file",
+      "name": "fonts.css",
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/fonts.css",
+      "summary": "Web-font @font-face declarations imported by the presentation index for consistent typography across slides.",
+      "tags": [
+        "stylesheet",
+        "fonts",
+        "presentation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/dev-docs/ppt/assets/runtime.js",
+      "type": "file",
+      "name": "runtime.js",
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/assets/runtime.js",
+      "summary": "Browser runtime that drives the HTML presentation: slide navigation, keyboard shortcuts, animations, theme cycling, overview mode, and a separate presenter window with notes synced via BroadcastChannel.",
+      "tags": [
+        "presentation",
+        "browser-runtime",
+        "navigation",
+        "ui"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Vanilla JS IIFE with no module imports; uses BroadcastChannel for cross-window sync and window.open for a dedicated presenter view."
+    },
+    {
+      "id": "file:common/ros2_move_recoder/dev-docs/ppt/index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "common/ros2_move_recoder/dev-docs/ppt/index.html",
+      "summary": "Single-file HTML presentation entry that wires base/fonts/animations CSS and runtime.js to render the ros2_move_recoder dev-docs slide deck.",
+      "tags": [
+        "html",
+        "presentation",
+        "entry-point"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/resource/ros2_move_recoder",
+      "type": "file",
+      "name": "ros2_move_recoder",
+      "filePath": "common/ros2_move_recoder/resource/ros2_move_recoder",
+      "summary": "Empty ament_python resource marker file that registers ros2_move_recoder with the ROS 2 ament index at install time.",
+      "tags": [
+        "ros2",
+        "ament",
+        "resource-marker"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/ros2_move_recoder/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/__init__.py",
+      "summary": "Empty package init that marks ros2_move_recoder as a Python package for the recorder/playback engine.",
+      "tags": [
+        "python",
+        "package-init"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/ros2_move_recoder/onrobot.py",
+      "type": "file",
+      "name": "onrobot.py",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/onrobot.py",
+      "summary": "Modbus/TCP driver for the OnRobot RG2 electric gripper exposing high-level open/close/move and width/status reads to the rest of the cooking pipeline.",
+      "tags": [
+        "gripper",
+        "driver",
+        "modbus",
+        "onrobot-rg2"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Direct pymodbus ModbusClient usage; methods map 1:1 to RG2 holding registers."
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/onrobot.py:RG",
+      "type": "class",
+      "name": "RG",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/onrobot.py",
+      "lineRange": [
+        6,
+        184
+      ],
+      "summary": "Thin OnRobot RG2 gripper class wrapping Modbus reads/writes for connection, status, target force/width, and open/close/move commands.",
+      "tags": [
+        "gripper",
+        "driver",
+        "modbus",
+        "hardware-interface"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+      "type": "file",
+      "name": "recorder.py",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+      "summary": "ROS 2 node that subscribes to /joint_states and, between two Enter presses, captures a timestamped joint-position trajectory and dumps it as a JSON segment file used later for playback.",
+      "tags": [
+        "ros2",
+        "recorder",
+        "motion-capture",
+        "trajectory"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:common/ros2_move_recoder/ros2_move_recoder/recorder.py:RecorderNode",
+      "type": "class",
+      "name": "RecorderNode",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+      "lineRange": [
+        32,
+        118
+      ],
+      "summary": "rclpy node that buffers joint-state samples while recording and writes a normalized degrees-based JSON trajectory segment on stop.",
+      "tags": [
+        "ros2",
+        "rclpy-node",
+        "recorder",
+        "trajectory"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/ros2_move_recoder/ros2_move_recoder/recorder.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+      "lineRange": [
+        137,
+        159
+      ],
+      "summary": "CLI entry point that initializes rclpy, spawns RecorderNode plus a stdin Enter-key thread, and spins until recording completes.",
+      "tags": [
+        "entry-point",
+        "cli",
+        "ros2-main"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/ros2_move_recoder/ros2_move_recoder/run.py",
+      "type": "file",
+      "name": "run.py",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/run.py",
+      "summary": "Sample DSR motion script that initializes an rclpy node and exercises amovej/amovel async motion primitives with a polling _wait_motion helper.",
+      "tags": [
+        "ros2",
+        "dsr",
+        "sample",
+        "motion-demo"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/ros2_move_recoder/ros2_move_recoder/run.py:my_motion",
+      "type": "function",
+      "name": "my_motion",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/run.py",
+      "lineRange": [
+        29,
+        51
+      ],
+      "summary": "Demonstrates a three-step async motion sequence (joint move, then two relative linear tool moves) with polled completion waits.",
+      "tags": [
+        "dsr",
+        "motion",
+        "demo"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/ros2_move_recoder/ros2_move_recoder/run.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "common/ros2_move_recoder/ros2_move_recoder/run.py",
+      "lineRange": [
+        54,
+        83
+      ],
+      "summary": "Initializes rclpy + DR_init, configures velocity/acceleration, runs my_motion, then returns the arm to a home posture.",
+      "tags": [
+        "entry-point",
+        "dsr",
+        "ros2-main"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:common/ros2_move_recoder/setup.py",
+      "type": "config",
+      "name": "setup.py",
+      "filePath": "common/ros2_move_recoder/setup.py",
+      "summary": "ament_python package manifest declaring entry points (recorder, run, playback) and resource/data installation for the ros2_move_recoder package.",
+      "tags": [
+        "configuration",
+        "ament-python",
+        "build-system",
+        "ros2"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/architecture.md",
+      "type": "document",
+      "name": "architecture.md",
+      "filePath": "docs/architecture.md",
+      "summary": "Authoritative cobot1 architecture document covering robo_chef nodes, realtime_scan telemetry/safety bridge, the web (sub1_side) panels, ros2_move_recoder, ROS topics/services, and the Firebase RTDB schema including /robot_state ownership and /orders shape.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "overview",
+        "entry-point"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:docs/presentation-outline.md",
+      "type": "document",
+      "name": "presentation-outline.md",
+      "filePath": "docs/presentation-outline.md",
+      "summary": "Twenty-slide presentation outline narrating the cobot1 system from architecture and ROS 2 node graph through data flow, the cooking engine, gripper integration, safety paths, and a refactoring retrospective.",
+      "tags": [
+        "documentation",
+        "presentation-outline",
+        "overview"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:main_side/realtime_scan/realtime_scan/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "main_side/realtime_scan/realtime_scan/__init__.py",
+      "summary": "Empty package init marking realtime_scan as a Python package for the main-PC telemetry and safety-bridge nodes.",
+      "tags": [
+        "python",
+        "package-init"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "type": "file",
+      "name": "coord_service.py",
+      "filePath": "main_side/realtime_scan/realtime_scan/coord_service.py",
+      "summary": "Main-PC telemetry and safety bridge that subscribes to /joint_states, mirrors joint angles plus FK pose to Firebase /robot_state, serves a get_coords JSON service, and listens to Firebase /commands to dispatch DSR stop/control/servo_off services with ack/state polling.",
+      "tags": [
+        "ros2",
+        "telemetry",
+        "safety-bridge",
+        "firebase",
+        "rclpy-node"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Combines an rclpy node, threaded Firebase publisher, multiple callback groups, and a curses-style stderr dashboard in one file."
+    },
+    {
+      "id": "class:main_side/realtime_scan/realtime_scan/coord_service.py:_FirebasePublisher",
+      "type": "class",
+      "name": "_FirebasePublisher",
+      "filePath": "main_side/realtime_scan/realtime_scan/coord_service.py",
+      "lineRange": [
+        209,
+        318
+      ],
+      "summary": "Background Firebase publisher that periodically writes the joint-state snapshot to /coords and updates joint-only fields of /robot_state on dedicated threads.",
+      "tags": [
+        "firebase",
+        "threading",
+        "publisher",
+        "telemetry"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:main_side/realtime_scan/realtime_scan/coord_service.py:SafetyBridge",
+      "type": "class",
+      "name": "SafetyBridge",
+      "filePath": "main_side/realtime_scan/realtime_scan/coord_service.py",
+      "lineRange": [
+        334,
+        538
+      ],
+      "summary": "Bridges Firebase /commands events into DSR service calls (MoveStop, SetRobotControl, ServoOff), writes acks back, and periodically polls GetRobotState to mirror robot mode/state into Firebase.",
+      "tags": [
+        "safety",
+        "firebase",
+        "ros2-client",
+        "rclpy-node",
+        "doosan"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:main_side/realtime_scan/realtime_scan/coord_service.py:_on_joint_states",
+      "type": "function",
+      "name": "_on_joint_states",
+      "filePath": "main_side/realtime_scan/realtime_scan/coord_service.py",
+      "lineRange": [
+        139,
+        175
+      ],
+      "summary": "Joint-state callback that sanitizes incoming positions, converts radians to degrees, computes FK pose via numpy/scipy, and updates the shared in-memory snapshot for downstream consumers.",
+      "tags": [
+        "callback",
+        "kinematics",
+        "telemetry"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:main_side/realtime_scan/realtime_scan/coord_service.py:_display_loop",
+      "type": "function",
+      "name": "_display_loop",
+      "filePath": "main_side/realtime_scan/realtime_scan/coord_service.py",
+      "lineRange": [
+        595,
+        622
+      ],
+      "summary": "Background thread that periodically reprints a formatted stderr dashboard summarizing joint angles, FK pose, and request counters.",
+      "tags": [
+        "display",
+        "threading",
+        "tui"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:main_side/realtime_scan/realtime_scan/coord_service.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "main_side/realtime_scan/realtime_scan/coord_service.py",
+      "lineRange": [
+        629,
+        703
+      ],
+      "summary": "Composes the rclpy node, joint-state subscription, get_coords service, /coords publisher timer, FirebasePublisher, SafetyBridge, and display thread, then runs a MultiThreadedExecutor.",
+      "tags": [
+        "entry-point",
+        "ros2-main",
+        "composition"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:main_side/realtime_scan/realtime_scan/log_bridge.py",
+      "type": "file",
+      "name": "log_bridge.py",
+      "filePath": "main_side/realtime_scan/realtime_scan/log_bridge.py",
+      "summary": "ROS 2 node that subscribes to /rosout, batches log records on a queue, and pushes them to Firebase /logs while keeping the path trimmed to a max-record window.",
+      "tags": [
+        "ros2",
+        "logging",
+        "firebase",
+        "bridge"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:main_side/realtime_scan/realtime_scan/log_bridge.py:LogBridgeNode",
+      "type": "class",
+      "name": "LogBridgeNode",
+      "filePath": "main_side/realtime_scan/realtime_scan/log_bridge.py",
+      "lineRange": [
+        83,
+        206
+      ],
+      "summary": "rclpy node that filters /rosout by minimum level, enqueues entries, and batches them to Firebase /logs in a worker thread with periodic trimming of old entries.",
+      "tags": [
+        "rclpy-node",
+        "logging",
+        "firebase",
+        "threading"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:main_side/realtime_scan/realtime_scan/order_receiver.py",
+      "type": "file",
+      "name": "order_receiver.py",
+      "filePath": "main_side/realtime_scan/realtime_scan/order_receiver.py",
+      "summary": "Lightweight ROS 2 listener that subscribes to /order_log status events, deduplicates by order id, and prints transitions for operator monitoring.",
+      "tags": [
+        "ros2",
+        "monitor",
+        "rclpy-node",
+        "logging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:main_side/realtime_scan/realtime_scan/order_receiver.py:OrderLogReceiver",
+      "type": "class",
+      "name": "OrderLogReceiver",
+      "filePath": "main_side/realtime_scan/realtime_scan/order_receiver.py",
+      "lineRange": [
+        31,
+        50
+      ],
+      "summary": "rclpy node that subscribes to the order-log topic and prints each unique order transition once for human-readable progress tracking.",
+      "tags": [
+        "rclpy-node",
+        "monitor",
+        "ros2"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/realtime_scan/resource/realtime_scan",
+      "type": "file",
+      "name": "realtime_scan",
+      "filePath": "main_side/realtime_scan/resource/realtime_scan",
+      "summary": "Empty ament_python resource marker registering the realtime_scan package with the ROS 2 ament index.",
+      "tags": [
+        "ros2",
+        "ament",
+        "resource-marker"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:main_side/realtime_scan/setup.py",
+      "type": "config",
+      "name": "setup.py",
+      "filePath": "main_side/realtime_scan/setup.py",
+      "summary": "ament_python package manifest declaring console_scripts for coord_service, log_bridge, and order_receiver nodes.",
+      "tags": [
+        "configuration",
+        "ament-python",
+        "build-system",
+        "ros2"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/nodes/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "main_side/robo_chef/nodes/__init__.py",
+      "summary": "Empty package init for the robo_chef nodes module containing the firebase_bridge and sequence_runner ROS 2 nodes plus shared logic cores.",
+      "tags": [
+        "python",
+        "package-init"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/nodes/cooking_core.py",
+      "type": "file",
+      "name": "cooking_core.py",
+      "filePath": "main_side/robo_chef/nodes/cooking_core.py",
+      "summary": "Pure-logic orchestrator that walks the item -> quantity -> segment triple loop for an order, invoking play and emit callbacks so the ROS-aware caller stays IO-free.",
+      "tags": [
+        "logic-core",
+        "orchestrator",
+        "pure-function",
+        "robo-chef",
+        "tested"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Injects play_fn/emit_fn/seg_path callables so the module has no ROS or filesystem dependencies and is unit-testable."
+    },
+    {
+      "id": "function:main_side/robo_chef/nodes/cooking_core.py:run_jobs",
+      "type": "function",
+      "name": "run_jobs",
+      "filePath": "main_side/robo_chef/nodes/cooking_core.py",
+      "lineRange": [
+        22,
+        42
+      ],
+      "summary": "Walks each item, each quantity, and each segment for an order, emitting structured status updates around every play_fn invocation and a final completion event.",
+      "tags": [
+        "orchestrator",
+        "logic-core",
+        "robo-chef"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "type": "file",
+      "name": "firebase_bridge.py",
+      "filePath": "main_side/robo_chef/nodes/firebase_bridge.py",
+      "summary": "ROS 2 node that listens to Firebase /orders and /recipes, picks the next FIFO pending order via order_core, publishes a /recipe job to sequence_runner, and reflects status updates back into Firebase with orphan recovery on boot.",
+      "tags": [
+        "ros2",
+        "firebase",
+        "gateway",
+        "rclpy-node",
+        "robo-chef"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:main_side/robo_chef/nodes/firebase_bridge.py:FirebaseBridge",
+      "type": "class",
+      "name": "FirebaseBridge",
+      "filePath": "main_side/robo_chef/nodes/firebase_bridge.py",
+      "lineRange": [
+        43,
+        166
+      ],
+      "summary": "rclpy node bridging Firebase orders to the /recipe topic: initializes firebase_admin, recovers orphan in-progress orders, dispatches one job at a time, and mirrors sequence_runner status events back into /orders and /order_log.",
+      "tags": [
+        "rclpy-node",
+        "firebase",
+        "gateway",
+        "robo-chef"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:main_side/robo_chef/nodes/firebase_bridge.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "main_side/robo_chef/nodes/firebase_bridge.py",
+      "lineRange": [
+        173,
+        182
+      ],
+      "summary": "Boots rclpy, instantiates FirebaseBridge, and spins until shutdown.",
+      "tags": [
+        "entry-point",
+        "ros2-main"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/nodes/order_core.py",
+      "type": "file",
+      "name": "order_core.py",
+      "filePath": "main_side/robo_chef/nodes/order_core.py",
+      "summary": "Pure-logic helpers for order handling: FIFO selection of the next pending order, building a jobs list from items and recipe segments, and computing valid state transitions.",
+      "tags": [
+        "logic-core",
+        "pure-function",
+        "order",
+        "robo-chef",
+        "tested"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:main_side/robo_chef/nodes/order_core.py:select_next_pending",
+      "type": "function",
+      "name": "select_next_pending",
+      "filePath": "main_side/robo_chef/nodes/order_core.py",
+      "lineRange": [
+        14,
+        20
+      ],
+      "summary": "Returns the oldest pending (state == 'pending') order from the /orders dict, sorted by created_at, or None when no pending order exists.",
+      "tags": [
+        "selection",
+        "fifo",
+        "logic-core"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:main_side/robo_chef/nodes/order_core.py:build_jobs",
+      "type": "function",
+      "name": "build_jobs",
+      "filePath": "main_side/robo_chef/nodes/order_core.py",
+      "lineRange": [
+        23,
+        36
+      ],
+      "summary": "Expands an order's items into a list of jobs by resolving each item to its recipe segments and quantity, raising OrderError when a recipe or items list is missing.",
+      "tags": [
+        "builder",
+        "recipe",
+        "logic-core"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:main_side/robo_chef/nodes/order_core.py:order_transition",
+      "type": "function",
+      "name": "order_transition",
+      "filePath": "main_side/robo_chef/nodes/order_core.py",
+      "lineRange": [
+        39,
+        48
+      ],
+      "summary": "Returns the next valid order state given a sequence_runner status, enforcing the running/done/error state machine.",
+      "tags": [
+        "state-machine",
+        "transition",
+        "logic-core"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "type": "file",
+      "name": "sequence_runner.py",
+      "filePath": "main_side/robo_chef/nodes/sequence_runner.py",
+      "summary": "ROS 2 node that owns the DSR robot and replays recorded segment chains: subscribes to /recipe, runs cooking_core.run_jobs with ros2_move_recoder.playback.play_segment as the player, emits status, and exposes an unlock_system Trigger service.",
+      "tags": [
+        "ros2",
+        "rclpy-node",
+        "doosan",
+        "robo-chef",
+        "playback"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Sets DR_init.__dsr__id/__dsr__model before importing DSR_ROBOT2 helpers; threads abort flag and DSR ownership lock."
+    },
+    {
+      "id": "class:main_side/robo_chef/nodes/sequence_runner.py:SequenceRunner",
+      "type": "class",
+      "name": "SequenceRunner",
+      "filePath": "main_side/robo_chef/nodes/sequence_runner.py",
+      "lineRange": [
+        30,
+        143
+      ],
+      "summary": "rclpy node initializing the OnRobot RG2 gripper and Doosan m0609 settings, receiving /recipe jobs, validating segment files, and delegating segment playback to ros2_move_recoder.playback.play_segment via cooking_core.run_jobs.",
+      "tags": [
+        "rclpy-node",
+        "doosan",
+        "playback",
+        "robo-chef"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:main_side/robo_chef/nodes/sequence_runner.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "main_side/robo_chef/nodes/sequence_runner.py",
+      "lineRange": [
+        146,
+        167
+      ],
+      "summary": "Initializes rclpy and DR_init's dsr-node, builds a MultiThreadedExecutor with both the DSR helper node and SequenceRunner, and spins until shutdown.",
+      "tags": [
+        "entry-point",
+        "ros2-main"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/resource/robo_chef",
+      "type": "file",
+      "name": "robo_chef",
+      "filePath": "main_side/robo_chef/resource/robo_chef",
+      "summary": "Empty ament resource marker used by ROS 2 ament_index to register the robo_chef package so it can be discovered after install.",
+      "tags": [
+        "ros2",
+        "ament-resource",
+        "package-marker",
+        "configuration"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/setup.py",
+      "type": "file",
+      "name": "setup.py",
+      "filePath": "main_side/robo_chef/setup.py",
+      "summary": "Python setuptools manifest for the robo_chef ament package, declaring data_files (resource marker, package.xml) and console_script entry points for the node executables.",
+      "tags": [
+        "ros2",
+        "ament-python",
+        "build-system",
+        "entry-point",
+        "packaging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/test/test_cooking_core.py",
+      "type": "file",
+      "name": "test_cooking_core.py",
+      "filePath": "main_side/robo_chef/test/test_cooking_core.py",
+      "summary": "Pytest suite covering the pure-logic cooking_core.run_jobs sequencer: verifies emitted status transitions on the happy path and error propagation when a job fails.",
+      "tags": [
+        "test",
+        "pytest",
+        "unit-test",
+        "cooking-core"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:main_side/robo_chef/test/test_cooking_core.py:test_run_jobs_emits_status_sequence_and_completes",
+      "type": "function",
+      "name": "test_run_jobs_emits_status_sequence_and_completes",
+      "filePath": "main_side/robo_chef/test/test_cooking_core.py",
+      "lineRange": [
+        6,
+        32
+      ],
+      "summary": "Drives cooking_core.run_jobs against a fake play() collaborator and asserts that pending/cooking/done status updates are emitted in order while all jobs are played.",
+      "tags": [
+        "test",
+        "happy-path",
+        "status-sequence"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:main_side/robo_chef/test/test_cooking_core.py:test_run_jobs_stops_on_failure_with_error_state",
+      "type": "function",
+      "name": "test_run_jobs_stops_on_failure_with_error_state",
+      "filePath": "main_side/robo_chef/test/test_cooking_core.py",
+      "lineRange": [
+        35,
+        48
+      ],
+      "summary": "Verifies run_jobs halts and surfaces an error status when the play() collaborator raises, ensuring downstream jobs are not executed.",
+      "tags": [
+        "test",
+        "error-path",
+        "failure-handling"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/test/test_copyright.py",
+      "type": "file",
+      "name": "test_copyright.py",
+      "filePath": "main_side/robo_chef/test/test_copyright.py",
+      "summary": "Standard ament_copyright lint-test stub generated by ros2 pkg create; expected to be marked xfail until copyright headers are added.",
+      "tags": [
+        "test",
+        "ament-lint",
+        "copyright",
+        "boilerplate"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/test/test_flake8.py",
+      "type": "file",
+      "name": "test_flake8.py",
+      "filePath": "main_side/robo_chef/test/test_flake8.py",
+      "summary": "Standard ament_flake8 lint-test that runs flake8 across the package and asserts no errors are reported.",
+      "tags": [
+        "test",
+        "ament-lint",
+        "flake8",
+        "code-style"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/test/test_order_core.py",
+      "type": "file",
+      "name": "test_order_core.py",
+      "filePath": "main_side/robo_chef/test/test_order_core.py",
+      "summary": "Pytest suite covering order_core: FIFO selection by order_time, job expansion from items into segment lists, missing-segment error reporting, and order status transitions.",
+      "tags": [
+        "test",
+        "pytest",
+        "unit-test",
+        "order-core"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:main_side/robo_chef/test/test_order_core.py:test_select_next_pending_fifo_by_order_time",
+      "type": "function",
+      "name": "test_select_next_pending_fifo_by_order_time",
+      "filePath": "main_side/robo_chef/test/test_order_core.py",
+      "lineRange": [
+        6,
+        13
+      ],
+      "summary": "Asserts select_next_pending returns the oldest pending order based on order_time, enforcing first-in-first-out scheduling.",
+      "tags": [
+        "test",
+        "fifo",
+        "order-selection"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:main_side/robo_chef/test/test_order_core.py:test_build_jobs_expands_items_in_order_with_segments",
+      "type": "function",
+      "name": "test_build_jobs_expands_items_in_order_with_segments",
+      "filePath": "main_side/robo_chef/test/test_order_core.py",
+      "lineRange": [
+        20,
+        35
+      ],
+      "summary": "Exercises build_jobs to confirm each ordered item is expanded into its motion-segment sequence in the correct order.",
+      "tags": [
+        "test",
+        "job-expansion",
+        "segments"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:main_side/robo_chef/test/test_order_core.py:test_build_jobs_raises_when_segments_missing",
+      "type": "function",
+      "name": "test_build_jobs_raises_when_segments_missing",
+      "filePath": "main_side/robo_chef/test/test_order_core.py",
+      "lineRange": [
+        38,
+        44
+      ],
+      "summary": "Ensures build_jobs raises a descriptive error when a requested item has no corresponding motion segments registered.",
+      "tags": [
+        "test",
+        "error-path",
+        "missing-segments"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:main_side/robo_chef/test/test_order_core.py:test_status_transition_for_cooking_status",
+      "type": "function",
+      "name": "test_status_transition_for_cooking_status",
+      "filePath": "main_side/robo_chef/test/test_order_core.py",
+      "lineRange": [
+        47,
+        51
+      ],
+      "summary": "Validates order_transition computes the correct next state across the cooking lifecycle (pending → cooking → done / error).",
+      "tags": [
+        "test",
+        "state-machine",
+        "transition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:main_side/robo_chef/test/test_pep257.py",
+      "type": "file",
+      "name": "test_pep257.py",
+      "filePath": "main_side/robo_chef/test/test_pep257.py",
+      "summary": "Standard ament_pep257 lint-test that enforces PEP 257 docstring conventions across the package sources.",
+      "tags": [
+        "test",
+        "ament-lint",
+        "pep257",
+        "docstrings"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sub1_side/web/backend/fk_m0609.py",
+      "type": "file",
+      "name": "fk_m0609.py",
+      "filePath": "sub1_side/web/backend/fk_m0609.py",
+      "summary": "Pure-Python forward kinematics for the Doosan m0609, deriving the TCP pose (x/y/z + RPY) from six joint angles via hard-coded DH-style origin and rotation chains.",
+      "tags": [
+        "forward-kinematics",
+        "doosan-m0609",
+        "math",
+        "robot-control"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Implements 4x4 matrix multiplication and RPY extraction without numpy to avoid an extra dependency in the Flask backend."
+    },
+    {
+      "id": "function:sub1_side/web/backend/fk_m0609.py:_mat_mul",
+      "type": "function",
+      "name": "_mat_mul",
+      "filePath": "sub1_side/web/backend/fk_m0609.py",
+      "lineRange": [
+        30,
+        39
+      ],
+      "summary": "Multiplies two 4x4 homogeneous transform matrices using nested loops, returning the resulting transform.",
+      "tags": [
+        "matrix",
+        "math",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/fk_m0609.py:_origin",
+      "type": "function",
+      "name": "_origin",
+      "filePath": "sub1_side/web/backend/fk_m0609.py",
+      "lineRange": [
+        42,
+        52
+      ],
+      "summary": "Builds a 4x4 homogeneous transform from URDF-style RPY rotation plus XYZ translation, used to encode each link's fixed origin offset.",
+      "tags": [
+        "transform",
+        "urdf",
+        "rpy",
+        "math"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/fk_m0609.py:compute_tcp_from_joint",
+      "type": "function",
+      "name": "compute_tcp_from_joint",
+      "filePath": "sub1_side/web/backend/fk_m0609.py",
+      "lineRange": [
+        65,
+        91
+      ],
+      "summary": "Top-level FK entry: chains per-joint origin offsets with Z-axis rotations from the six joint angles in degrees, then extracts the TCP position (mm) and roll/pitch/yaw (deg).",
+      "tags": [
+        "forward-kinematics",
+        "tcp",
+        "doosan-m0609",
+        "entry-point"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:sub1_side/web/backend/fk_worker.py",
+      "type": "file",
+      "name": "fk_worker.py",
+      "filePath": "sub1_side/web/backend/fk_worker.py",
+      "summary": "Background thread that initializes Firebase Admin, polls /robot_state/joint_positions at ~2 Hz, runs fk_m0609.compute_tcp_from_joint, and writes the rounded TCP pose back to /robot_state/tcp_position.",
+      "tags": [
+        "firebase",
+        "worker-thread",
+        "forward-kinematics",
+        "polling",
+        "backend"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sub1_side/web/backend/fk_worker.py:_init_firebase",
+      "type": "function",
+      "name": "_init_firebase",
+      "filePath": "sub1_side/web/backend/fk_worker.py",
+      "lineRange": [
+        44,
+        54
+      ],
+      "summary": "Resolves the Firebase service-account credential file and database URL from environment/defaults and initializes the firebase_admin app with the RTDB URL.",
+      "tags": [
+        "firebase",
+        "initialization",
+        "credentials"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sub1_side/web/backend/fk_worker.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "sub1_side/web/backend/fk_worker.py",
+      "lineRange": [
+        61,
+        99
+      ],
+      "summary": "Main worker loop: reads the latest 6-DoF joint positions from Firebase, runs forward kinematics, writes the TCP pose with a UTC timestamp, and sleeps to maintain a steady 2 Hz update rate.",
+      "tags": [
+        "worker-loop",
+        "firebase-rtdb",
+        "fk",
+        "periodic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sub1_side/web/backend/fk_worker.py:start_fk_worker_thread",
+      "type": "function",
+      "name": "start_fk_worker_thread",
+      "filePath": "sub1_side/web/backend/fk_worker.py",
+      "lineRange": [
+        102,
+        107
+      ],
+      "summary": "Spawns the FK worker run() loop as a daemon thread so the Flask backend can launch it without blocking the main process.",
+      "tags": [
+        "threading",
+        "daemon",
+        "entry-point"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:sub1_side/web/backend/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "sub1_side/web/backend/requirements.txt",
+      "summary": "Pins the Flask backend's Python dependencies to firebase-admin, flask, and flask-cors at minimum supported versions.",
+      "tags": [
+        "dependencies",
+        "requirements",
+        "python",
+        "flask"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sub1_side/web/backend/ros2_pub_once.py",
+      "type": "file",
+      "name": "ros2_pub_once.py",
+      "filePath": "sub1_side/web/backend/ros2_pub_once.py",
+      "summary": "One-shot ROS 2 publisher utility invoked by the Flask backend: takes topic and JSON payload as argv, publishes a std_msgs/String a few times under TRANSIENT_LOCAL QoS, and exits.",
+      "tags": [
+        "ros2",
+        "publisher",
+        "cli-utility",
+        "bridge"
+      ],
+      "complexity": "simple",
+      "languageNotes": "TRANSIENT_LOCAL QoS lets late-joining subscribers still receive the last command, matching the firebase_bridge consumer."
+    },
+    {
+      "id": "function:sub1_side/web/backend/ros2_pub_once.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "sub1_side/web/backend/ros2_pub_once.py",
+      "lineRange": [
+        10,
+        45
+      ],
+      "summary": "Parses topic+payload from argv, initializes rclpy, creates a transient-local publisher, publishes the message a few times to ensure delivery, then shuts down cleanly.",
+      "tags": [
+        "entry-point",
+        "ros2",
+        "publisher",
+        "cli"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sub1_side/web/panel/admin_monitor/firebase_config.js",
+      "type": "file",
+      "name": "firebase_config.js",
+      "filePath": "sub1_side/web/panel/admin_monitor/firebase_config.js",
+      "summary": "Per-panel copy of the shared Firebase web client config (apiKey, databaseURL, etc.) plus BACKEND_URL, synced from the master file by start_all.sh.",
+      "tags": [
+        "firebase",
+        "configuration",
+        "client-config",
+        "admin-monitor"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sub1_side/web/panel/admin_monitor/index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "sub1_side/web/panel/admin_monitor/index.html",
+      "summary": "Single-file admin dashboard SPA showing live order queue, robot state, and operator controls; subscribes to Firebase RTDB and invokes the Flask backend for control actions.",
+      "tags": [
+        "spa",
+        "admin-dashboard",
+        "firebase-rtdb",
+        "monitoring",
+        "ui"
+      ],
+      "complexity": "complex",
+      "languageNotes": "All UI, styles, and Firebase wiring live in one large HTML file — typical of small kiosk demos where a build step is intentionally avoided."
+    },
+    {
+      "id": "file:sub1_side/web/panel/customer_status/firebase_config.js",
+      "type": "file",
+      "name": "firebase_config.js",
+      "filePath": "sub1_side/web/panel/customer_status/firebase_config.js",
+      "summary": "Per-panel copy of the shared Firebase web client config used by the customer status SPA, synced from the master file by start_all.sh.",
+      "tags": [
+        "firebase",
+        "configuration",
+        "client-config",
+        "customer-status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sub1_side/web/panel/customer_status/index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "sub1_side/web/panel/customer_status/index.html",
+      "summary": "Single-file customer-facing status board SPA that subscribes to Firebase RTDB to display each order's pending/cooking/done state in near real time.",
+      "tags": [
+        "spa",
+        "status-board",
+        "firebase-rtdb",
+        "customer-ui",
+        "ui"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:sub1_side/web/panel/firebase_config.js",
+      "type": "file",
+      "name": "firebase_config.js",
+      "filePath": "sub1_side/web/panel/firebase_config.js",
+      "summary": "Canonical Firebase web client config and BACKEND_URL for the ROBO CHEF UI; start_all.sh copies this into each panel directory at startup.",
+      "tags": [
+        "firebase",
+        "configuration",
+        "client-config",
+        "template"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sub1_side/web/panel/kiosk/firebase_config.js",
+      "type": "file",
+      "name": "firebase_config.js",
+      "filePath": "sub1_side/web/panel/kiosk/firebase_config.js",
+      "summary": "Per-panel copy of the shared Firebase web client config used by the customer ordering kiosk SPA, synced from the master file by start_all.sh.",
+      "tags": [
+        "firebase",
+        "configuration",
+        "client-config",
+        "kiosk"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sub1_side/web/panel/kiosk/images/ramen.webp",
+      "type": "file",
+      "name": "ramen.webp",
+      "filePath": "sub1_side/web/panel/kiosk/images/ramen.webp",
+      "summary": "Binary WebP product image for the ramen menu item displayed on the kiosk ordering UI.",
+      "tags": [
+        "image",
+        "asset",
+        "webp",
+        "kiosk"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sub1_side/web/panel/kiosk/images/steak.webp",
+      "type": "file",
+      "name": "steak.webp",
+      "filePath": "sub1_side/web/panel/kiosk/images/steak.webp",
+      "summary": "Binary WebP product image for the steak menu item displayed on the kiosk ordering UI.",
+      "tags": [
+        "image",
+        "asset",
+        "webp",
+        "kiosk"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sub1_side/web/panel/kiosk/index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "sub1_side/web/panel/kiosk/index.html",
+      "summary": "Single-file customer kiosk SPA: presents the ramen/steak menu, collects orders, writes them to Firebase RTDB, and posts control intents to the Flask backend.",
+      "tags": [
+        "spa",
+        "kiosk",
+        "firebase-rtdb",
+        "ordering-ui",
+        "ui"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:sub1_side/web/start_all.sh",
+      "type": "file",
+      "name": "start_all.sh",
+      "filePath": "sub1_side/web/start_all.sh",
+      "summary": "Orchestration script that kills stale processes, syncs firebase_config.js into each panel, launches three static http.server panels (kiosk/status/admin), the Flask backend in tmux, the FK worker in tmux, and a Cloudflare named tunnel.",
+      "tags": [
+        "entry-point",
+        "orchestration",
+        "deployment",
+        "shell-script",
+        "tmux"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Fixes ROS_DOMAIN_ID=24 so this sub PC matches the main_side robo_chef nodes regardless of the host bashrc default."
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "file:sub1_side/web/backend/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "file:sub1_side/web/backend/firebase_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "file:sub1_side/web/backend/robot_bridge.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "file:sub1_side/web/backend/ros2_coord_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "file:sub1_side/web/backend/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/backend/recipe_seeder.py",
+      "target": "file:sub1_side/web/backend/firebase_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "file:sub1_side/web/backend/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "file:sub1_side/web/backend/firebase_client.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "function:sub1_side/web/backend/app.py:startup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "function:sub1_side/web/backend/app.py:create_order",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "function:sub1_side/web/backend/app.py:get_robot_coords",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "function:sub1_side/web/backend/app.py:robot_home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "function:sub1_side/web/backend/app.py:ros2_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:init",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:create_order",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:prune_orders",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:get_orders",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:push_log",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:_prune_logs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "class:sub1_side/web/backend/firebase_client.py:RecipeNotSeededError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/recipe_seeder.py",
+      "target": "function:sub1_side/web/backend/recipe_seeder.py:seed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:_spin_worker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:start",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:_call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:stop_robot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:move_joint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:set_robot_mode_autonomous",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/ros2_coord_client.py",
+      "target": "function:sub1_side/web/backend/ros2_coord_client.py:_spin_worker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/ros2_coord_client.py",
+      "target": "function:sub1_side/web/backend/ros2_coord_client.py:start",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/ros2_coord_client.py",
+      "target": "function:sub1_side/web/backend/ros2_coord_client.py:get_coords",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "function:sub1_side/web/backend/app.py:startup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "function:sub1_side/web/backend/app.py:create_order",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "function:sub1_side/web/backend/app.py:get_robot_coords",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "function:sub1_side/web/backend/app.py:robot_home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/app.py",
+      "target": "function:sub1_side/web/backend/app.py:ros2_status",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:init",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:create_order",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:prune_orders",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:get_orders",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "function:sub1_side/web/backend/firebase_client.py:push_log",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/firebase_client.py",
+      "target": "class:sub1_side/web/backend/firebase_client.py:RecipeNotSeededError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/recipe_seeder.py",
+      "target": "function:sub1_side/web/backend/recipe_seeder.py:seed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:start",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:stop_robot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:move_joint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/robot_bridge.py",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:set_robot_mode_autonomous",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/ros2_coord_client.py",
+      "target": "function:sub1_side/web/backend/ros2_coord_client.py:start",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/ros2_coord_client.py",
+      "target": "function:sub1_side/web/backend/ros2_coord_client.py:get_coords",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/app.py:startup",
+      "target": "function:sub1_side/web/backend/firebase_client.py:init",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/app.py:startup",
+      "target": "function:sub1_side/web/backend/firebase_client.py:push_log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/app.py:startup",
+      "target": "function:sub1_side/web/backend/ros2_coord_client.py:start",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/app.py:startup",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:start",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/app.py:create_order",
+      "target": "function:sub1_side/web/backend/firebase_client.py:create_order",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/app.py:create_order",
+      "target": "function:sub1_side/web/backend/firebase_client.py:prune_orders",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/app.py:create_order",
+      "target": "function:sub1_side/web/backend/firebase_client.py:push_log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/app.py:get_robot_coords",
+      "target": "function:sub1_side/web/backend/ros2_coord_client.py:get_coords",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/app.py:robot_home",
+      "target": "function:sub1_side/web/backend/robot_bridge.py:move_joint",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/app.py:robot_home",
+      "target": "function:sub1_side/web/backend/firebase_client.py:push_log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/recipe_seeder.py:seed",
+      "target": "function:sub1_side/web/backend/firebase_client.py:init",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/robot_bridge.py:stop_robot",
+      "target": "function:sub1_side/web/backend/firebase_client.py:push_log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/robot_bridge.py:move_joint",
+      "target": "function:sub1_side/web/backend/firebase_client.py:push_log",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/firebase_client.py:push_log",
+      "target": "function:sub1_side/web/backend/firebase_client.py:_prune_logs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sub1_side/web/backend/firebase_client.py:create_order",
+      "target": "class:sub1_side/web/backend/firebase_client.py:RecipeNotSeededError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py:DualSenseWorker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py:DualSenseWorker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py:GripperWorker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py:GripperWorker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:MacroNode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:JointStateNode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:BringupDialog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:BringupManager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:_JogDispatcher",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:DsrWorker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:DsrInterruptWorker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:RosSpinThread",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:JointStateThread",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:MainWindow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/gui.py:build_stylesheet",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/gui.py:btn_variants_for_theme",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/gui.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/gui.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:MainWindow",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:MainWindow",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py:DualSenseWorker",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:MainWindow",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py:GripperWorker",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:DsrWorker",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:_JogDispatcher",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:MainWindow",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/smoother.py:smooth_and_save",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:common/ros2_move_recoder/ros2_move_recoder/gui.py:DsrWorker",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/playback.py:play_segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:common/ros2_move_recoder/ros2_move_recoder/smoother.py:main",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/smoother.py:smooth_and_save",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/smoother.py:smooth_and_save",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/smoother.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/smoother.py:smooth_and_save",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/smoother.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/playback.py:play_segment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/playback.py:PlayResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/playback.py:_GripperTimeline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/playback.py:play_segment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/playback.py:PlayResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/player.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/player.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/player.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/player.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/player.py",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:common/ros2_move_recoder/ros2_move_recoder/player.py:main",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/playback.py:play_segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/test/test_playback.py",
+      "target": "function:common/ros2_move_recoder/test/test_playback.py:test_gripper_events_fire_in_order",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/test/test_playback.py",
+      "target": "class:common/ros2_move_recoder/test/test_playback.py:FakeGripper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/test/test_playback.py",
+      "target": "function:common/ros2_move_recoder/test/test_playback.py:test_gripper_events_fire_in_order",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/test/test_playback.py",
+      "target": "class:common/ros2_move_recoder/test/test_playback.py:FakeGripper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/test/test_playback.py",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "target": "file:common/ros2_move_recoder/test/test_playback.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "function:common/ros2_move_recoder/test/test_playback.py:test_gripper_events_fire_in_order",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/playback.py:play_segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:common/ros2_move_recoder/package.xml",
+      "target": "config:common/ros2_move_recoder/setup.cfg",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:common/ros2_move_recoder/README.md",
+      "target": "config:common/ros2_move_recoder/package.xml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/README.md",
+      "target": "config:common/ros2_move_recoder/setup.cfg",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/gui.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/pipeline.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/gripper.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/data-formats.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/dualsense-mapping.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/dualsense-plan.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/architecture.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/architecture.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/architecture.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/architecture.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/build-and-run.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/dev-essentials.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/pipeline.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/gui.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/data-formats.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/troubleshooting.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/extending.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/gripper.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/dualsense-mapping.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/dualsense-plan.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/CHANGELOG.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/aurora.css",
+      "target": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/corporate-clean.css",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/aurora.css",
+      "target": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/dark-corporate.css",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/aurora.css",
+      "target": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/minimal-white.css",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/corporate-clean.css",
+      "target": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/dark-corporate.css",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/corporate-clean.css",
+      "target": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/minimal-white.css",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/dark-corporate.css",
+      "target": "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/minimal-white.css",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:main_side/realtime_scan/install.sh",
+      "target": "config:main_side/realtime_scan/package.xml",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:main_side/realtime_scan/install.sh",
+      "target": "config:main_side/realtime_scan/setup.cfg",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:main_side/realtime_scan/package.xml",
+      "target": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:main_side/realtime_scan/package.xml",
+      "target": "file:main_side/realtime_scan/realtime_scan/order_receiver.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:main_side/realtime_scan/run_coord_service.sh",
+      "target": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:main_side/realtime_scan/run_receiver.sh",
+      "target": "file:main_side/realtime_scan/realtime_scan/order_receiver.py",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:main_side/realtime_scan/install.sh",
+      "target": "file:main_side/realtime_scan/run_coord_service.sh",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:main_side/realtime_scan/install.sh",
+      "target": "file:main_side/realtime_scan/run_receiver.sh",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:main_side/robo_chef/README.md",
+      "target": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:main_side/robo_chef/README.md",
+      "target": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:main_side/robo_chef/package.xml",
+      "target": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:main_side/robo_chef/package.xml",
+      "target": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:main_side/robo_chef/setup.cfg",
+      "target": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:main_side/robo_chef/setup.cfg",
+      "target": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/ros2_move_recoder/dev-docs/ppt/index.html",
+      "target": "file:common/ros2_move_recoder/dev-docs/ppt/assets/base.css",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/ros2_move_recoder/dev-docs/ppt/index.html",
+      "target": "file:common/ros2_move_recoder/dev-docs/ppt/assets/fonts.css",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/ros2_move_recoder/dev-docs/ppt/index.html",
+      "target": "file:common/ros2_move_recoder/dev-docs/ppt/assets/animations/animations.css",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/ros2_move_recoder/dev-docs/ppt/index.html",
+      "target": "file:common/ros2_move_recoder/dev-docs/ppt/assets/runtime.js",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/onrobot.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/onrobot.py:RG",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/onrobot.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/onrobot.py:RG",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/recorder.py:RecorderNode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/recorder.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/recorder.py:RecorderNode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/recorder.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/run.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/run.py:my_motion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/run.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/run.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/run.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/run.py:my_motion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/ros2_move_recoder/ros2_move_recoder/run.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/run.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:common/ros2_move_recoder/setup.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/recorder.py:main",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:common/ros2_move_recoder/setup.py",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/run.py:main",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:common/ros2_move_recoder/setup.py",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/__init__.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "target": "class:main_side/realtime_scan/realtime_scan/coord_service.py:_FirebasePublisher",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "target": "class:main_side/realtime_scan/realtime_scan/coord_service.py:SafetyBridge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "target": "function:main_side/realtime_scan/realtime_scan/coord_service.py:_on_joint_states",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "target": "function:main_side/realtime_scan/realtime_scan/coord_service.py:_display_loop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "target": "function:main_side/realtime_scan/realtime_scan/coord_service.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "target": "function:main_side/realtime_scan/realtime_scan/coord_service.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/realtime_scan/realtime_scan/log_bridge.py",
+      "target": "class:main_side/realtime_scan/realtime_scan/log_bridge.py:LogBridgeNode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/realtime_scan/realtime_scan/log_bridge.py",
+      "target": "class:main_side/realtime_scan/realtime_scan/log_bridge.py:LogBridgeNode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/realtime_scan/realtime_scan/order_receiver.py",
+      "target": "class:main_side/realtime_scan/realtime_scan/order_receiver.py:OrderLogReceiver",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/realtime_scan/realtime_scan/order_receiver.py",
+      "target": "class:main_side/realtime_scan/realtime_scan/order_receiver.py:OrderLogReceiver",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:main_side/realtime_scan/setup.py",
+      "target": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:main_side/realtime_scan/setup.py",
+      "target": "file:main_side/realtime_scan/realtime_scan/log_bridge.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:main_side/realtime_scan/setup.py",
+      "target": "file:main_side/realtime_scan/realtime_scan/order_receiver.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/cooking_core.py",
+      "target": "function:main_side/robo_chef/nodes/cooking_core.py:run_jobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/cooking_core.py",
+      "target": "function:main_side/robo_chef/nodes/cooking_core.py:run_jobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/order_core.py",
+      "target": "function:main_side/robo_chef/nodes/order_core.py:select_next_pending",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/order_core.py",
+      "target": "function:main_side/robo_chef/nodes/order_core.py:build_jobs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/order_core.py",
+      "target": "function:main_side/robo_chef/nodes/order_core.py:order_transition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/order_core.py",
+      "target": "function:main_side/robo_chef/nodes/order_core.py:select_next_pending",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/order_core.py",
+      "target": "function:main_side/robo_chef/nodes/order_core.py:build_jobs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/order_core.py",
+      "target": "function:main_side/robo_chef/nodes/order_core.py:order_transition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "target": "class:main_side/robo_chef/nodes/firebase_bridge.py:FirebaseBridge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "target": "function:main_side/robo_chef/nodes/firebase_bridge.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "target": "class:main_side/robo_chef/nodes/firebase_bridge.py:FirebaseBridge",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "target": "function:main_side/robo_chef/nodes/firebase_bridge.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "target": "file:main_side/robo_chef/nodes/order_core.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "class:main_side/robo_chef/nodes/firebase_bridge.py:FirebaseBridge",
+      "target": "function:main_side/robo_chef/nodes/order_core.py:select_next_pending",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:main_side/robo_chef/nodes/firebase_bridge.py:FirebaseBridge",
+      "target": "function:main_side/robo_chef/nodes/order_core.py:build_jobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:main_side/robo_chef/nodes/firebase_bridge.py:FirebaseBridge",
+      "target": "function:main_side/robo_chef/nodes/order_core.py:order_transition",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "target": "class:main_side/robo_chef/nodes/sequence_runner.py:SequenceRunner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "target": "function:main_side/robo_chef/nodes/sequence_runner.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "target": "class:main_side/robo_chef/nodes/sequence_runner.py:SequenceRunner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "target": "function:main_side/robo_chef/nodes/sequence_runner.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "target": "file:main_side/robo_chef/nodes/cooking_core.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "class:main_side/robo_chef/nodes/sequence_runner.py:SequenceRunner",
+      "target": "function:main_side/robo_chef/nodes/cooking_core.py:run_jobs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "target": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "target": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:docs/architecture.md",
+      "target": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/architecture.md",
+      "target": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/architecture.md",
+      "target": "file:main_side/robo_chef/nodes/cooking_core.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/architecture.md",
+      "target": "file:main_side/robo_chef/nodes/order_core.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/architecture.md",
+      "target": "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/architecture.md",
+      "target": "file:main_side/realtime_scan/realtime_scan/log_bridge.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/architecture.md",
+      "target": "file:main_side/realtime_scan/realtime_scan/order_receiver.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/architecture.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/architecture.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/onrobot.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/presentation-outline.md",
+      "target": "document:docs/architecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/presentation-outline.md",
+      "target": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/presentation-outline.md",
+      "target": "file:main_side/robo_chef/nodes/firebase_bridge.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/presentation-outline.md",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/onrobot.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:main_side/robo_chef/test/test_cooking_core.py",
+      "target": "function:main_side/robo_chef/test/test_cooking_core.py:test_run_jobs_emits_status_sequence_and_completes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/test/test_cooking_core.py",
+      "target": "function:main_side/robo_chef/test/test_cooking_core.py:test_run_jobs_stops_on_failure_with_error_state",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/test/test_order_core.py",
+      "target": "function:main_side/robo_chef/test/test_order_core.py:test_select_next_pending_fifo_by_order_time",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/test/test_order_core.py",
+      "target": "function:main_side/robo_chef/test/test_order_core.py:test_build_jobs_expands_items_in_order_with_segments",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/test/test_order_core.py",
+      "target": "function:main_side/robo_chef/test/test_order_core.py:test_build_jobs_raises_when_segments_missing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:main_side/robo_chef/test/test_order_core.py",
+      "target": "function:main_side/robo_chef/test/test_order_core.py:test_status_transition_for_cooking_status",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/fk_m0609.py",
+      "target": "function:sub1_side/web/backend/fk_m0609.py:_mat_mul",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/fk_m0609.py",
+      "target": "function:sub1_side/web/backend/fk_m0609.py:_origin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/fk_m0609.py",
+      "target": "function:sub1_side/web/backend/fk_m0609.py:compute_tcp_from_joint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/fk_m0609.py",
+      "target": "function:sub1_side/web/backend/fk_m0609.py:compute_tcp_from_joint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/fk_worker.py",
+      "target": "function:sub1_side/web/backend/fk_worker.py:_init_firebase",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/fk_worker.py",
+      "target": "function:sub1_side/web/backend/fk_worker.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/fk_worker.py",
+      "target": "function:sub1_side/web/backend/fk_worker.py:start_fk_worker_thread",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/fk_worker.py",
+      "target": "function:sub1_side/web/backend/fk_worker.py:start_fk_worker_thread",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/fk_worker.py",
+      "target": "file:sub1_side/web/backend/fk_m0609.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:sub1_side/web/backend/fk_worker.py:run",
+      "target": "function:sub1_side/web/backend/fk_m0609.py:compute_tcp_from_joint",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:sub1_side/web/backend/ros2_pub_once.py",
+      "target": "function:sub1_side/web/backend/ros2_pub_once.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:sub1_side/web/backend/ros2_pub_once.py",
+      "target": "function:sub1_side/web/backend/ros2_pub_once.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/cooking_core.py",
+      "target": "file:main_side/robo_chef/test/test_cooking_core.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/order_core.py",
+      "target": "file:main_side/robo_chef/test/test_order_core.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:sub1_side/web/panel/admin_monitor/index.html",
+      "target": "file:sub1_side/web/panel/admin_monitor/firebase_config.js",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:sub1_side/web/panel/customer_status/index.html",
+      "target": "file:sub1_side/web/panel/customer_status/firebase_config.js",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:sub1_side/web/panel/kiosk/index.html",
+      "target": "file:sub1_side/web/panel/kiosk/firebase_config.js",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:sub1_side/web/panel/kiosk/index.html",
+      "target": "file:sub1_side/web/panel/kiosk/images/ramen.webp",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:sub1_side/web/panel/kiosk/index.html",
+      "target": "file:sub1_side/web/panel/kiosk/images/steak.webp",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:sub1_side/web/start_all.sh",
+      "target": "file:sub1_side/web/panel/firebase_config.js",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:sub1_side/web/start_all.sh",
+      "target": "file:sub1_side/web/panel/kiosk/firebase_config.js",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/start_all.sh",
+      "target": "file:sub1_side/web/panel/customer_status/firebase_config.js",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/start_all.sh",
+      "target": "file:sub1_side/web/panel/admin_monitor/firebase_config.js",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/start_all.sh",
+      "target": "file:sub1_side/web/panel/kiosk/index.html",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/start_all.sh",
+      "target": "file:sub1_side/web/panel/customer_status/index.html",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/start_all.sh",
+      "target": "file:sub1_side/web/panel/admin_monitor/index.html",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sub1_side/web/start_all.sh",
+      "target": "file:sub1_side/web/backend/app.py",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:sub1_side/web/start_all.sh",
+      "target": "file:sub1_side/web/backend/fk_worker.py",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:sub1_side/web/backend/requirements.txt",
+      "target": "file:sub1_side/web/backend/fk_worker.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:sub1_side/web/backend/requirements.txt",
+      "target": "file:sub1_side/web/backend/app.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:main_side/robo_chef/setup.py",
+      "target": "file:main_side/robo_chef/resource/robo_chef",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:main_side/realtime_scan/setup.cfg",
+      "target": "config:main_side/realtime_scan/setup.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:main_side/robo_chef/nodes/sequence_runner.py",
+      "target": "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "class:main_side/robo_chef/nodes/sequence_runner.py:SequenceRunner",
+      "target": "function:common/ros2_move_recoder/ros2_move_recoder/playback.py:play_segment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:main_side/robo_chef/nodes/sequence_runner.py:SequenceRunner",
+      "target": "class:common/ros2_move_recoder/ros2_move_recoder/onrobot.py:RG",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/presentation-plan.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:common/ros2_move_recoder/dev-docs/README.md",
+      "target": "document:common/ros2_move_recoder/dev-docs/voice-vision-async-workflow.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:web-panels",
+      "name": "Customer-Facing Web Panels",
+      "description": "Static HTML/JS kiosk, customer-status, and admin-monitor UIs (plus shared Firebase config and image assets) served from sub1_side/web/panel for in-store ordering and order tracking.",
+      "nodeIds": [
+        "file:sub1_side/web/panel/admin_monitor/firebase_config.js",
+        "file:sub1_side/web/panel/admin_monitor/index.html",
+        "file:sub1_side/web/panel/customer_status/firebase_config.js",
+        "file:sub1_side/web/panel/customer_status/index.html",
+        "file:sub1_side/web/panel/firebase_config.js",
+        "file:sub1_side/web/panel/kiosk/firebase_config.js",
+        "file:sub1_side/web/panel/kiosk/images/ramen.webp",
+        "file:sub1_side/web/panel/kiosk/images/steak.webp",
+        "file:sub1_side/web/panel/kiosk/index.html"
+      ]
+    },
+    {
+      "id": "layer:web-backend",
+      "name": "Flask Web Backend",
+      "description": "Sub-node Flask REST API plus its Firebase, ROS 2 bridge, forward-kinematics worker, seeder, and launch helpers that mediate between the kiosk panels and the on-robot ROS 2 stack.",
+      "nodeIds": [
+        "file:sub1_side/web/backend/app.py",
+        "file:sub1_side/web/backend/config.py",
+        "file:sub1_side/web/backend/firebase_client.py",
+        "file:sub1_side/web/backend/recipe_seeder.py",
+        "file:sub1_side/web/backend/robot_bridge.py",
+        "file:sub1_side/web/backend/ros2_coord_client.py",
+        "file:sub1_side/web/backend/fk_m0609.py",
+        "file:sub1_side/web/backend/fk_worker.py",
+        "file:sub1_side/web/backend/ros2_pub_once.py",
+        "document:sub1_side/web/backend/requirements.txt",
+        "file:sub1_side/web/start_all.sh"
+      ]
+    },
+    {
+      "id": "layer:cooking-engine",
+      "name": "ROS 2 Cooking Engine (robo_chef)",
+      "description": "main_side/robo_chef ROS 2 package — firebase_bridge, sequence_runner, cooking_core, order_core nodes plus their tests and ament packaging — that turns Firebase orders into recorded-motion playback on the m0609 arm.",
+      "nodeIds": [
+        "file:main_side/robo_chef/nodes/__init__.py",
+        "file:main_side/robo_chef/nodes/cooking_core.py",
+        "file:main_side/robo_chef/nodes/firebase_bridge.py",
+        "file:main_side/robo_chef/nodes/order_core.py",
+        "file:main_side/robo_chef/nodes/sequence_runner.py",
+        "file:main_side/robo_chef/resource/robo_chef",
+        "file:main_side/robo_chef/setup.py",
+        "file:main_side/robo_chef/test/test_cooking_core.py",
+        "file:main_side/robo_chef/test/test_copyright.py",
+        "file:main_side/robo_chef/test/test_flake8.py",
+        "file:main_side/robo_chef/test/test_order_core.py",
+        "file:main_side/robo_chef/test/test_pep257.py",
+        "config:main_side/robo_chef/package.xml",
+        "config:main_side/robo_chef/setup.cfg",
+        "document:main_side/robo_chef/README.md"
+      ]
+    },
+    {
+      "id": "layer:telemetry",
+      "name": "ROS 2 Telemetry & Order Receiver (realtime_scan)",
+      "description": "main_side/realtime_scan ROS 2 package — coord_service, log_bridge, order_receiver nodes plus install/run shell scripts and ament packaging — that streams robot telemetry to the sub-node and ingests external orders.",
+      "nodeIds": [
+        "file:main_side/realtime_scan/realtime_scan/__init__.py",
+        "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+        "file:main_side/realtime_scan/realtime_scan/log_bridge.py",
+        "file:main_side/realtime_scan/realtime_scan/order_receiver.py",
+        "file:main_side/realtime_scan/resource/realtime_scan",
+        "file:main_side/realtime_scan/install.sh",
+        "file:main_side/realtime_scan/run_coord_service.sh",
+        "file:main_side/realtime_scan/run_receiver.sh",
+        "config:main_side/realtime_scan/package.xml",
+        "config:main_side/realtime_scan/setup.cfg",
+        "config:main_side/realtime_scan/setup.py"
+      ]
+    },
+    {
+      "id": "layer:motion-engine",
+      "name": "Motion Recorder & Playback Engine",
+      "description": "common/ros2_move_recoder Python package — PyQt5 GUI, DSR_ROBOT2 player/playback, recorder, smoother, DualSense and OnRobot RG gripper workers — that records, smooths, and replays m0609 motion segments consumed by robo_chef.",
+      "nodeIds": [
+        "file:common/ros2_move_recoder/ros2_move_recoder/__init__.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/dualsense_worker.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/gripper_worker.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/onrobot.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/player.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/recorder.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/run.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/smoother.py",
+        "file:common/ros2_move_recoder/test/test_playback.py",
+        "file:common/ros2_move_recoder/resource/ros2_move_recoder",
+        "config:common/ros2_move_recoder/package.xml",
+        "config:common/ros2_move_recoder/setup.cfg",
+        "config:common/ros2_move_recoder/setup.py",
+        "document:common/ros2_move_recoder/README.md"
+      ]
+    },
+    {
+      "id": "layer:recorder-docs",
+      "name": "Recorder Dev-Docs & Presentation Assets",
+      "description": "Markdown dev-docs (architecture, pipeline, dualsense, gripper, gui, troubleshooting, etc.) plus the slide deck under common/ros2_move_recoder/dev-docs/ppt (themes, animations, base/fonts CSS, runtime.js, index.html) that document and demo the recorder.",
+      "nodeIds": [
+        "document:common/ros2_move_recoder/dev-docs/CHANGELOG.md",
+        "document:common/ros2_move_recoder/dev-docs/README.md",
+        "document:common/ros2_move_recoder/dev-docs/architecture.md",
+        "document:common/ros2_move_recoder/dev-docs/build-and-run.md",
+        "document:common/ros2_move_recoder/dev-docs/data-formats.md",
+        "document:common/ros2_move_recoder/dev-docs/dev-essentials.md",
+        "document:common/ros2_move_recoder/dev-docs/dualsense-mapping.md",
+        "document:common/ros2_move_recoder/dev-docs/dualsense-plan.md",
+        "document:common/ros2_move_recoder/dev-docs/extending.md",
+        "document:common/ros2_move_recoder/dev-docs/gripper.md",
+        "document:common/ros2_move_recoder/dev-docs/gui.md",
+        "document:common/ros2_move_recoder/dev-docs/pipeline.md",
+        "document:common/ros2_move_recoder/dev-docs/presentation-plan.md",
+        "document:common/ros2_move_recoder/dev-docs/troubleshooting.md",
+        "document:common/ros2_move_recoder/dev-docs/voice-vision-async-workflow.md",
+        "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/aurora.css",
+        "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/corporate-clean.css",
+        "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/dark-corporate.css",
+        "file:common/ros2_move_recoder/dev-docs/ppt/assets/themes/minimal-white.css",
+        "file:common/ros2_move_recoder/dev-docs/ppt/assets/animations/animations.css",
+        "file:common/ros2_move_recoder/dev-docs/ppt/assets/base.css",
+        "file:common/ros2_move_recoder/dev-docs/ppt/assets/fonts.css",
+        "file:common/ros2_move_recoder/dev-docs/ppt/assets/runtime.js",
+        "file:common/ros2_move_recoder/dev-docs/ppt/index.html"
+      ]
+    },
+    {
+      "id": "layer:project-docs-tooling",
+      "name": "Project Docs & Tooling Config",
+      "description": "Top-level project documentation (docs/architecture.md, presentation-outline.md) and repository tooling configuration such as the understand-anything ignore file.",
+      "nodeIds": [
+        "document:docs/architecture.md",
+        "document:docs/presentation-outline.md",
+        "config:.understand-anything/.understandignore"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "Project Overview",
+      "description": "Start with the authoritative architecture document, which describes cobot1 as a ROS 2 Humble workspace for a kiosk-driven ramen and steak cooking robot. It maps the end-to-end flow from the customer kiosk through Firebase RTDB into the robo_chef ROS 2 nodes, the recorded-motion playback engine on the Doosan m0609, and the telemetry that mirrors robot state back to the web UIs. Read this first to keep the rest of the tour anchored to the system's intent.",
+      "nodeIds": [
+        "document:docs/architecture.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "The Customer's First Touchpoint",
+      "description": "The kiosk SPA is where every order originates: a single-file HTML app that renders the ramen/steak menu, takes the customer's selection, and pushes the order straight into Firebase Realtime Database. The shared firebase_config.js next to it pins the Firebase project credentials and the BACKEND_URL that all three panels (kiosk, customer status, admin monitor) reuse, so this pair is the single source of truth for the front-end's connection to the rest of the system.",
+      "nodeIds": [
+        "file:sub1_side/web/panel/kiosk/index.html",
+        "file:sub1_side/web/panel/firebase_config.js"
+      ],
+      "languageLesson": "Firebase Realtime Database is used here as a pub/sub queue between processes that never speak to each other directly: the kiosk writes to /orders, the ROS 2 bridge listens on /orders, and the panels listen on /robot_state. This 'database-as-message-bus' pattern decouples the web tier (HTTP/JS) from the robot tier (ROS 2/Python) without needing a custom socket protocol."
+    },
+    {
+      "order": 3,
+      "title": "Web Backend Glue",
+      "description": "The Flask app on the sub-node bootstraps Firebase, rclpy, the robot bridge, and the coordinate subscriber, exposing REST endpoints for recipes, orders, robot control, logs, and live ROS 2 status. Its companion firebase_client.py wraps firebase_admin into a thin recipe/order/robot-state helper that every other backend module reuses, so understanding these two files is the fastest way to grasp the contract between the web panels and the ROS 2 stack from Step 2.",
+      "nodeIds": [
+        "file:sub1_side/web/backend/app.py",
+        "file:sub1_side/web/backend/firebase_client.py"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "The Order Listener",
+      "description": "firebase_bridge is the ROS 2 node that watches Firebase /orders and /recipes in FIFO order and republishes the next pending job on the /recipe topic for the cooking pipeline to consume. It leans on order_core, a pure-logic helper module that isolates the 'pick the next pending order' selection rules so they can be unit-tested without ROS or Firebase. This is the boundary where the web world from Step 3 crosses into the robot world.",
+      "nodeIds": [
+        "file:main_side/robo_chef/nodes/firebase_bridge.py",
+        "file:main_side/robo_chef/nodes/order_core.py"
+      ],
+      "languageLesson": "Notice the pure-logic split: firebase_bridge owns the ROS 2 / Firebase side-effects, while order_core holds only deterministic functions. This is the standard ROS 2 testability pattern — keep rclpy and external I/O at the edges, push business rules into plain Python modules so pytest can exercise them without spinning up a node."
+    },
+    {
+      "order": 5,
+      "title": "The Cooking Pipeline",
+      "description": "sequence_runner is the heart of the robot side: it subscribes to the /recipe topic published by Step 4, owns the DSR robot handle, and replays recorded motion segments in order. Its companion cooking_core walks the 'item -> quantity -> segment' triple loop that turns a high-level order ('two ramen, one steak') into the concrete sequence of recorded segments to play back. Together they orchestrate the entire cooking choreography.",
+      "nodeIds": [
+        "file:main_side/robo_chef/nodes/sequence_runner.py",
+        "file:main_side/robo_chef/nodes/cooking_core.py"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Replaying Recorded Motion",
+      "description": "playback.py is the most depended-on file in the codebase: it is the headless engine that loads a recorded smooth-path JSON segment and replays it on the m0609 via DSR_ROBOT2. sequence_runner from Step 5 calls into this module for every segment, and the OnRobot driver beside it exposes the Modbus/TCP open/close commands for the RG2 gripper that the recorded segments interleave with arm motion. This is where the abstract 'cook a steak' instruction finally moves real hardware.",
+      "nodeIds": [
+        "file:common/ros2_move_recoder/ros2_move_recoder/playback.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/onrobot.py"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Recording Motion (Sister Tool)",
+      "description": "The recorded segments that Step 6 replays don't appear from thin air — they are authored with this PyQt5 GUI. gui.py is the main application that drives recording, smoothing, and test-replay sessions, while recorder.py is the ROS 2 node that subscribes to /joint_states between two Enter presses and captures the trajectory to disk. Seeing the producer side of the segment files makes the playback engine in Step 6 much easier to reason about.",
+      "nodeIds": [
+        "file:common/ros2_move_recoder/ros2_move_recoder/gui.py",
+        "file:common/ros2_move_recoder/ros2_move_recoder/recorder.py"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Robot Telemetry",
+      "description": "While the cooking pipeline is running, coord_service on the main PC subscribes to /joint_states and mirrors joint positions, TCP poses, and safety signals back toward the sub-node. fk_worker on the web backend side is the background thread that polls /robot_state/joint_positions and computes forward kinematics so the admin monitor can render the arm's pose in real time. This pair closes the feedback loop from the robot back to the UI tier.",
+      "nodeIds": [
+        "file:main_side/realtime_scan/realtime_scan/coord_service.py",
+        "file:sub1_side/web/backend/fk_worker.py"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Live Status to the Customer",
+      "description": "The story closes where it began — at the panels. The customer_status SPA subscribes to Firebase RTDB and renders order progress to whoever placed the order in Step 2, while the admin_monitor SPA shows the live order queue, robot state (driven by the telemetry from Step 8), and operator controls. Together with the kiosk, these three single-file HTML apps form the entire customer- and operator-facing surface of cobot1.",
+      "nodeIds": [
+        "file:sub1_side/web/panel/customer_status/index.html",
+        "file:sub1_side/web/panel/admin_monitor/index.html"
+      ]
+    }
+  ]
+}

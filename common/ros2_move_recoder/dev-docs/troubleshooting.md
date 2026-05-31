@@ -201,3 +201,17 @@ cat ~/cobot_ws/src/ros2_move_recoder/records/<name>/smooth.json | grep -E "vel|a
 ## 16. 기존 macros 폴더 (사용 안 함)
 
 `macros/` 디렉토리는 historical leftover. 현재 모든 데이터는 `records/<name>/`. 정리하고 싶으면 그냥 삭제 가능.
+
+## 17. `dsr_bringup2` 종료 후 좀비 프로세스 잔존
+
+**증상**: GUI 종료 후 `ps auxf | grep dsr_bringup2` 에 `<defunct>` 가 남음. 다음 launch 시 포트 12345 점유 충돌.
+
+**원인**: GUI 의 `BringupManager.shutdown()` 이 SIGKILL 후 `proc.wait()` 으로 reap 하지 않아 부모 종료까지 좀비 유지.
+
+**해결**: 이미 적용됨 — `shutdown()` 은 SIGINT → wait(5s) → SIGKILL → wait(2s) 3단계로 reap 까지 수행 (gui.py:246+). 만약 그래도 좀비가 보이면 외부에서:
+```bash
+pkill -INT -f dsr_bringup2_rviz   # graceful
+sleep 5
+pkill -KILL -f dsr_bringup2_rviz  # fallback
+```
+

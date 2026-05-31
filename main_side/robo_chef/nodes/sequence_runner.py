@@ -73,6 +73,16 @@ class SequenceRunner(Node):
                            logger=self.get_logger())
         return res.ok
 
+    def _missing_segments(self, jobs: list) -> list:
+        """모든 job 의 모든 segment 의 smooth.json 존재 검사. 누락된 seg 이름 반환.
+        실제 모션 시작 전에 fail-fast 하기 위한 pre-flight 게이트."""
+        missing = []
+        for job in jobs:
+            for seg in (job.get("segments") or []):
+                if not os.path.isfile(self._seg_path(seg)):
+                    missing.append(seg)
+        return missing
+
     def _on_recipe(self, msg: String):
         # NOTE: /recipe subscription MUST remain in a MutuallyExclusiveCallbackGroup
         # (rclpy default). _lock makes the IDLE→EXECUTING transition atomic so
@@ -87,6 +97,18 @@ class SequenceRunner(Node):
                 jobs = job["jobs"]
             except Exception as e:  # noqa: BLE001
                 self.get_logger().error(f"잘못된 /recipe: {e}")
+                return
+            # Pre-flight — segment 파일이 하나라도 없으면 모션 시작 안 함.
+            # 실행 중 폭발하면 emergency stop + ERROR 잠금이 되므로 사전 차단 가치 큼.
+            missing = self._missing_segments(jobs)
+            if missing:
+                err_msg = f"missing segments: {', '.join(missing)}"
+                self.get_logger().error(f"❌ pre-flight 실패 ({order_id}): {err_msg}")
+                self._emit({"state": "ERROR", "order_id": order_id,
+                            "recipe_id": "", "item_index": 0, "item_total": 0,
+                            "qty_index": 0, "qty_total": 0, "segment_name": "",
+                            "segment_index": 0, "segment_total": 0,
+                            "error_msg": err_msg})
                 return
             self.state = "EXECUTING"
             self._abort.clear()

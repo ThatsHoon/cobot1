@@ -1,0 +1,22 @@
+/* theme: dark-corporate — 다크 비즈니스 (ros2_move_recoder deck) */
+:root{
+  --bg:#080b12;--bg-soft:#0d121c;--surface:#121a27;--surface-2:#18222f;
+  --border:rgba(255,255,255,.09);--border-strong:rgba(255,255,255,.20);
+  --text-1:#eef3f9;--text-2:#9eafc2;--text-3:#6a7889;
+  --accent:#4f8cff;--accent-2:#74a8ff;--accent-3:#8aa0b8;
+  --good:#3fd09a;--warn:#f3b54a;--bad:#f06a6a;
+  --grad:linear-gradient(135deg,#1d4ed8,#4f8cff);
+  --grad-soft:linear-gradient(135deg,#11203a,#0f1828);
+  --radius:9px;--radius-sm:6px;--radius-lg:14px;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 8px 24px rgba(0,0,0,.38);
+  --shadow-lg:0 16px 44px rgba(0,0,0,.55),0 4px 12px rgba(0,0,0,.45);
+  --font-sans:'Pretendard','Noto Sans KR',-apple-system,sans-serif;
+  --font-display:'Pretendard','Noto Sans KR',sans-serif;
+}
+body{background:
+  radial-gradient(80% 60% at 88% -8%, rgba(79,140,255,.10), transparent 60%),
+  radial-gradient(70% 55% at 0% 108%, rgba(79,140,255,.07), transparent 60%),
+  var(--bg);}
+.kicker{color:var(--accent-2)}
+h1.title,h2.title,.h1,.h2{font-weight:700;color:var(--text-1)}
+.divider-accent{background:var(--accent-2);height:3px;width:56px}

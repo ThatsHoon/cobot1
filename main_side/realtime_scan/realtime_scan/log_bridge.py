@@ -26,7 +26,8 @@ from rcl_interfaces.msg import Log
 
 
 # ── 설정 ─────────────────────────────────────────────────────────
-FIREBASE_DB_URL    = "https://robochef-5d9b6-default-rtdb.asia-southeast1.firebasedatabase.app"
+FIREBASE_DB_URL_DEFAULT = "https://robochef-5d9b6-default-rtdb.asia-southeast1.firebasedatabase.app"
+FIREBASE_DB_URL    = os.environ.get("FIREBASE_DB_URL", FIREBASE_DB_URL_DEFAULT)
 FB_LOG_PATH        = "dsr_log"
 MAX_ENTRIES        = 300          # Firebase 에 유지할 최대 개수
 # rcl_interfaces/msg/Log level 상수: DEBUG=10, INFO=20, WARN=30, ERROR=40, FATAL=50
@@ -35,13 +36,23 @@ BATCH_INTERVAL_SEC = 0.5          # push 배칭 주기
 TRIM_EVERY_N_PUSH  = 30           # N건 push 마다 trim 수행
 OWN_NODE_NAMES     = {"dsr_log_bridge"}   # 피드백 루프 방지
 
+# FIREBASE_CRED_PATH 환경변수 우선. 없으면 후보 경로 중 첫 번째 존재 파일 사용.
 FIREBASE_CRED_CANDIDATES = [
+    os.path.expanduser("~/.config/cobot1/firebase-key.json"),
+    os.path.expanduser("~/cobot_ws/src/cobot1/main_side/robo_chef/config/serviceAccountKey.json"),
     os.path.expanduser("~/cobot_ws/src/robo_chef/config/serviceAccountKey.json"),
     os.path.expanduser("~/cobot_ws/src/a_robo_chef/config/serviceAccountKey.json"),
     os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                   "..", "..", "robo_chef", "config",
                                   "serviceAccountKey.json")),
 ]
+
+
+def _resolve_firebase_cred() -> str | None:
+    env = os.environ.get("FIREBASE_CRED_PATH")
+    if env and os.path.isfile(env):
+        return env
+    return next((p for p in FIREBASE_CRED_CANDIDATES if os.path.isfile(p)), None)
 
 LEVEL_NAMES = {10: "DEBUG", 20: "INFO", 30: "WARN", 40: "ERROR", 50: "FATAL"}
 
@@ -129,9 +140,11 @@ class LogBridgeNode(Node):
         except ImportError:
             _stderr("WARN", "firebase_admin 미설치 — 비활성화")
             return
-        cred_path = next((p for p in FIREBASE_CRED_CANDIDATES if os.path.isfile(p)), None)
+        cred_path = _resolve_firebase_cred()
         if cred_path is None:
-            _stderr("WARN", "credential 파일 미탐지 — 비활성화")
+            _stderr("WARN",
+                    "credential 파일 미탐지 — FIREBASE_CRED_PATH 환경변수 또는 "
+                    f"후보 경로 필요: {FIREBASE_CRED_CANDIDATES}")
             return
         try:
             if not firebase_admin._apps:
